@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import useDragging from "@/composables/useDragging";
+import useMouseTracking from "@/composables/useMouseTracking";
 import PatchModule from "@/components/PatchModule.vue";
 import PatchConnection from "./PatchConnection.vue";
 import AudioModule from "@/classes/AudioModule";
@@ -13,7 +14,7 @@ export type Position = {
   y: number;
 };
 
-export type Connection = {
+export type ConnectionInstance = {
   from: {
     moduleId: string;
     output: OutputInstance;
@@ -44,7 +45,7 @@ export type ModuleInstance = {
 
 export type PatchGraph = {
   modules: ModuleInstance[];
-  connections: Connection[];
+  connections: ConnectionInstance[];
 };
 
 defineProps({
@@ -72,8 +73,8 @@ const patchGraph = ref<PatchGraph>({
       id: "2",
       type: "speaker-output",
       position: {
-        x: 300,
-        y: 100,
+        x: 100,
+        y: 200,
       },
     },
   ],
@@ -83,6 +84,13 @@ const patchGraph = ref<PatchGraph>({
 const showContextMenu = ref(false);
 const contextMenuX = ref(0);
 const contextMenuY = ref(0);
+
+let currentPatchingModule: ModuleInstance | null = null;
+let currentPatchingOutput: OutputInstance | null = null;
+let abortPatchingController: AbortController | null = null;
+let abortPatchingSignal: AbortSignal | null = null;
+const selectedConnection = ref<ConnectionInstance | null>(null);
+const inProgressConnection = ref<ConnectionInstance | null>(null);
 
 const onGraphContextMenu = (e: MouseEvent) => {
   e.preventDefault();
@@ -95,17 +103,29 @@ const addModule = () => {
   showContextMenu.value = false;
 };
 
-let currentPatchingModule: ModuleInstance | null = null;
-let currentPatchingOutput: OutputInstance | null = null;
-let abortPatchingController: AbortController | null = null;
-let abortPatchingSignal: AbortSignal | null = null;
-let activePatchConnection: Connection | null = null;
-
 const onBeginPatching = (payload: {
   moduleInstance: ModuleInstance;
   output: OutputInstance;
 }) => {
   console.log("Begin patching from output:", payload.output);
+
+  inProgressConnection.value = {
+    from: {
+      moduleId: payload.moduleInstance.id,
+      output: payload.output,
+    },
+    to: {
+      moduleId: "",
+      input: {
+        position: {
+          x: payload.output.position.x,
+          y: payload.output.position.y,
+        },
+        name: "",
+        moduleInput: null as unknown as ModuleInput,
+      },
+    },
+  };
 
   currentPatchingOutput = payload.output;
   currentPatchingModule = payload.moduleInstance;
@@ -113,14 +133,21 @@ const onBeginPatching = (payload: {
   abortPatchingController = new AbortController();
   abortPatchingSignal = abortPatchingController.signal;
 
-  document.addEventListener(
-    "click",
-    () => {
-      console.log("Cancel patching");
-      currentPatchingOutput = null;
-    },
-    { once: true, signal: abortPatchingSignal }
-  );
+  document.addEventListener("click", cancelPatching, {
+    once: true,
+    signal: abortPatchingSignal,
+  });
+
+  startMouseTracking();
+};
+
+const cancelPatching = () => {
+  console.log("Cancel patching");
+
+  stopMouseTracking();
+
+  currentPatchingOutput = null;
+  inProgressConnection.value = null;
 };
 
 const onFinishPatching = (payload: {
@@ -128,6 +155,8 @@ const onFinishPatching = (payload: {
   input: InputInstance;
 }) => {
   console.log("Finish patching to input:", payload.input);
+
+  stopMouseTracking();
 
   if (currentPatchingOutput && currentPatchingModule) {
     patchGraph.value.connections.push({
@@ -143,6 +172,7 @@ const onFinishPatching = (payload: {
 
     currentPatchingOutput.moduleOutput.connect(payload.input.moduleInput);
     currentPatchingOutput = null;
+    inProgressConnection.value = null;
   }
 
   if (abortPatchingController) {
@@ -173,7 +203,16 @@ const onModuleDrag = (
   });
 };
 
+const onPatchingMouseMove = (deltaX: number, deltaY: number) => {
+  if (inProgressConnection.value) {
+    inProgressConnection.value!.to!.input!.position.x += deltaX;
+    inProgressConnection.value!.to!.input!.position.y += deltaY;
+  }
+};
+
 const { onDragElementStart } = useDragging(onModuleDrag);
+const { startMouseTracking, stopMouseTracking } =
+  useMouseTracking(onPatchingMouseMove);
 </script>
 
 <template>
@@ -196,11 +235,18 @@ const { onDragElementStart } = useDragging(onModuleDrag);
     ></PatchModule>
 
     <PatchConnection
+      v-if="inProgressConnection != null"
+      :patcherWindowWidth="width"
+      :patcherWindowHeight="height"
+      :connection="inProgressConnection as ConnectionInstance"
+    />
+
+    <PatchConnection
       v-for="(connection, i) in patchGraph.connections"
       :key="i"
       :patcherWindowWidth="width"
       :patcherWindowHeight="height"
-      :connection="connection as Connection"
+      :connection="connection as ConnectionInstance"
     />
 
     <v-menu
@@ -211,7 +257,7 @@ const { onDragElementStart } = useDragging(onModuleDrag);
       <v-list>
         <v-list-item @click="addModule">
           <v-list-item-title
-            ><v-icon>mdi-plus</v-icon> Add Module</v-list-item-title
+            ><v-icon>mdi-plus</v-icon>Add Module</v-list-item-title
           >
         </v-list-item>
       </v-list>

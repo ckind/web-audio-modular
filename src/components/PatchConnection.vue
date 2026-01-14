@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type PropType } from "vue";
-import type { Connection, Position } from "@/components/PatchWindow.vue";
+import type { ConnectionInstance, Position } from "@/components/PatchWindow.vue";
 
 const props = defineProps({
   patcherWindowWidth: {
@@ -12,7 +12,7 @@ const props = defineProps({
     required: true,
   },
   connection: {
-    type: Object as PropType<Connection>,
+    type: Object as PropType<ConnectionInstance>,
     required: true,
   },
 });
