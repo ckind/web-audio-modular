@@ -1,19 +1,17 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, type PropType } from "vue";
+import { computed, ref, type PropType, watch } from "vue";
 import AudioModule from "@/classes/AudioModule";
 import useAudioGlobalContext from "@/composables/useAudioGlobalContext.ts";
-import {
-  createAudioModule,
-  type AudioModuleType,
-} from "@/classes/factory/AudioModuleFactory";
-import ModuleOutput from "@/classes/ModuleOutput";
-import type ModuleInput from "@/classes/ModuleInput";
+import { createAudioModule } from "@/classes/factory/AudioModuleFactory";
 import {
   type ModuleInstance,
   type InputInstance,
   type OutputInstance,
 } from "./PatchWindow.vue";
+import useDynamicSize from "@/composables/useDynamicSize";
+import PatchModuleInput from "./PatchModuleInput.vue";
 
+const BORDER_SIZE = 1;
 const emit = defineEmits(["begin-patching", "finish-patching"]);
 
 useAudioGlobalContext((ctx) => {
@@ -29,6 +27,9 @@ const props = defineProps({
 
 const audioModule = ref<AudioModule | null>(null);
 
+const { width: moduleDisplayWidth, height: moduleDisplayHeight } =
+  useDynamicSize("module-container");
+
 const moduleName = computed(() => {
   return audioModule.value?.type ?? "";
 });
@@ -38,21 +39,16 @@ const inputs = computed(() => {
     return [];
   }
 
-  return (
-    Array.from(audioModule.value.inputs.keys()).map((key: string) => {
-      return {
-        text: key,
-        value: {
-          name: key,
-          moduleInput: audioModule.value!.inputs.get(key) as ModuleInput,
-          position: {
-            x: props.moduleInstance.position.x,
-            y: props.moduleInstance.position.y,
-          },
-        },
-      };
-    }) ?? []
-  );
+  return audioModule.value.inputs.map((input) => {
+    return {
+      name: input.name,
+      moduleInput: input,
+      position: {
+        x: props.moduleInstance.position.x + moduleDisplayWidth.value / 2,
+        y: props.moduleInstance.position.y,
+      },
+    } as InputInstance;
+  });
 });
 
 const outputs = computed(() => {
@@ -60,24 +56,19 @@ const outputs = computed(() => {
     return [];
   }
 
-  return (
-    Array.from(audioModule.value.outputs.keys()).map((key: string) => {
-      return {
-        text: key,
-        value: {
-          name: key,
-          moduleOutput: audioModule.value!.outputs.get(key) as ModuleOutput,
-          position: {
-            x: props.moduleInstance.position.x,
-            y: props.moduleInstance.position.y,
-          },
-        },
-      };
-    }) ?? []
-  );
+  return audioModule.value.outputs.map((output) => {
+    return {
+      name: output.name,
+      moduleOutput: output,
+      position: {
+        x: props.moduleInstance.position.x + moduleDisplayWidth.value / 2,
+        y: props.moduleInstance.position.y + moduleDisplayHeight.value,
+      },
+    } as OutputInstance;
+  });
 });
 
-const beginPatching = (name: string, output: OutputInstance) => {
+const beginPatching = (output: OutputInstance) => {
   if (!audioModule.value) {
     return;
   }
@@ -85,7 +76,7 @@ const beginPatching = (name: string, output: OutputInstance) => {
   emit("begin-patching", { moduleInstance: props.moduleInstance, output });
 };
 
-const finishPatching = (name: string, input: InputInstance) => {
+const finishPatching = (input: InputInstance) => {
   if (!audioModule.value) {
     return;
   }
@@ -95,20 +86,35 @@ const finishPatching = (name: string, input: InputInstance) => {
 </script>
 
 <template>
-  <v-card variant="outlined" class="audio-module user-select-none">
-    <v-btn
+  <v-card
+    ref="module-container"
+    class="audio-module user-select-none"
+  >
+    <patch-module-input
       v-for="input in inputs"
-      :key="input.text"
-      @click.stop="finishPatching(input.text, input.value)"
-      >{{ input.text }}</v-btn
+      :key="input.name"
+      @click.stop="finishPatching(input)"
+      :style="{
+        left: `${input.position.x - moduleInstance.position.x - BORDER_SIZE}px`,
+        top: `${input.position.y - moduleInstance.position.y - BORDER_SIZE}px`,
+      }"
+      class="module-input-output"
     >
+    </patch-module-input>
+
     <v-card-text>{{ moduleName }}</v-card-text>
-    <v-btn
+
+    <patch-module-output
       v-for="output in outputs"
-      :key="output.text"
-      @click.stop="beginPatching(output.text, output.value)"
-      >{{ output.text }}</v-btn
+      :key="output.name"
+      @click.stop="beginPatching(output)"
+      :style="{
+        left: `${output.position.x - moduleInstance.position.x - BORDER_SIZE}px`,
+        top: `${output.position.y - moduleInstance.position.y - BORDER_SIZE}px`,
+      }"
+      class="module-input-output"
     >
+    </patch-module-output>
   </v-card>
 </template>
 
@@ -117,5 +123,11 @@ const finishPatching = (name: string, input: InputInstance) => {
   display: inline-block;
   cursor: move;
   background-color: black;
+  overflow: visible;
+  border: 1px solid #fff;
+}
+.module-input-output {
+  position: absolute;
+  overflow: visible;
 }
 </style>

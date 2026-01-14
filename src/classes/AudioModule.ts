@@ -4,8 +4,8 @@ import { type AudioModuleType } from "./factory/AudioModuleFactory";
 
 export default abstract class AudioModule {
   protected _ctx: AudioContext;
-  protected _inputs: Map<string, ModuleInput> = new Map();
-  protected _outputs: Map<string, ModuleOutput> = new Map();
+  protected _inputs: ModuleInput[] = [];
+  protected _outputs: ModuleOutput[] = [];
 
   public id: string;
 
@@ -16,10 +16,10 @@ export default abstract class AudioModule {
 
   abstract get type(): AudioModuleType;
 
-  get inputs(): Map<string, ModuleInput> {
+  get inputs(): ModuleInput[]{
     return this._inputs;
   }
-  get outputs(): Map<string, ModuleOutput> {
+  get outputs(): ModuleOutput[] {
     return this._outputs;
   }
 }

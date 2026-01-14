@@ -11,7 +11,7 @@ export default class OscillatorModule extends AudioModule {
     this._oscillatorNode.frequency.value = 440; // Default frequency
     this._oscillatorNode.start();
 
-    this._outputs.set("output", new ModuleOutput(this._oscillatorNode));
+    this._outputs = [new ModuleOutput("output", this._oscillatorNode)];
   }
 
   get type(): AudioModuleType {

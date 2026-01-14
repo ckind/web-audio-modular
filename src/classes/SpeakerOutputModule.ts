@@ -6,7 +6,7 @@ export default class SpeakerOutputModule extends AudioModule {
   constructor(ctx: AudioContext) {
     super(ctx);
 
-    this._inputs.set("input", new ModuleInput(this._ctx.destination));
+    this._inputs = [new ModuleInput("input", this._ctx.destination)];
   }
 
   get type(): AudioModuleType {

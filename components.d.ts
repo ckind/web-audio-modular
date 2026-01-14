@@ -16,6 +16,8 @@ declare module 'vue' {
     PatchConnection: typeof import('./src/components/PatchConnection.vue')['default']
     PatchGraph: typeof import('./src/components/PatchGraph.vue')['default']
     PatchModule: typeof import('./src/components/PatchModule.vue')['default']
+    PatchModuleInput: typeof import('./src/components/PatchModuleInput.vue')['default']
+    PatchModuleOutput: typeof import('./src/components/PatchModuleOutput.vue')['default']
     PatchWindow: typeof import('./src/components/PatchWindow.vue')['default']
     Test: typeof import('./src/components/test.vue')['default']
   }

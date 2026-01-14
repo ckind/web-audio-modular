@@ -5,15 +5,18 @@ import TickSourceNode from "./TickSourceNode";
 
 export interface IModuleOutput {
   node: AudioNode | TickSourceNode;
+  name: string;
   connect(destination: ModuleInput): void;
   disconnect(): void;
 }
 
 export default class ModuleOutput implements IModuleOutput {
   public node: AudioNode | TickSourceNode;
+  public name: string;
 
-  constructor(node: AudioNode | TickSourceNode) {
+  constructor(name: string, node: AudioNode | TickSourceNode) {
     this.node = node;
+    this.name = name;
   }
 
   connect(destination: ModuleInput) {
