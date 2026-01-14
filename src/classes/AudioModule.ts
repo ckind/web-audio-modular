@@ -7,8 +7,11 @@ export default abstract class AudioModule {
   protected _inputs: Map<string, ModuleInput> = new Map();
   protected _outputs: Map<string, ModuleOutput> = new Map();
 
+  public id: string;
+
   constructor(ctx: AudioContext) {
     this._ctx = ctx;
+    this.id = crypto.randomUUID();
   }
 
   abstract get type(): AudioModuleType;

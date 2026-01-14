@@ -1,0 +1,6 @@
+.user-select-none {
+  user-select: none; /* Standard syntax */
+  -webkit-user-select: none; /* Safari, Chrome, Opera, Android */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+}
