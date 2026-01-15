@@ -13,8 +13,6 @@ export default function useDragging(
   let signal: AbortSignal;
 
   function onDragElementStart(e: MouseEvent | TouchEvent, data?: any) {
-    e.preventDefault();
-
     controller = new AbortController();
     signal = controller.signal;
 

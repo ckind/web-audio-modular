@@ -35,7 +35,7 @@ const addModule = (moduleType: string) => {
     :style="{ left: `${x}px`, top: `${y}px` }"
   >
     <v-list>
-      <v-menu open-on-hover location="end">
+      <v-menu location="end">
         <template v-slot:activator="{ props }">
           <v-list-item @click="" v-bind="props">
             <v-list-item-title>

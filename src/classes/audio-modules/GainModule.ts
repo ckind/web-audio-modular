@@ -23,7 +23,7 @@ export default class GainModule extends AudioModule<GainModuleOptions> {
     this._outputs = [new ModuleOutput("output", this._gainNode)];
     this._inputs = [
       new ModuleInput("input", this._gainNode),
-      // new ModuleInput("gain", this._gainNode.gain),
+      new ModuleInput("gain", this._gainNode.gain),
     ];
   }
 

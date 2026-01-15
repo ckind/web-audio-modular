@@ -195,6 +195,42 @@ const onFinishPatching = (payload: {
   logGraph();
 };
 
+const onPatchingMouseMove = (deltaX: number, deltaY: number) => {
+  if (inProgressConnection.value) {
+    inProgressConnection.value!.to!.input!.position.x += deltaX;
+    inProgressConnection.value!.to!.input!.position.y += deltaY;
+  }
+};
+
+const onModuleInputsUpdated = (moduleId: string,inputs: InputInstance[]) => {
+  // update positions of connections related to this module
+  patchGraph.value.connections.forEach((connection) => {
+    if (connection.to.moduleId === moduleId) {
+      const updatedInput = inputs.find(
+        (input) => input.name === connection.to.input.name
+      );
+      if (updatedInput) {
+        connection.to.input.position = { ...updatedInput.position };
+      }
+    }
+  });
+};
+
+const onModuleOutputsUpdated = (moduleId: string, outputs: OutputInstance[]) => {
+  // update positions of connections related to this module
+  patchGraph.value.connections.forEach((connection) => {
+    if (connection.from.moduleId === moduleId) {
+      const updatedOutput = outputs.find(
+        (output) => output.name === connection.from.output.name
+      );
+      if (updatedOutput) {
+        connection.from.output.position = { ...updatedOutput.position };
+      }
+    }
+  });
+};
+
+
 const onModuleDrag = (
   deltaX: number,
   deltaY: number,
@@ -216,12 +252,6 @@ const onModuleDrag = (
   });
 };
 
-const onPatchingMouseMove = (deltaX: number, deltaY: number) => {
-  if (inProgressConnection.value) {
-    inProgressConnection.value!.to!.input!.position.x += deltaX;
-    inProgressConnection.value!.to!.input!.position.y += deltaY;
-  }
-};
 
 const { onDragElementStart } = useDragging(onModuleDrag);
 const { startMouseTracking, stopMouseTracking } =
@@ -302,6 +332,8 @@ onUnmounted(() => {
       @touchstart="(e: TouchEvent) => onDragElementStart(e, module)"
       @begin-patching="onBeginPatching"
       @finish-patching="onFinishPatching"
+      @inputs-updated="(inputs) => onModuleInputsUpdated(module.id, inputs)"
+      @outputs-updated="(outputs) => onModuleOutputsUpdated(module.id, outputs)"
     ></PatchModule>
 
     <svg

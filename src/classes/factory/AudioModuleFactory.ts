@@ -16,7 +16,7 @@ export function createAudioModule(
     case "oscillator":
       return new OscillatorModule(id, ctx, options);
     case "gain":
-      return new GainModule(id, ctx, { gain: 1200 });
+      return new GainModule(id, ctx, options);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }

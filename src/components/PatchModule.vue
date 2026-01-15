@@ -10,9 +10,18 @@ import {
 } from "@/types/patchWindowTypes";
 import useDynamicSize from "@/composables/useDynamicSize";
 import PatchModuleInput from "./PatchModuleInput.vue";
+import {
+  computeInputPosition,
+  computeOutputPosition,
+} from "@/helpers/patchHelper.ts";
 
 const BORDER_SIZE = 1;
-const emit = defineEmits(["begin-patching", "finish-patching"]);
+const emit = defineEmits([
+  "begin-patching",
+  "finish-patching",
+  "inputs-updated",
+  "outputs-updated",
+]);
 
 useAudioGlobalContext((ctx) => {
   audioModule.value = createAudioModule(
@@ -43,17 +52,23 @@ const inputs = computed(() => {
     return [];
   }
 
-  return audioModule.value.inputs.map((input) => {
+  const newInputs = audioModule.value.inputs.map((input, index) => {
     return {
       name: input.name,
       moduleInput: input,
-      position: {
-        // todo: evenly space
-        x: props.moduleInstance.position.x + moduleDisplayWidth.value / 2,
-        y: props.moduleInstance.position.y,
-      },
+      position: computeInputPosition(
+        props.moduleInstance,
+        index,
+        audioModule.value!.inputs.length,
+        moduleDisplayWidth.value,
+        moduleDisplayHeight.value
+      ),
     } as InputInstance;
   });
+
+  emit("inputs-updated", newInputs);
+
+  return newInputs;
 });
 
 const outputs = computed(() => {
@@ -61,17 +76,23 @@ const outputs = computed(() => {
     return [];
   }
 
-  return audioModule.value.outputs.map((output) => {
+  const newOutputs = audioModule.value.outputs.map((output, index) => {
     return {
       name: output.name,
       moduleOutput: output,
-      position: {
-        // todo: evenly space
-        x: props.moduleInstance.position.x + moduleDisplayWidth.value / 2,
-        y: props.moduleInstance.position.y + moduleDisplayHeight.value,
-      },
+      position: computeOutputPosition(
+        props.moduleInstance,
+        index,
+        audioModule.value!.outputs.length,
+        moduleDisplayWidth.value,
+        moduleDisplayHeight.value
+      ),
     } as OutputInstance;
   });
+
+  emit("outputs-updated", newOutputs);
+
+  return newOutputs;
 });
 
 const beginPatching = (outputInstance: OutputInstance) => {
@@ -95,6 +116,42 @@ const finishPatching = (inputInstance: InputInstance) => {
     inputInstance,
   });
 };
+
+const moduleOptions = ref<{ name: string; value: any }[]>([]);
+
+watch(
+  () => audioModule.value,
+  (newModule) => {
+    if (!newModule) {
+      moduleOptions.value = [];
+      return;
+    }
+
+    moduleOptions.value = Object.entries(newModule.options).map(
+      ([key, value]) => {
+        return { name: key, value: value };
+      }
+    );
+  },
+  { immediate: true }
+);
+
+watch(
+  () => moduleOptions.value,
+  (newOptions) => {
+    if (!audioModule.value) {
+      return;
+    }
+
+    audioModule.value.updateOptions(
+      newOptions.reduce((acc, option) => {
+        acc[option.name] = option.value;
+        return acc;
+      }, {} as Record<string, any>)
+    );
+  },
+  { deep: true }
+);
 </script>
 
 <template>
@@ -111,13 +168,15 @@ const finishPatching = (inputInstance: InputInstance) => {
     >
     </patch-module-input>
 
-    <div class="pa-2 d-inline-block">{{ moduleName }}</div>
+    <div class="ma-2 d-inline-block">{{ moduleName }}</div>
 
     <input
-      v-for="(value, key) in audioModule?.options"
-      :key="key"
-      :name="value.name"
+      v-for="option in moduleOptions"
+      :key="option.name"
+      :name="option.name"
       type="text"
+      v-model="option.value"
+      class="module-option-input mr-2 d-inline-block"
     />
 
     <patch-module-output
@@ -147,5 +206,8 @@ const finishPatching = (inputInstance: InputInstance) => {
 .module-input-output {
   position: absolute;
   overflow: visible;
+}
+.module-option-input {
+  field-sizing: content;
 }
 </style>
