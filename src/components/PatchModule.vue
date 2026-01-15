@@ -29,7 +29,7 @@ const props = defineProps({
   },
 });
 
-const audioModule = ref<AudioModule | null>(null);
+const audioModule = ref<AudioModule<any> | null>(null);
 
 const { width: moduleDisplayWidth, height: moduleDisplayHeight } =
   useDynamicSize("module-container");
@@ -48,6 +48,7 @@ const inputs = computed(() => {
       name: input.name,
       moduleInput: input,
       position: {
+        // todo: evenly space
         x: props.moduleInstance.position.x + moduleDisplayWidth.value / 2,
         y: props.moduleInstance.position.y,
       },
@@ -65,6 +66,7 @@ const outputs = computed(() => {
       name: output.name,
       moduleOutput: output,
       position: {
+        // todo: evenly space
         x: props.moduleInstance.position.x + moduleDisplayWidth.value / 2,
         y: props.moduleInstance.position.y + moduleDisplayHeight.value,
       },
@@ -109,7 +111,14 @@ const finishPatching = (inputInstance: InputInstance) => {
     >
     </patch-module-input>
 
-    <v-card-text>{{ moduleName }}</v-card-text>
+    <div class="pa-2 d-inline-block">{{ moduleName }}</div>
+
+    <input
+      v-for="(value, key) in audioModule?.options"
+      :key="key"
+      :name="value.name"
+      type="text"
+    />
 
     <patch-module-output
       v-for="output in outputs"

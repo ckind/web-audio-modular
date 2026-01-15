@@ -3,14 +3,6 @@ import { type PropType } from "vue";
 import type { ConnectionInstance } from "@/types/patchWindowTypes";
 
 const props = defineProps({
-  patcherWindowWidth: {
-    type: Number,
-    required: true,
-  },
-  patcherWindowHeight: {
-    type: Number,
-    required: true,
-  },
   connection: {
     type: Object as PropType<ConnectionInstance>,
     required: true,
@@ -25,15 +17,7 @@ const connectionClick = () => {
 </script>
 
 <template>
-  <!-- todo: need a new strategy for rendering connections
-   overlapping the whole patch window is not a good call 
-   maybe just render the whole graph with svgs? -->
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    :viewBox="`0 0 ${patcherWindowWidth} ${patcherWindowHeight}`"
-    :width="patcherWindowWidth"
-    :height="patcherWindowHeight"
-  >
+  <g>
     <!-- line -->
     <line
       :x1="connection.from.output.position.x"
@@ -60,7 +44,7 @@ const connectionClick = () => {
       r="5"
       fill="#fff"
     />
-  </svg>
+  </g>
 </template>
 
 <style scoped></style>

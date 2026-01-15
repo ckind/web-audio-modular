@@ -304,21 +304,24 @@ onUnmounted(() => {
       @finish-patching="onFinishPatching"
     ></PatchModule>
 
-    <PatchConnection
-      v-if="inProgressConnection != null"
-      :patcherWindowWidth="width"
-      :patcherWindowHeight="height"
-      :connection="inProgressConnection as ConnectionInstance"
-    />
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      :viewBox="`0 0 ${width} ${height}`"
+      :width="width"
+      :height="height"
+    >
+      <PatchConnection
+        v-if="inProgressConnection != null"
+        :connection="inProgressConnection as ConnectionInstance"
+      />
 
-    <PatchConnection
-      v-for="(connection, i) in patchGraph.connections"
-      :key="i"
-      :patcherWindowWidth="width"
-      :patcherWindowHeight="height"
-      :connection="connection as ConnectionInstance"
-      @selected="() => onConnectionSelected(connection as ConnectionInstance)"
-    />
+      <PatchConnection
+        v-for="(connection, i) in patchGraph.connections"
+        :key="i"
+        :connection="connection as ConnectionInstance"
+        @selected="() => onConnectionSelected(connection as ConnectionInstance)"
+      />
+    </svg>
 
     <PatchContextMenu
       v-model="showContextMenu"

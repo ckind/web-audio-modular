@@ -4,8 +4,12 @@ import ModuleInput from "@/classes/ModuleInput";
 import ModuleOutput from "@/classes/ModuleOutput";
 
 type OscillatorModuleOptions = {
-  frequency?: number;
+  frequency: number;
 };
+
+const getDefaultOptions = (): OscillatorModuleOptions => ({
+  frequency: 440,
+});
 
 export default class OscillatorModule extends AudioModule<OscillatorModuleOptions> {
   private _oscillatorNode: OscillatorNode;
@@ -15,9 +19,10 @@ export default class OscillatorModule extends AudioModule<OscillatorModuleOption
     ctx: AudioContext,
     options?: OscillatorModuleOptions
   ) {
-    super(id, ctx, options);
+    super(id, ctx, options ?? getDefaultOptions());
+    
     this._oscillatorNode = ctx.createOscillator();
-    this._oscillatorNode.frequency.value = options?.frequency ?? 440; // Default frequency
+    this._oscillatorNode.frequency.value = this._options.frequency; // Default frequency
     this._oscillatorNode.start();
 
     this._outputs = [new ModuleOutput("output", this._oscillatorNode)];
@@ -30,9 +35,10 @@ export default class OscillatorModule extends AudioModule<OscillatorModuleOption
     return "oscillator";
   }
 
-  updateOptions(options: OscillatorModuleOptions): void {
+  updateOptions(options: Partial<OscillatorModuleOptions>): void {
     if (options.frequency !== undefined) {
       this._oscillatorNode.frequency.value = options.frequency;
+      this._options.frequency = options.frequency;
     }
   }
 }

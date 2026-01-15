@@ -20,6 +20,7 @@ const emit = defineEmits(["add-module"]);
 const availableModules = [
   { title: "oscillator", type: "oscillator" },
   { title: "speaker-output", type: "speaker-output" },
+  { title: "gain", type: "gain" },
 ];
 
 const addModule = (moduleType: string) => {
