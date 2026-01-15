@@ -12,7 +12,12 @@ export default class TickSourceNode {
     this._connections.push(destination);
   }
 
-  disconnect(destination: TickDestinationNode) {
+  disconnect(destination?: TickDestinationNode) {
+    if (!destination) {
+      this._connections = [];
+      return;
+    }
+
     this._connections = this._connections.filter(connection => connection !== destination);
   }
   

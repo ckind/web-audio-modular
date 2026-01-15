@@ -1,52 +1,18 @@
 <script lang="ts" setup>
-import { ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import useDragging from "@/composables/useDragging";
 import useMouseTracking from "@/composables/useMouseTracking";
 import PatchModule from "@/components/PatchModule.vue";
-import PatchConnection from "./PatchConnection.vue";
-import AudioModule from "@/classes/AudioModule";
+import PatchConnection from "@/components/PatchConnection.vue";
+import type {
+  PatchGraph,
+  ModuleInstance,
+  ConnectionInstance,
+  InputInstance,
+  OutputInstance,
+} from "@/types/patchWindowTypes";
 import ModuleInput from "@/classes/ModuleInput";
 import ModuleOutput from "@/classes/ModuleOutput";
-import type { AudioModuleType } from "@/classes/factory/AudioModuleFactory";
-
-export type Position = {
-  x: number;
-  y: number;
-};
-
-export type ConnectionInstance = {
-  from: {
-    moduleId: string;
-    output: OutputInstance;
-  };
-  to: {
-    moduleId: string;
-    input: InputInstance;
-  };
-};
-
-export type InputInstance = {
-  name: string;
-  moduleInput: ModuleInput;
-  position: Position;
-};
-
-export type OutputInstance = {
-  name: string;
-  moduleOutput: ModuleOutput;
-  position: Position;
-};
-
-export type ModuleInstance = {
-  id: string;
-  type: AudioModuleType;
-  position: Position;
-};
-
-export type PatchGraph = {
-  modules: ModuleInstance[];
-  connections: ConnectionInstance[];
-};
 
 defineProps({
   height: {
@@ -81,16 +47,18 @@ const patchGraph = ref<PatchGraph>({
   connections: [],
 });
 
-const showContextMenu = ref(false);
-const contextMenuX = ref(0);
-const contextMenuY = ref(0);
-
 let currentPatchingModule: ModuleInstance | null = null;
 let currentPatchingOutput: OutputInstance | null = null;
 let abortPatchingController: AbortController | null = null;
 let abortPatchingSignal: AbortSignal | null = null;
+// todo: multiple selected modules and connections
+const selectedModule = ref<ModuleInstance | null>(null);
 const selectedConnection = ref<ConnectionInstance | null>(null);
 const inProgressConnection = ref<ConnectionInstance | null>(null);
+
+const showContextMenu = ref(false);
+const contextMenuX = ref(0);
+const contextMenuY = ref(0);
 
 const onGraphContextMenu = (e: MouseEvent) => {
   e.preventDefault();
@@ -103,23 +71,47 @@ const addModule = () => {
   showContextMenu.value = false;
 };
 
+const onConnectionSelected = (connection: ConnectionInstance) => {
+  if (selectedConnection.value) {
+    selectedConnection.value.selected = false;
+  }
+
+  selectedConnection.value = connection;
+  connection.selected = true;
+};
+
+const isConnected = (
+  module: ModuleInstance,
+  output: OutputInstance
+): boolean => {
+  return patchGraph.value.connections.some(
+    (c) => c.from.output.name === output.name && c.from.moduleId === module.id
+  );
+};
+
 const onBeginPatching = (payload: {
   moduleInstance: ModuleInstance;
-  output: OutputInstance;
+  outputInstance: OutputInstance;
 }) => {
-  console.log("Begin patching from output:", payload.output);
+  console.log("Begin patching from output:", payload.outputInstance);
+
+  if (isConnected(payload.moduleInstance, payload.outputInstance)) {
+    // todo: allow multiple connections from the same output
+    console.warn("Output is already connected.");
+    return;
+  }
 
   inProgressConnection.value = {
     from: {
       moduleId: payload.moduleInstance.id,
-      output: payload.output,
+      output: payload.outputInstance,
     },
     to: {
       moduleId: "",
       input: {
         position: {
-          x: payload.output.position.x,
-          y: payload.output.position.y,
+          x: payload.outputInstance.position.x,
+          y: payload.outputInstance.position.y,
         },
         name: "",
         moduleInput: null as unknown as ModuleInput,
@@ -127,7 +119,7 @@ const onBeginPatching = (payload: {
     },
   };
 
-  currentPatchingOutput = payload.output;
+  currentPatchingOutput = payload.outputInstance;
   currentPatchingModule = payload.moduleInstance;
 
   abortPatchingController = new AbortController();
@@ -152,9 +144,9 @@ const cancelPatching = () => {
 
 const onFinishPatching = (payload: {
   moduleInstance: ModuleInstance;
-  input: InputInstance;
+  inputInstance: InputInstance;
 }) => {
-  console.log("Finish patching to input:", payload.input);
+  console.log("Finish patching to input:", payload.inputInstance);
 
   stopMouseTracking();
 
@@ -166,11 +158,13 @@ const onFinishPatching = (payload: {
       },
       to: {
         moduleId: payload.moduleInstance.id,
-        input: payload.input,
+        input: payload.inputInstance,
       },
     });
 
-    currentPatchingOutput.moduleOutput.connect(payload.input.moduleInput);
+    currentPatchingOutput.moduleOutput.connect(
+      payload.inputInstance.moduleInput
+    );
     currentPatchingOutput = null;
     inProgressConnection.value = null;
   }
@@ -213,6 +207,63 @@ const onPatchingMouseMove = (deltaX: number, deltaY: number) => {
 const { onDragElementStart } = useDragging(onModuleDrag);
 const { startMouseTracking, stopMouseTracking } =
   useMouseTracking(onPatchingMouseMove);
+
+let abortKeyListenersController: AbortController | null = null;
+let abortKeyListenersSignal: AbortSignal | null = null;
+
+const assignKeyListners = () => {
+  abortKeyListenersController = new AbortController();
+  abortKeyListenersSignal = abortKeyListenersController.signal;
+
+  document.addEventListener(
+    "keydown",
+    (e) => {
+      switch (e.key) {
+        case "Escape":
+          if (inProgressConnection.value) {
+            cancelPatching();
+          }
+          break;
+        case "Backspace":
+        case "Delete":
+          if (selectedConnection.value) {
+            // Disconnect audio nodes
+            const fromOuput = selectedConnection.value.from.output
+              .moduleOutput as ModuleOutput;
+            const toInput = selectedConnection.value.to.input
+              .moduleInput as ModuleInput;
+
+            fromOuput.disconnect(toInput);
+
+            // Remove connection from graph
+            patchGraph.value.connections = patchGraph.value.connections.filter(
+              (c) => c !== selectedConnection.value
+            );
+
+            selectedConnection.value = null;
+          }
+          break;
+      }
+    },
+    { signal: abortKeyListenersSignal }
+  );
+};
+
+const removeKeyListeners = () => {
+  if (abortKeyListenersController) {
+    abortKeyListenersController.abort();
+    abortKeyListenersController = null;
+    abortKeyListenersSignal = null;
+  }
+};
+
+onMounted(() => {
+  assignKeyListners();
+});
+
+onUnmounted(() => {
+  removeKeyListeners();
+});
 </script>
 
 <template>
@@ -247,6 +298,7 @@ const { startMouseTracking, stopMouseTracking } =
       :patcherWindowWidth="width"
       :patcherWindowHeight="height"
       :connection="connection as ConnectionInstance"
+      @selected="() => onConnectionSelected(connection as ConnectionInstance)"
     />
 
     <v-menu

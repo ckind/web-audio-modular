@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type PropType } from "vue";
-import type { ConnectionInstance, Position } from "@/components/PatchWindow.vue";
+import type { ConnectionInstance } from "@/types/patchWindowTypes";
 
 const props = defineProps({
   patcherWindowWidth: {
@@ -16,6 +16,12 @@ const props = defineProps({
     required: true,
   },
 });
+
+const emit = defineEmits(["selected"]);
+
+const connectionClick = () => {
+  emit("selected");
+};
 </script>
 
 <template>
@@ -31,9 +37,11 @@ const props = defineProps({
       :y1="connection.from.output.position.y"
       :x2="connection.to.input.position.x"
       :y2="connection.to.input.position.y"
-      stroke="#fff"
-      stroke-width="2"
+      :stroke="connection.selected ? '#f00' : '#fff'"
+      stroke-width="3"
       stroke-linecap="round"
+      class="cursor-pointer"
+      @click="connectionClick"
     />
 
     <!-- end points -->

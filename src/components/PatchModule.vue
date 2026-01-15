@@ -7,7 +7,7 @@ import {
   type ModuleInstance,
   type InputInstance,
   type OutputInstance,
-} from "./PatchWindow.vue";
+} from "@/types/patchWindowTypes";
 import useDynamicSize from "@/composables/useDynamicSize";
 import PatchModuleInput from "./PatchModuleInput.vue";
 
@@ -68,28 +68,31 @@ const outputs = computed(() => {
   });
 });
 
-const beginPatching = (output: OutputInstance) => {
+const beginPatching = (outputInstance: OutputInstance) => {
   if (!audioModule.value) {
     return;
   }
 
-  emit("begin-patching", { moduleInstance: props.moduleInstance, output });
+  emit("begin-patching", {
+    moduleInstance: props.moduleInstance,
+    outputInstance,
+  });
 };
 
-const finishPatching = (input: InputInstance) => {
+const finishPatching = (inputInstance: InputInstance) => {
   if (!audioModule.value) {
     return;
   }
 
-  emit("finish-patching", { moduleInstance: props.moduleInstance, input });
+  emit("finish-patching", {
+    moduleInstance: props.moduleInstance,
+    inputInstance,
+  });
 };
 </script>
 
 <template>
-  <v-card
-    ref="module-container"
-    class="audio-module user-select-none"
-  >
+  <v-card ref="module-container" class="audio-module user-select-none">
     <patch-module-input
       v-for="input in inputs"
       :key="input.name"
@@ -109,7 +112,9 @@ const finishPatching = (input: InputInstance) => {
       :key="output.name"
       @click.stop="beginPatching(output)"
       :style="{
-        left: `${output.position.x - moduleInstance.position.x - BORDER_SIZE}px`,
+        left: `${
+          output.position.x - moduleInstance.position.x - BORDER_SIZE
+        }px`,
         top: `${output.position.y - moduleInstance.position.y - BORDER_SIZE}px`,
       }"
       class="module-input-output"

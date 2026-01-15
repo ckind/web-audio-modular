@@ -8,6 +8,7 @@ export interface IModuleOutput {
   name: string;
   connect(destination: ModuleInput): void;
   disconnect(): void;
+  disconnect(destination: ModuleInput): void;
 }
 
 export default class ModuleOutput implements IModuleOutput {
@@ -32,7 +33,27 @@ export default class ModuleOutput implements IModuleOutput {
       }
   }
 
-  disconnect() {
-    // todo: implement disconnect logic
+  disconnect(destination?: ModuleInput) {
+    if (!destination) {
+      if (this.node instanceof TickSourceNode) {
+        this.node.disconnect();
+      } else if (this.node instanceof AudioNode) {
+        this.node.disconnect();
+      }
+      
+      return;
+    }
+
+    if (this.node instanceof TickSourceNode) {
+      if (destination.node instanceof TickDestinationNode) {
+        this.node.disconnect(destination.node);
+      }
+    } else if (this.node instanceof AudioNode) {
+      if (destination.node instanceof AudioNode) {
+        this.node.disconnect(destination.node);
+      } else if (destination.node instanceof AudioParam) {
+        this.node.disconnect(destination.node);
+      }
+    }
   }
 }
