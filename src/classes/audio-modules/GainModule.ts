@@ -37,4 +37,6 @@ export default class GainModule extends AudioModule<GainModuleOptions> {
       this._options.gain = options.gain;
     }
   }
+
+  dispose(): void {}
 }

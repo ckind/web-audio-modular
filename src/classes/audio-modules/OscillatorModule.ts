@@ -41,4 +41,8 @@ export default class OscillatorModule extends AudioModule<OscillatorModuleOption
       this._options.frequency = options.frequency;
     }
   }
+
+  dispose(): void {
+    this._oscillatorNode.stop();
+  }
 }

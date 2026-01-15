@@ -7,6 +7,12 @@ export type Position = {
   y: number;
 };
 
+export type PatchCableInstance = {
+  from: Position;
+  to: Position;
+  selected?: boolean;
+};
+
 export type ConnectionInstance = {
   from: {
     moduleId: string;

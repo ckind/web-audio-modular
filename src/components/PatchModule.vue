@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, type PropType, watch } from "vue";
+import { computed, ref, type PropType, watch, onUnmounted } from "vue";
 import AudioModule from "@/classes/audio-modules/AudioModule";
 import useAudioGlobalContext from "@/composables/useAudioGlobalContext.ts";
 import { createAudioModule } from "@/classes/factory/AudioModuleFactory";
@@ -7,7 +7,7 @@ import {
   type ModuleInstance,
   type InputInstance,
   type OutputInstance,
-} from "@/types/patchWindowTypes";
+} from "@/types/patchTypes";
 import useDynamicSize from "@/composables/useDynamicSize";
 import PatchModuleInput from "./PatchModuleInput.vue";
 import {
@@ -152,6 +152,13 @@ watch(
   },
   { deep: true }
 );
+
+onUnmounted(() => {
+  if (audioModule.value) {
+    audioModule.value.dispose();
+    audioModule.value = null;
+  }
+});
 </script>
 
 <template>

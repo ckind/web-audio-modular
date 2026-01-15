@@ -1,4 +1,4 @@
-import type { ModuleInstance, PatchGraph } from "@/types/patchWindowTypes";
+import type { ConnectionInstance, ModuleInstance, PatchGraph } from "@/types/patchTypes";
 
 export const computeInputPosition = (
   moduleInstance: ModuleInstance,
@@ -33,4 +33,14 @@ export const logGraph = (patchGraph: PatchGraph) => {
     "Current Patch Graph:",
     JSON.parse(JSON.stringify(patchGraph, null, 2))
   );
+};
+
+export const logConnections = (connections: ConnectionInstance[]) => {
+  connections.forEach((connection, index) => {
+    console.log(
+      `Connection ${index + 1}:`,
+      `From ${connection.from.output.name} ${connection.from.moduleId} `,
+      `To ${connection.to.input.name} ${connection.to.moduleId}`
+    );
+  });
 };

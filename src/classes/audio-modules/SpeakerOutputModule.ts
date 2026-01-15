@@ -24,4 +24,8 @@ export default class SpeakerOutputModule extends AudioModule<SpeakerOutputModule
   updateOptions(options: Partial<SpeakerOutputModuleOptions>): void {
     // No options to update for speaker output
   }
+
+  dispose(): void {
+    // No resources to clean up for speaker output
+  }
 }

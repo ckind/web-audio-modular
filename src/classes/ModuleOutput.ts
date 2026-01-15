@@ -34,13 +34,17 @@ export default class ModuleOutput implements IModuleOutput {
   }
 
   disconnect(destination?: ModuleInput) {
-    if (!destination) {
+    if (
+      !destination ||
+      destination.node === undefined ||
+      destination.node === null
+    ) {
       if (this.node instanceof TickSourceNode) {
         this.node.disconnect();
       } else if (this.node instanceof AudioNode) {
         this.node.disconnect();
       }
-      
+
       return;
     }
 

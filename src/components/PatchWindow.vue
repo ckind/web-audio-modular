@@ -6,15 +6,17 @@ import PatchModule from "@/components/PatchModule.vue";
 import PatchConnection from "@/components/PatchConnection.vue";
 import type {
   PatchGraph,
+  PatchCableInstance,
   ModuleInstance,
   ConnectionInstance,
   InputInstance,
   OutputInstance,
-} from "@/types/patchWindowTypes";
+} from "@/types/patchTypes";
 import ModuleInput from "@/classes/ModuleInput";
 import ModuleOutput from "@/classes/ModuleOutput";
 import PatchContextMenu from "./PatchContextMenu.vue";
 import type { AudioModuleType } from "@/classes/factory/AudioModuleFactory";
+import { logConnections } from "@/helpers/patchHelper.ts";
 
 defineProps({
   height: {
@@ -30,7 +32,7 @@ defineProps({
 const patchGraph = ref<PatchGraph>({
   modules: [
     {
-      id: "1",
+      id: crypto.randomUUID(),
       type: "oscillator",
       position: {
         x: 100,
@@ -38,7 +40,7 @@ const patchGraph = ref<PatchGraph>({
       },
     },
     {
-      id: "2",
+      id: crypto.randomUUID(),
       type: "speaker-output",
       position: {
         x: 100,
@@ -56,7 +58,7 @@ let abortPatchingSignal: AbortSignal | null = null;
 // todo: multiple selected modules and connections
 const selectedModule = ref<ModuleInstance | null>(null);
 const selectedConnection = ref<ConnectionInstance | null>(null);
-const inProgressConnection = ref<ConnectionInstance | null>(null);
+const inProgressConnection = ref<PatchCableInstance | null>(null);
 
 const showContextMenu = ref(false);
 const contextMenuX = ref(0);
@@ -79,6 +81,45 @@ const addModule = (moduleType: AudioModuleType) => {
     },
   });
   showContextMenu.value = false;
+};
+
+const deleteConnection = (connection: ConnectionInstance) => {
+  // remove connection from graph
+  // - cleanup is handled in onUnmounted of PatchConnection.vue
+  const index = patchGraph.value.connections.findIndex((c) => c === connection);
+  const removed = patchGraph.value.connections.splice(index, 1);
+
+  console.log(
+    "Deleting connection:",
+    removed[0]?.from.moduleId,
+    removed[0]?.to.moduleId
+  );
+  logConnections(patchGraph.value.connections as ConnectionInstance[]);
+};
+
+const deleteModule = (moduleId: string) => {
+  // remove related connections from graph
+  // - cleanup is handled in onUnmounted of PatchConnection.vue
+  const connectionIndexes = patchGraph.value.connections
+    .map((c, i) => {
+      if (c.from.moduleId === moduleId || c.to.moduleId === moduleId) {
+        return i;
+      }
+    })
+    .filter((i) => i !== undefined) as number[];
+  connectionIndexes
+    .sort((a, b) => b - a)
+    .forEach((i) => {
+      patchGraph.value.connections.splice(i, 1);
+    });
+
+  // remove module from graph
+  // - cleanup is handled in onUnmounted of PatchModule.vue
+  const index = patchGraph.value.modules.findIndex((m) => m.id === moduleId);
+  const removed = patchGraph.value.modules.splice(index, 1);
+
+  console.log("Deleting module:", removed[0]?.type, removed[0]?.id);
+  logConnections(patchGraph.value.connections as ConnectionInstance[]);
 };
 
 const onConnectionSelected = (connection: ConnectionInstance) => {
@@ -129,19 +170,12 @@ const onBeginPatching = (payload: {
 
   inProgressConnection.value = {
     from: {
-      moduleId: payload.moduleInstance.id,
-      output: payload.outputInstance,
+      x: payload.outputInstance.position.x,
+      y: payload.outputInstance.position.y,
     },
     to: {
-      moduleId: "",
-      input: {
-        position: {
-          x: payload.outputInstance.position.x,
-          y: payload.outputInstance.position.y,
-        },
-        name: "",
-        moduleInput: null as unknown as ModuleInput,
-      },
+      x: payload.outputInstance.position.x,
+      y: payload.outputInstance.position.y,
     },
   };
 
@@ -204,8 +238,8 @@ const onFinishPatching = (payload: {
 
 const onPatchingMouseMove = (deltaX: number, deltaY: number) => {
   if (inProgressConnection.value) {
-    inProgressConnection.value!.to!.input!.position.x += deltaX;
-    inProgressConnection.value!.to!.input!.position.y += deltaY;
+    inProgressConnection.value.to.x += deltaX;
+    inProgressConnection.value.to.y += deltaY;
   }
 };
 
@@ -285,20 +319,12 @@ const assignKeyListners = () => {
         case "Backspace":
         case "Delete":
           if (selectedConnection.value) {
-            // Disconnect audio nodes
-            const fromOuput = selectedConnection.value.from.output
-              .moduleOutput as ModuleOutput;
-            const toInput = selectedConnection.value.to.input
-              .moduleInput as ModuleInput;
-
-            fromOuput.disconnect(toInput);
-
-            // Remove connection from graph
-            patchGraph.value.connections = patchGraph.value.connections.filter(
-              (c) => c !== selectedConnection.value
-            );
-
-            selectedConnection.value = null;
+            deleteConnection(selectedConnection.value as ConnectionInstance);
+            clearSelection();
+          }
+          if (selectedModule.value) {
+            deleteModule(selectedModule.value.id);
+            clearSelection();
           }
           break;
       }
@@ -355,9 +381,10 @@ onUnmounted(() => {
       :width="width"
       :height="height"
     >
-      <PatchConnection
+      <PatchCable
         v-if="inProgressConnection != null"
-        :connection="(inProgressConnection as ConnectionInstance)"
+        :startPosition="inProgressConnection.from"
+        :endPosition="inProgressConnection.to"
       />
 
       <PatchConnection

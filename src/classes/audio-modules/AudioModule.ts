@@ -18,6 +18,7 @@ export default abstract class AudioModule<TModuleOptions> {
 
   abstract get type(): AudioModuleType;
   abstract updateOptions(options: Partial<TModuleOptions>): void;
+  abstract dispose(): void;
 
   get inputs(): ModuleInput[] {
     return this._inputs;
