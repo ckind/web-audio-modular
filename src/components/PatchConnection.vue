@@ -24,11 +24,11 @@ const connectionClick = () => {
       :y1="connection.from.output.position.y"
       :x2="connection.to.input.position.x"
       :y2="connection.to.input.position.y"
-      :stroke="connection.selected ? '#f00' : '#fff'"
+      :stroke="connection.selected ? 'white' : 'gray'"
       stroke-width="3"
       stroke-linecap="round"
       class="cursor-pointer"
-      @click="connectionClick"
+      @click.stop="connectionClick"
     />
 
     <!-- end points -->

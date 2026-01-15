@@ -97,6 +97,26 @@ const onConnectionSelected = (connection: ConnectionInstance) => {
   connection.selected = true;
 };
 
+const onModuleSelected = (module: ModuleInstance) => {
+  if (selectedModule.value) {
+    selectedModule.value.selected = false;
+  }
+
+  selectedModule.value = module;
+  module.selected = true;
+};
+
+const clearSelection = () => {
+  if (selectedModule.value) {
+    selectedModule.value.selected = false;
+    selectedModule.value = null;
+  }
+  if (selectedConnection.value) {
+    selectedConnection.value.selected = false;
+    selectedConnection.value = null;
+  }
+};
+
 const isConnected = (
   module: ModuleInstance,
   output: OutputInstance
@@ -202,7 +222,7 @@ const onPatchingMouseMove = (deltaX: number, deltaY: number) => {
   }
 };
 
-const onModuleInputsUpdated = (moduleId: string,inputs: InputInstance[]) => {
+const onModuleInputsUpdated = (moduleId: string, inputs: InputInstance[]) => {
   // update positions of connections related to this module
   patchGraph.value.connections.forEach((connection) => {
     if (connection.to.moduleId === moduleId) {
@@ -216,7 +236,10 @@ const onModuleInputsUpdated = (moduleId: string,inputs: InputInstance[]) => {
   });
 };
 
-const onModuleOutputsUpdated = (moduleId: string, outputs: OutputInstance[]) => {
+const onModuleOutputsUpdated = (
+  moduleId: string,
+  outputs: OutputInstance[]
+) => {
   // update positions of connections related to this module
   patchGraph.value.connections.forEach((connection) => {
     if (connection.from.moduleId === moduleId) {
@@ -229,7 +252,6 @@ const onModuleOutputsUpdated = (moduleId: string, outputs: OutputInstance[]) => 
     }
   });
 };
-
 
 const onModuleDrag = (
   deltaX: number,
@@ -252,8 +274,8 @@ const onModuleDrag = (
   });
 };
 
-
 const { onDragElementStart } = useDragging(onModuleDrag);
+
 const { startMouseTracking, stopMouseTracking } =
   useMouseTracking(onPatchingMouseMove);
 
@@ -317,23 +339,27 @@ onUnmounted(() => {
 
 <template>
   <v-card
-    @contextmenu.stop="onGraphContextMenu"
-    :style="{ height: `${height}px`, width: `${width}px` }"
     class="patch-window"
     variant="outlined"
+    :ripple="false"
+    :style="{ height: `${height}px`, width: `${width}px` }"
+    @contextmenu.stop="onGraphContextMenu"
+    @click="clearSelection"
   >
     <PatchModule
       v-for="module in patchGraph.modules"
       :key="module.id"
       :moduleInstance="module"
-      class="patch-module"
+      :class="['patch-module', { selected: module.selected }]"
       :style="{ left: module.position.x + 'px', top: module.position.y + 'px' }"
+      :ripple="false"
       @mousedown="(e: MouseEvent) => onDragElementStart(e, module)"
       @touchstart="(e: TouchEvent) => onDragElementStart(e, module)"
       @begin-patching="onBeginPatching"
       @finish-patching="onFinishPatching"
       @inputs-updated="(inputs) => onModuleInputsUpdated(module.id, inputs)"
       @outputs-updated="(outputs) => onModuleOutputsUpdated(module.id, outputs)"
+      @dblclick.stop="() => onModuleSelected(module)"
     ></PatchModule>
 
     <svg
@@ -344,13 +370,13 @@ onUnmounted(() => {
     >
       <PatchConnection
         v-if="inProgressConnection != null"
-        :connection="inProgressConnection as ConnectionInstance"
+        :connection="(inProgressConnection as ConnectionInstance)"
       />
 
       <PatchConnection
         v-for="(connection, i) in patchGraph.connections"
         :key="i"
-        :connection="connection as ConnectionInstance"
+        :connection="(connection as ConnectionInstance)"
         @selected="() => onConnectionSelected(connection as ConnectionInstance)"
       />
     </svg>
@@ -367,8 +393,13 @@ onUnmounted(() => {
 <style scoped>
 .patch-window {
   position: relative;
+  cursor: default;
 }
 .patch-module {
   position: absolute;
+  cursor: pointer;
+}
+.patch-module.selected {
+  background-color: gray;
 }
 </style>

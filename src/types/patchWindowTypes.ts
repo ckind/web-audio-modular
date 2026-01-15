@@ -35,6 +35,7 @@ export type ModuleInstance = {
   id: string;
   type: AudioModuleType;
   position: Position;
+  selected?: boolean;
 };
 
 export type PatchGraph = {

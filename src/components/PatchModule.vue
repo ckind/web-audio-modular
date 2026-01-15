@@ -198,7 +198,6 @@ watch(
 <style scoped>
 .audio-module {
   display: inline-block;
-  cursor: move;
   background-color: black;
   overflow: visible;
   border: 1px solid #fff;
