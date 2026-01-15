@@ -1,4 +1,4 @@
-import AudioModule from "@/classes/audio-modules/AudioModule";
+import AudioModule from "@/classes/audioModules/AudioModule";
 import type { AudioModuleType } from "@/classes/factory/AudioModuleFactory";
 import ModuleInput from "@/classes/ModuleInput";
 import ModuleOutput from "@/classes/ModuleOutput";
@@ -25,9 +25,9 @@ export default class OscillatorModule extends AudioModule<OscillatorModuleOption
     this._oscillatorNode.frequency.value = this._options.frequency; // Default frequency
     this._oscillatorNode.start();
 
-    this._outputs = [new ModuleOutput("output", this._oscillatorNode)];
+    this._outputs = [new ModuleOutput("osc-signal-output", this._oscillatorNode)];
     this._inputs = [
-      new ModuleInput("frequency", this._oscillatorNode.frequency),
+      new ModuleInput("frequency-param", this._oscillatorNode.frequency),
     ];
   }
 

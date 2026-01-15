@@ -38,9 +38,15 @@ export const logGraph = (patchGraph: PatchGraph) => {
 export const logConnections = (connections: ConnectionInstance[]) => {
   connections.forEach((connection, index) => {
     console.log(
-      `Connection ${index + 1}:`,
+      `Connection ${index}:`,
       `From ${connection.from.output.name} ${connection.from.moduleId} `,
       `To ${connection.to.input.name} ${connection.to.moduleId}`
     );
   });
+};
+
+export const disconnect = (connection: ConnectionInstance) => {
+  connection.from.output.moduleOutput.disconnect(
+    connection.to.input.moduleInput
+  );
 };

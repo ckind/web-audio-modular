@@ -1,6 +1,6 @@
-import SpeakerOutputModule from "@/classes/audio-modules/SpeakerOutputModule";
-import OscillatorModule from "@/classes/audio-modules/OscillatorModule";
-import GainModule from "@/classes/audio-modules/GainModule";
+import SpeakerOutputModule from "@/classes/audioModules/SpeakerOutputModule";
+import OscillatorModule from "@/classes/audioModules/OscillatorModule";
+import GainModule from "@/classes/audioModules/GainModule";
 
 export type AudioModuleType = "speaker-output" | "oscillator" | "gain";
 

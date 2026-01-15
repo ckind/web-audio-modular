@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, type PropType, watch, onUnmounted } from "vue";
-import AudioModule from "@/classes/audio-modules/AudioModule";
-import useAudioGlobalContext from "@/composables/useAudioGlobalContext.ts";
-import { createAudioModule } from "@/classes/factory/AudioModuleFactory";
+import AudioModule from "@/classes/audioModules/AudioModule";
 import {
   type ModuleInstance,
   type InputInstance,
@@ -23,14 +21,6 @@ const emit = defineEmits([
   "outputs-updated",
 ]);
 
-useAudioGlobalContext((ctx) => {
-  audioModule.value = createAudioModule(
-    props.moduleInstance.type,
-    props.moduleInstance.id,
-    ctx
-  );
-});
-
 const props = defineProps({
   moduleInstance: {
     type: Object as PropType<ModuleInstance>,
@@ -38,28 +28,22 @@ const props = defineProps({
   },
 });
 
-const audioModule = ref<AudioModule<any> | null>(null);
-
 const { width: moduleDisplayWidth, height: moduleDisplayHeight } =
   useDynamicSize("module-container");
 
 const moduleName = computed(() => {
-  return audioModule.value?.type ?? "";
+  return props.moduleInstance.module.type;
 });
 
 const inputs = computed(() => {
-  if (!audioModule.value) {
-    return [];
-  }
-
-  const newInputs = audioModule.value.inputs.map((input, index) => {
+  const newInputs = props.moduleInstance.module.inputs.map((input, index) => {
     return {
       name: input.name,
       moduleInput: input,
       position: computeInputPosition(
         props.moduleInstance,
         index,
-        audioModule.value!.inputs.length,
+        props.moduleInstance.module.inputs.length,
         moduleDisplayWidth.value,
         moduleDisplayHeight.value
       ),
@@ -72,18 +56,14 @@ const inputs = computed(() => {
 });
 
 const outputs = computed(() => {
-  if (!audioModule.value) {
-    return [];
-  }
-
-  const newOutputs = audioModule.value.outputs.map((output, index) => {
+  const newOutputs = props.moduleInstance.module.outputs.map((output, index) => {
     return {
       name: output.name,
       moduleOutput: output,
       position: computeOutputPosition(
         props.moduleInstance,
         index,
-        audioModule.value!.outputs.length,
+        props.moduleInstance.module.outputs.length,
         moduleDisplayWidth.value,
         moduleDisplayHeight.value
       ),
@@ -96,10 +76,6 @@ const outputs = computed(() => {
 });
 
 const beginPatching = (outputInstance: OutputInstance) => {
-  if (!audioModule.value) {
-    return;
-  }
-
   emit("begin-patching", {
     moduleInstance: props.moduleInstance,
     outputInstance,
@@ -107,10 +83,6 @@ const beginPatching = (outputInstance: OutputInstance) => {
 };
 
 const finishPatching = (inputInstance: InputInstance) => {
-  if (!audioModule.value) {
-    return;
-  }
-
   emit("finish-patching", {
     moduleInstance: props.moduleInstance,
     inputInstance,
@@ -120,7 +92,7 @@ const finishPatching = (inputInstance: InputInstance) => {
 const moduleOptions = ref<{ name: string; value: any }[]>([]);
 
 watch(
-  () => audioModule.value,
+  () => props.moduleInstance.module,
   (newModule) => {
     if (!newModule) {
       moduleOptions.value = [];
@@ -139,11 +111,7 @@ watch(
 watch(
   () => moduleOptions.value,
   (newOptions) => {
-    if (!audioModule.value) {
-      return;
-    }
-
-    audioModule.value.updateOptions(
+    props.moduleInstance.module.updateOptions(
       newOptions.reduce((acc, option) => {
         acc[option.name] = option.value;
         return acc;
@@ -152,13 +120,6 @@ watch(
   },
   { deep: true }
 );
-
-onUnmounted(() => {
-  if (audioModule.value) {
-    audioModule.value.dispose();
-    audioModule.value = null;
-  }
-});
 </script>
 
 <template>

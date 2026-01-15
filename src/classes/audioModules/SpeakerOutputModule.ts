@@ -14,7 +14,7 @@ export default class SpeakerOutputModule extends AudioModule<SpeakerOutputModule
   ) {
     super(id, ctx, options ?? getDefaultOptions());
 
-    this._inputs = [new ModuleInput("input", this._ctx.destination)];
+    this._inputs = [new ModuleInput("speaker-input", this._ctx.destination)];
   }
 
   get type(): AudioModuleType {

@@ -55,13 +55,15 @@ export async function requestGlobalAudioContext(
 }
 
 export default function useGlobalAudioContext(
-  callback: (ctx: AudioContext) => void
+  callback?: (ctx: AudioContext) => void
 ) {
   const ctx = ref<AudioContext | null>(null);
 
   onMounted(async () => {
     ctx.value = await requestGlobalAudioContext();
-    callback(ctx.value);
+    if (callback) {
+      callback(ctx.value);
+    }
   });
 
   return {

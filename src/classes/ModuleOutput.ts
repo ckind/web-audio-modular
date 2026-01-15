@@ -25,15 +25,17 @@ export default class ModuleOutput implements IModuleOutput {
       if (destination.node instanceof TickDestinationNode) {
         this.node.connect(destination.node);
       }
-    } else if (this.node instanceof AudioNode)
+    } else if (this.node instanceof AudioNode) {
       if (destination.node instanceof AudioNode) {
         this.node.connect(destination.node);
       } else if (destination.node instanceof AudioParam) {
         this.node.connect(destination.node);
       }
+    }
   }
 
   disconnect(destination?: ModuleInput) {
+    console.log("disconnecting output:", this.name, "from input:", destination?.name);
     if (
       !destination ||
       destination.node === undefined ||

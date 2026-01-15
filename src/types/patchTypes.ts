@@ -1,5 +1,6 @@
 import ModuleInput from "@/classes/ModuleInput";
 import ModuleOutput from "@/classes/ModuleOutput";
+import AudioModule from "@/classes/audioModules/AudioModule";
 import type { AudioModuleType } from "@/classes/factory/AudioModuleFactory";
 
 export type Position = {
@@ -10,18 +11,6 @@ export type Position = {
 export type PatchCableInstance = {
   from: Position;
   to: Position;
-  selected?: boolean;
-};
-
-export type ConnectionInstance = {
-  from: {
-    moduleId: string;
-    output: OutputInstance;
-  };
-  to: {
-    moduleId: string;
-    input: InputInstance;
-  };
   selected?: boolean;
 };
 
@@ -38,9 +27,20 @@ export type OutputInstance = {
 };
 
 export type ModuleInstance = {
-  id: string;
-  type: AudioModuleType;
+  module: AudioModule<any>;
   position: Position;
+  selected?: boolean;
+};
+
+export type ConnectionInstance = {
+  from: {
+    moduleId: string;
+    output: OutputInstance;
+  };
+  to: {
+    moduleId: string;
+    input: InputInstance;
+  };
   selected?: boolean;
 };
 

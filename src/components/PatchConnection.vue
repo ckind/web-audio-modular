@@ -16,15 +16,6 @@ const connectionClick = () => {
   emit("selected");
 };
 
-const disconnect = (connection: ConnectionInstance) => {
-  connection.from.output.moduleOutput.disconnect(
-    connection.to.input.moduleInput
-  );
-};
-
-onUnmounted(() => {
-  disconnect(props.connection);
-});
 </script>
 
 <template>
