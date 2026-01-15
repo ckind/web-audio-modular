@@ -1,4 +1,4 @@
-import type { ModuleInstance } from "@/types/patchWindowTypes";
+import type { ModuleInstance, PatchGraph } from "@/types/patchWindowTypes";
 
 export const computeInputPosition = (
   moduleInstance: ModuleInstance,
@@ -26,4 +26,11 @@ export const computeOutputPosition = (
     x: moduleInstance.position.x + widthMult * (outputIndex + 0.5),
     y: moduleInstance.position.y + moduleDisplayHeight,
   };
+};
+
+export const logGraph = (patchGraph: PatchGraph) => {
+  console.log(
+    "Current Patch Graph:",
+    JSON.parse(JSON.stringify(patchGraph, null, 2))
+  );
 };

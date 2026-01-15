@@ -176,6 +176,7 @@ watch(
       :name="option.name"
       type="text"
       v-model="option.value"
+      @dblclick.stop=""
       class="module-option-input mr-2 d-inline-block"
     />
 

@@ -49,13 +49,6 @@ const patchGraph = ref<PatchGraph>({
   connections: [],
 });
 
-const logGraph = () => {
-  console.log(
-    "Current Patch Graph:",
-    JSON.parse(JSON.stringify(patchGraph.value, null, 2))
-  );
-};
-
 let currentPatchingModule: ModuleInstance | null = null;
 let currentPatchingOutput: OutputInstance | null = null;
 let abortPatchingController: AbortController | null = null;
@@ -89,18 +82,14 @@ const addModule = (moduleType: AudioModuleType) => {
 };
 
 const onConnectionSelected = (connection: ConnectionInstance) => {
-  if (selectedConnection.value) {
-    selectedConnection.value.selected = false;
-  }
+  clearSelection();
 
   selectedConnection.value = connection;
   connection.selected = true;
 };
 
 const onModuleSelected = (module: ModuleInstance) => {
-  if (selectedModule.value) {
-    selectedModule.value.selected = false;
-  }
+  clearSelection();
 
   selectedModule.value = module;
   module.selected = true;
@@ -211,8 +200,6 @@ const onFinishPatching = (payload: {
     abortPatchingController = null;
     abortPatchingSignal = null;
   }
-
-  logGraph();
 };
 
 const onPatchingMouseMove = (deltaX: number, deltaY: number) => {
