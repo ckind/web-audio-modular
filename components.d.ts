@@ -14,6 +14,7 @@ declare module 'vue' {
     AudioModule: typeof import('./src/components/AudioModule.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     PatchConnection: typeof import('./src/components/PatchConnection.vue')['default']
+    PatchContextMenu: typeof import('./src/components/PatchContextMenu.vue')['default']
     PatchGraph: typeof import('./src/components/PatchGraph.vue')['default']
     PatchModule: typeof import('./src/components/PatchModule.vue')['default']
     PatchModuleInput: typeof import('./src/components/PatchModuleInput.vue')['default']

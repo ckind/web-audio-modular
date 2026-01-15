@@ -25,6 +25,9 @@ const connectionClick = () => {
 </script>
 
 <template>
+  <!-- todo: need a new strategy for rendering connections
+   overlapping the whole patch window is not a good call 
+   maybe just render the whole graph with svgs? -->
   <svg
     xmlns="http://www.w3.org/2000/svg"
     :viewBox="`0 0 ${patcherWindowWidth} ${patcherWindowHeight}`"
@@ -48,13 +51,13 @@ const connectionClick = () => {
     <circle
       :cx="connection.from.output.position.x"
       :cy="connection.from.output.position.y"
-      r="6"
+      r="5"
       fill="#fff"
     />
     <circle
       :cx="connection.to.input.position.x"
       :cy="connection.to.input.position.y"
-      r="6"
+      r="5"
       fill="#fff"
     />
   </svg>

@@ -1,14 +1,22 @@
-import SpeakerOutputModule from "@/classes/SpeakerOutputModule";
-import OscillatorModule from "@/classes/OscillatorModule";
+import SpeakerOutputModule from "@/classes/audio-modules/SpeakerOutputModule";
+import OscillatorModule from "@/classes/audio-modules/OscillatorModule";
+import GainModule from "@/classes/audio-modules/GainModule";
 
-export type AudioModuleType = "speaker-output" | "oscillator";
+export type AudioModuleType = "speaker-output" | "oscillator" | "gain";
 
-export function createAudioModule(type: AudioModuleType, ctx: AudioContext) {
+export function createAudioModule(
+  type: AudioModuleType,
+  id: string,
+  ctx: AudioContext,
+  options?: any
+) {
   switch (type) {
     case "speaker-output":
-      return new SpeakerOutputModule(ctx);
+      return new SpeakerOutputModule(id, ctx, options);
     case "oscillator":
-      return new OscillatorModule(ctx);
+      return new OscillatorModule(id, ctx, options);
+    case "gain":
+      return new GainModule(id, ctx, options);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }

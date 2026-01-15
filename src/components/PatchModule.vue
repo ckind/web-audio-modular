@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, type PropType, watch } from "vue";
-import AudioModule from "@/classes/AudioModule";
+import AudioModule from "@/classes/audio-modules/AudioModule";
 import useAudioGlobalContext from "@/composables/useAudioGlobalContext.ts";
 import { createAudioModule } from "@/classes/factory/AudioModuleFactory";
 import {
@@ -15,7 +15,11 @@ const BORDER_SIZE = 1;
 const emit = defineEmits(["begin-patching", "finish-patching"]);
 
 useAudioGlobalContext((ctx) => {
-  audioModule.value = createAudioModule(props.moduleInstance.type, ctx);
+  audioModule.value = createAudioModule(
+    props.moduleInstance.type,
+    props.moduleInstance.id,
+    ctx
+  );
 });
 
 const props = defineProps({

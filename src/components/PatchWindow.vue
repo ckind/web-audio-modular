@@ -13,6 +13,8 @@ import type {
 } from "@/types/patchWindowTypes";
 import ModuleInput from "@/classes/ModuleInput";
 import ModuleOutput from "@/classes/ModuleOutput";
+import PatchContextMenu from "./PatchContextMenu.vue";
+import type { AudioModuleType } from "@/classes/factory/AudioModuleFactory";
 
 defineProps({
   height: {
@@ -47,6 +49,13 @@ const patchGraph = ref<PatchGraph>({
   connections: [],
 });
 
+const logGraph = () => {
+  console.log(
+    "Current Patch Graph:",
+    JSON.parse(JSON.stringify(patchGraph.value, null, 2))
+  );
+};
+
 let currentPatchingModule: ModuleInstance | null = null;
 let currentPatchingOutput: OutputInstance | null = null;
 let abortPatchingController: AbortController | null = null;
@@ -67,7 +76,15 @@ const onGraphContextMenu = (e: MouseEvent) => {
   showContextMenu.value = true;
 };
 
-const addModule = () => {
+const addModule = (moduleType: AudioModuleType) => {
+  patchGraph.value.modules.push({
+    id: crypto.randomUUID(),
+    type: moduleType,
+    position: {
+      x: contextMenuX.value,
+      y: contextMenuY.value,
+    },
+  });
   showContextMenu.value = false;
 };
 
@@ -174,6 +191,8 @@ const onFinishPatching = (payload: {
     abortPatchingController = null;
     abortPatchingSignal = null;
   }
+
+  logGraph();
 };
 
 const onModuleDrag = (
@@ -301,19 +320,12 @@ onUnmounted(() => {
       @selected="() => onConnectionSelected(connection as ConnectionInstance)"
     />
 
-    <v-menu
+    <PatchContextMenu
       v-model="showContextMenu"
-      :close-on-content-click="true"
-      :style="{ left: contextMenuX + 'px', top: contextMenuY + 'px' }"
-    >
-      <v-list>
-        <v-list-item @click="addModule">
-          <v-list-item-title
-            ><v-icon>mdi-plus</v-icon>Add Module</v-list-item-title
-          >
-        </v-list-item>
-      </v-list>
-    </v-menu>
+      :x="contextMenuX"
+      :y="contextMenuY"
+      @add-module="addModule"
+    />
   </v-card>
 </template>
 
