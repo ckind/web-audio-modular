@@ -21,8 +21,12 @@ import {
 } from "@/classes/factory/AudioModuleFactory";
 import { logConnections, disconnect } from "@/helpers/patchHelper.ts";
 import useAudioGlobalContext from "@/composables/useAudioGlobalContext.ts";
+import useResizeObserver from "@/composables/useResizeObserver.ts";
 
 const { ctx } = useAudioGlobalContext();
+
+let patchWindowPageX = 0;
+let patchWindowPageY = 0;
 
 defineProps({
   height: {
@@ -53,6 +57,19 @@ const showContextMenu = ref(false);
 const contextMenuX = ref(0);
 const contextMenuY = ref(0);
 
+const savePatch = () => {
+  const patchData = JSON.stringify(patchGraph.value);
+  const blob = new Blob([patchData], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "patch.json";
+  a.click();
+
+  URL.revokeObjectURL(url);
+};
+
 const onGraphContextMenu = (e: MouseEvent) => {
   e.preventDefault();
   contextMenuX.value = e.pageX;
@@ -64,10 +81,11 @@ const addModule = (moduleType: AudioModuleType) => {
   patchGraph.value.modules.push({
     module: createAudioModule(moduleType, crypto.randomUUID(), ctx.value!),
     position: {
-      x: contextMenuX.value,
-      y: contextMenuY.value,
+      x: contextMenuX.value - patchWindowPageX,
+      y: contextMenuY.value - patchWindowPageY,
     },
   });
+
   showContextMenu.value = false;
 };
 
@@ -82,7 +100,7 @@ const deleteConnection = (connection: ConnectionInstance) => {
   console.log(
     "Deleting connection:",
     removed[0]?.from.moduleId,
-    removed[0]?.to.moduleId
+    removed[0]?.to.moduleId,
   );
 };
 
@@ -97,12 +115,12 @@ const deleteModule = (moduleId: string) => {
     });
 
   patchGraph.value.connections = patchGraph.value.connections.filter(
-    (c) => c.from.moduleId !== moduleId && c.to.moduleId !== moduleId
+    (c) => c.from.moduleId !== moduleId && c.to.moduleId !== moduleId,
   );
 
   // remove module from graph
   const index = patchGraph.value.modules.findIndex(
-    (m) => m.module.id === moduleId
+    (m) => m.module.id === moduleId,
   );
   const removed = patchGraph.value.modules.splice(index, 1);
   removed[0]?.module.dispose();
@@ -135,12 +153,12 @@ const clearSelection = () => {
 
 const isConnected = (
   moduleInstance: ModuleInstance,
-  output: OutputInstance
+  output: OutputInstance,
 ): boolean => {
   return patchGraph.value.connections.some(
     (c) =>
       c.from.output.name === output.name &&
-      c.from.moduleId === moduleInstance.module.id
+      c.from.moduleId === moduleInstance.module.id,
   );
 };
 
@@ -211,7 +229,7 @@ const onFinishPatching = (payload: {
     });
 
     currentPatchingOutput.moduleOutput.connect(
-      payload.inputInstance.moduleInput
+      payload.inputInstance.moduleInput,
     );
     currentPatchingOutput = null;
     inProgressConnection.value = null;
@@ -236,7 +254,7 @@ const onModuleInputsUpdated = (moduleId: string, inputs: InputInstance[]) => {
   patchGraph.value.connections.forEach((connection) => {
     if (connection.to.moduleId === moduleId) {
       const updatedInput = inputs.find(
-        (input) => input.name === connection.to.input.name
+        (input) => input.name === connection.to.input.name,
       );
       if (updatedInput) {
         connection.to.input.position = { ...updatedInput.position };
@@ -247,13 +265,13 @@ const onModuleInputsUpdated = (moduleId: string, inputs: InputInstance[]) => {
 
 const onModuleOutputsUpdated = (
   moduleId: string,
-  outputs: OutputInstance[]
+  outputs: OutputInstance[],
 ) => {
   // update positions of connections related to this module
   patchGraph.value.connections.forEach((connection) => {
     if (connection.from.moduleId === moduleId) {
       const updatedOutput = outputs.find(
-        (output) => output.name === connection.from.output.name
+        (output) => output.name === connection.from.output.name,
       );
       if (updatedOutput) {
         connection.from.output.position = { ...updatedOutput.position };
@@ -265,7 +283,7 @@ const onModuleOutputsUpdated = (
 const onModuleDrag = (
   deltaX: number,
   deltaY: number,
-  moduleInstance: ModuleInstance
+  moduleInstance: ModuleInstance,
 ) => {
   moduleInstance.position.x += deltaX;
   moduleInstance.position.y += deltaY;
@@ -284,9 +302,13 @@ const onModuleDrag = (
 };
 
 const { onDragElementStart } = useDragging(onModuleDrag);
-
 const { startMouseTracking, stopMouseTracking } =
   useMouseTracking(onPatchingMouseMove);
+
+useResizeObserver("patch-window", (entries) => {
+  patchWindowPageX = entries[0]!.target.getBoundingClientRect().x + window.scrollX;
+  patchWindowPageY = entries[0]!.target.getBoundingClientRect().y + window.scrollY;
+});
 
 let abortKeyListenersController: AbortController | null = null;
 let abortKeyListenersSignal: AbortSignal | null = null;
@@ -317,7 +339,7 @@ const assignKeyListners = () => {
           break;
       }
     },
-    { signal: abortKeyListenersSignal }
+    { signal: abortKeyListenersSignal },
   );
 };
 
@@ -339,18 +361,17 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <v-card
+  <v-btn @click="savePatch">Save Patch</v-btn>
+  <div
+    ref="patch-window"
     class="patch-window"
-    variant="outlined"
-    :ripple="false"
-    :style="{ height: `${height}px`, width: `${width}px` }"
     @contextmenu.stop="onGraphContextMenu"
     @click="clearSelection"
   >
     <PatchModule
       v-for="instance in patchGraph.modules"
       :key="instance.module.id"
-      :moduleInstance="(instance as ModuleInstance)"
+      :moduleInstance="instance as ModuleInstance"
       :class="['patch-module', { selected: instance.selected }]"
       :style="{
         left: instance.position.x + 'px',
@@ -385,7 +406,7 @@ onUnmounted(() => {
       <PatchConnection
         v-for="(connection, i) in patchGraph.connections"
         :key="i"
-        :connection="(connection as ConnectionInstance)"
+        :connection="connection as ConnectionInstance"
         @selected="() => onConnectionSelected(connection as ConnectionInstance)"
       />
     </svg>
@@ -396,13 +417,16 @@ onUnmounted(() => {
       :y="contextMenuY"
       @add-module="addModule"
     />
-  </v-card>
+  </div>
 </template>
 
 <style scoped>
 .patch-window {
   position: relative;
   cursor: default;
+  border: 1px solid white;
+  border-radius: 5px;
+  overflow: auto;
 }
 .patch-module {
   position: absolute;
