@@ -406,7 +406,7 @@ onUnmounted(() => {
       <PatchConnection
         v-for="(connection, i) in patchGraph.connections"
         :key="i"
-        :connection="connection as ConnectionInstance"
+        :connection="(connection as ConnectionInstance)"
         @selected="() => onConnectionSelected(connection as ConnectionInstance)"
       />
     </svg>

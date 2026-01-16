@@ -2,7 +2,7 @@ import SpeakerOutputModule from "@/classes/audioModules/SpeakerOutputModule";
 import OscillatorModule from "@/classes/audioModules/OscillatorModule";
 import GainModule from "@/classes/audioModules/GainModule";
 
-export type AudioModuleType = "speaker-output" | "oscillator" | "gain";
+export type AudioModuleType = "speaker-output" | "oscillator" | "gain"| "clock";
 
 export function createAudioModule(
   type: AudioModuleType,
