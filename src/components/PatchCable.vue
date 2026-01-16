@@ -26,7 +26,20 @@ const cableClick = () => {
 
 <template>
   <g>
-    <!-- line -->
+    <!-- invisible hitbox line -->
+    <line
+      :x1="startPosition.x"
+      :y1="startPosition.y"
+      :x2="endPosition.x"
+      :y2="endPosition.y"
+      stroke="transparent"
+      stroke-width="15"
+      stroke-linecap="round"
+      class="cursor-pointer"
+      @click.stop="cableClick"
+    />
+
+    <!-- visible line -->
     <line
       :x1="startPosition.x"
       :y1="startPosition.y"
@@ -35,9 +48,9 @@ const cableClick = () => {
       :stroke="selected ? 'white' : 'gray'"
       stroke-width="3"
       stroke-linecap="round"
-      class="cursor-pointer"
-      @click.stop="cableClick"
+      pointer-events="none"
     />
+
 
     <!-- end points -->
     <circle
