@@ -1,5 +1,9 @@
 import AudioModule from "@/classes/audio-modules/AudioModule";
 import type { AudioModuleType } from "@/classes/audio-modules/AudioModule";
+import MessageInputNode from "@/classes/MessageInputNode";
+import MessageOutputNode from "@/classes/MessageOutputNode";
+import * as Tone from "tone";
+import ModuleOutput from "../ModuleOutput";
 
 type ClockModuleOptions = {
   bpm: number;
@@ -11,29 +15,34 @@ const getDefaultOptions = (): ClockModuleOptions => ({
 
 export default class ClockModule extends AudioModule<ClockModuleOptions> {
   private _intervalSeconds: number;
-  // private _outputNode: MessageOutputNode;
   private _running: boolean = false;
+  private _eventId: number;
+
+  private _messageOutput: MessageOutputNode;
 
   constructor(id: string, options?: ClockModuleOptions) {
     super(id, options ?? getDefaultOptions());
 
     this._intervalSeconds = 60 / this._options.bpm;
-    // this._outputNode = new MessageOutputNode(ctx);
+    this._eventId = Tone.getTransport().scheduleRepeat(
+      (time: number) => this._clockCallback(time),
+      this._intervalSeconds,
+    );
 
-    // this._outputs = [new ModuleOutput("clock-tick-output", this._outputNode)];
+    this._messageOutput = new MessageOutputNode();
+    this._outputs = [new ModuleOutput("clock-output", this._messageOutput)];
 
-    // todo: need to implement the actual ticking logic
-    // just schedule 100 message events for now
-    // for (let i = 0; i < 100; i++) {
-    //   this._outputNode.scheduleMessage(
-    //     ctx.currentTime + i * this._intervalSeconds,
-    //     i + 1,
-    //   );
-    // }
+    this.start();
   }
 
   get type(): AudioModuleType {
     return "clock";
+  }
+
+  private _clockCallback(time: number) {
+    if (this._running) {
+      this._messageOutput.scheduleMessage(time, Math.random() * 1000);
+    }
   }
 
   updateOptions(options: Partial<ClockModuleOptions>): void {
@@ -43,22 +52,15 @@ export default class ClockModule extends AudioModule<ClockModuleOptions> {
     }
   }
 
-  start(time: number) {
+  start(time?: number) {
     this._running = true;
   }
 
-  stop(time: number) {
+  stop(time?: number) {
     this._running = false;
   }
 
-  scheduleTick(time: number, data: any) {
-    if (!this._running) return;
-
-    // this._outputNode.scheduleMessage(time, data);
-  }
-
   dispose(): void {
-    // this.stop(this._ctx.currentTime);
-    // this._outputNode.disconnect();
+    Tone.getTransport().clear(this._eventId);
   }
 }

@@ -3,7 +3,8 @@ import MessageOutputNode from "@/classes/MessageOutputNode";
 import MessageInputNode from "@/classes/MessageInputNode";
 import * as Tone from "tone";
 
-export type ModuleOutputNode = Tone.ToneAudioNode;
+export type ModuleOutputNode = Tone.ToneAudioNode | MessageOutputNode;
+export type ModuleOutputType = "signal" | "message-bus";
 
 export interface IModuleOutput {
   name: string;
@@ -21,25 +22,73 @@ export default class ModuleOutput implements IModuleOutput {
     this.name = name;
   }
 
+  get type(): ModuleOutputType {
+    if (this.node instanceof Tone.ToneAudioNode) {
+      return "signal";
+    } else if (this.node instanceof MessageOutputNode) {
+      return "message-bus";
+    } else {
+      throw new Error("Unknown module output node type");
+    }
+  }
+
   connect(destination: IModuleInput) {
-    console.log(this.node.context.rawContext === destination.node.context.rawContext);
-    
-    this.node.connect(destination.node);
+    if (this.type === "signal") {
+      if (destination.node instanceof MessageInputNode) {
+        console.error("Cannot connect signal output to message input");
+        return;
+      }
+
+      (this.node as Tone.ToneAudioNode).connect(
+        destination.node as Tone.ToneAudioNode,
+      );
+    } else if (this.type === "message-bus") {
+      if (destination.node instanceof Tone.ToneAudioNode) {
+        console.error("Cannot connect message bus output to signal input");
+        return;
+      }
+
+      (this.node as MessageOutputNode).connect(
+        destination.node as MessageInputNode,
+      );
+    } else {
+      console.error("Unknown module output type");
+      return;
+    }
   }
 
   disconnect(destination?: IModuleInput) {
-    console.log("disconnecting output:", this.name, "from input:", destination?.name);
-
-    if (
-      !destination ||
-      destination.node === undefined ||
-      destination.node === null
-    ) {
+    if (!destination) {
       this.node.disconnect();
 
       return;
     }
 
-    this.node.disconnect(destination.node);
+    if (this.type === "signal") {
+      if (destination.node instanceof MessageInputNode) {
+        console.error(
+          "Cannot disconnect signal output from message input",
+        );
+        return;
+      }
+
+      (this.node as Tone.ToneAudioNode).disconnect(
+        destination.node as Tone.ToneAudioNode,
+      );
+    } else if (this.type === "message-bus") {
+      if (destination.node instanceof Tone.ToneAudioNode) {
+        console.error(
+          "Cannot disconnect message bus output from signal input",
+        );
+        return;
+      }
+
+      (this.node as MessageOutputNode).disconnect(
+        destination.node as MessageInputNode,
+      );
+    } else {
+      console.error("Unknown module output type");
+      return;
+    }
   }
 }

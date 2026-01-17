@@ -1,6 +1,7 @@
 import * as Tone from "tone";
+import type MessageInputNode from "./MessageInputNode";
 
-export type ModuleInputNode = Tone.ToneAudioNode | Tone.Param<any>;
+export type ModuleInputNode = Tone.ToneAudioNode | Tone.Param<any> | MessageInputNode;
 
 export interface IModuleInput {
   name: string;

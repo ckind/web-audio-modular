@@ -5,6 +5,8 @@ import { type AudioModuleType, type IAudioModule } from "@/classes/audio-modules
 import ClockModule from "@/classes/audio-modules/ClockModule";
 import LoggerModule from "@/classes/audio-modules/LoggerModule";
 import ScaleModule from "@/classes/audio-modules/ScaleModule";
+import MessageToSignalModule from "@/classes/audio-modules/MessageToSignalModule";
+import SequenceModule from "../audio-modules/SequenceModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -24,6 +26,10 @@ export function createAudioModule(
       return new LoggerModule(id, options);
     case "scale":
       return new ScaleModule(id, options);
+    case "message-to-signal":
+      return new MessageToSignalModule(id, options);
+    case "sequence":
+      return new SequenceModule(id, options);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }

@@ -16,6 +16,7 @@ const getDefaultOptions = (): OscillatorModuleOptions => ({
 
 export default class OscillatorModule extends AudioModule<OscillatorModuleOptions> {
   private _oscillatorNode: Tone.Oscillator;
+  private _frequencySum: Tone.Add;
 
   constructor(id: string, options?: OscillatorModuleOptions) {
     super(id, options ?? getDefaultOptions());
@@ -24,13 +25,18 @@ export default class OscillatorModule extends AudioModule<OscillatorModuleOption
       this._options.frequency,
       this._options.type,
     );
+    this._frequencySum = new Tone.Add(this._options.frequency);
+    this._frequencySum.connect(this._oscillatorNode.frequency);
     this._oscillatorNode.start();
 
     this._outputs = [
       new ModuleOutput("osc-signal-output", this._oscillatorNode),
     ];
+    // use an add node to sum multiple frequency inputs
+    // this also fixes an issue with Tone Oscillators where the frequency
+    // parameter isn't responsive after disconnecting all incoming signals from it
     this._inputs = [
-      new ModuleInput("frequency-param", this._oscillatorNode.frequency),
+      new ModuleInput("frequency-param", this._frequencySum),
     ];
   }
 
@@ -40,7 +46,7 @@ export default class OscillatorModule extends AudioModule<OscillatorModuleOption
 
   updateOptions(options: Partial<OscillatorModuleOptions>): void {
     if (options.frequency !== undefined && options.frequency !== this._options.frequency) {
-      this._oscillatorNode.frequency.value = options.frequency;
+      this._frequencySum.value = options.frequency;
       this._options.frequency = options.frequency;
     }
     if (options.type !== undefined && options.type !== this._options.type) {
@@ -51,5 +57,7 @@ export default class OscillatorModule extends AudioModule<OscillatorModuleOption
 
   dispose(): void {
     this._oscillatorNode.stop();
+    this._frequencySum.dispose();
+    this._oscillatorNode.dispose();
   }
 }

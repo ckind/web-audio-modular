@@ -24,6 +24,8 @@ const availableModules = [
   { title: "clock", type: "clock" },
   { title: "logger", type: "logger" },
   { title: "scale", type: "scale" },
+  { title: "message-to-signal", type: "message-to-signal" },
+  { title: "sequence", type: "sequence" },
 ];
 
 const addModule = (moduleType: string) => {

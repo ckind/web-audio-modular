@@ -7,7 +7,9 @@ export type AudioModuleType =
   | "gain"
   | "clock"
   | "logger"
-  | "scale";
+  | "scale"
+  | "message-to-signal"
+  | "sequence";
 
 export type ModuleId = string;
 

@@ -12,17 +12,63 @@ import type {
   InputInstance,
   OutputInstance,
 } from "@/types/patchTypes";
-import ModuleInput from "@/classes/ModuleInput";
-import ModuleOutput from "@/classes/ModuleOutput";
 import PatchContextMenu from "@/components/PatchContextMenu.vue";
 import type { AudioModuleType } from "@/classes/audio-modules/AudioModule";
 import { createAudioModule } from "@/classes/factory/AudioModuleFactory";
 import useResizeObserver from "@/composables/useResizeObserver.ts";
-import * as Tone from "tone";
 import useToneAutoResume from "@/composables/useToneAutoResume";
 import Patcher from "@/classes/Patcher";
+import * as Tone from "tone";
 
-useToneAutoResume();
+function test() {
+
+  // const ctx = new AudioContext();
+  // const osc = ctx.createOscillator();
+  // osc.frequency.value = 220;
+  // osc.start();
+
+  // const src = ctx.createConstantSource();
+  // src.offset.value = 220;
+  // src.start();
+
+  // src.connect(osc.frequency);
+
+  // window.setTimeout(() => {
+  //   src.disconnect(osc.frequency);
+  //   console.log("Source disconnected from oscillator frequency");
+  // }, 2000);
+
+  // window.setTimeout(() => {
+  //   osc.stop();
+  //   console.log("Oscillator stopped");
+  // }, 4000);
+
+  // osc.connect(ctx.destination);
+
+  // // const gain = new Tone.Gain(1);
+  // const osc = new Tone.Oscillator(220).start();
+  // const src1 = new Tone.Signal(220);
+  // const src2 = new Tone.Signal(220);
+
+  // src1.connect(osc.frequency);
+  // src2.connect(osc.frequency);
+
+  // osc.toDestination();
+
+  // window.setTimeout(() => {
+  //   src1.disconnect(osc.frequency);
+  //   src2.disconnect(osc.frequency);
+  // }, 2000);
+
+  // window.setTimeout(() => {
+  //   osc.stop();
+  //   console.log("Oscillator stopped");
+  // }, 4000);
+
+  // const signal = new Tone.Signal(220).connect(gain).connect(osc.frequency);
+}
+
+useToneAutoResume(test);
 
 const patcher = new Patcher();
 
@@ -295,10 +341,13 @@ const onModuleOutputsUpdated = (
   });
 };
 
-const onModuleOptionsUpdated = (moduleId: string, options: Record<string, any>) => {
+const onModuleOptionsUpdated = (
+  moduleId: string,
+  options: Record<string, any>,
+) => {
   const module = patcher.getModule(moduleId);
   module.updateOptions(options);
-}; 
+};
 
 const onModuleDrag = (
   deltaX: number,
