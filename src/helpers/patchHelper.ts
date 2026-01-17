@@ -44,9 +44,3 @@ export const logConnections = (connections: ConnectionInstance[]) => {
     );
   });
 };
-
-export const disconnect = (connection: ConnectionInstance) => {
-  connection.from.output.moduleOutput.disconnect(
-    connection.to.input.moduleInput
-  );
-};

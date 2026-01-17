@@ -1,4 +1,4 @@
-import type IMessageBusDestinationNode from "./interfaces/IMessageBusDestinationNode";
+import type IMessageBusDestinationNode from "@/classes/interfaces/IMessageBusDestinationNode";
 
 type MessageInputNodeCallback = (message: any) => void;
 

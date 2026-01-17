@@ -14,16 +14,17 @@ import type {
 } from "@/types/patchTypes";
 import ModuleInput from "@/classes/ModuleInput";
 import ModuleOutput from "@/classes/ModuleOutput";
-import PatchContextMenu from "./PatchContextMenu.vue";
-import {
-  createAudioModule,
-  type AudioModuleType,
-} from "@/classes/factory/AudioModuleFactory";
-import { logConnections, disconnect } from "@/helpers/patchHelper.ts";
-import useAudioGlobalContext from "@/composables/useAudioGlobalContext.ts";
+import PatchContextMenu from "@/components/PatchContextMenu.vue";
+import type { AudioModuleType } from "@/classes/audio-modules/AudioModule";
+import { createAudioModule } from "@/classes/factory/AudioModuleFactory";
 import useResizeObserver from "@/composables/useResizeObserver.ts";
+import * as Tone from "tone";
+import useToneAutoResume from "@/composables/useToneAutoResume";
+import Patcher from "@/classes/Patcher";
 
-const { ctx } = useAudioGlobalContext();
+useToneAutoResume();
+
+const patcher = new Patcher();
 
 let patchWindowPageX = 0;
 let patchWindowPageY = 0;
@@ -78,8 +79,14 @@ const onGraphContextMenu = (e: MouseEvent) => {
 };
 
 const addModule = (moduleType: AudioModuleType) => {
+  const module = createAudioModule(moduleType, crypto.randomUUID());
+  patcher.addModule(module);
   patchGraph.value.modules.push({
-    module: createAudioModule(moduleType, crypto.randomUUID(), ctx.value!),
+    moduleId: module.id,
+    displayName: module.type,
+    options: module.options,
+    outputNames: module.outputs.map((o) => o.name),
+    inputNames: module.inputs.map((i) => i.name),
     position: {
       x: contextMenuX.value - patchWindowPageX,
       y: contextMenuY.value - patchWindowPageY,
@@ -90,12 +97,19 @@ const addModule = (moduleType: AudioModuleType) => {
 };
 
 const deleteConnection = (connection: ConnectionInstance) => {
-  // remove connection from graph
-  // - cleanup is handled in onUnmounted of PatchConnection.vue
-  // TODO: no it's not
   const index = patchGraph.value.connections.indexOf(connection);
   const removed = patchGraph.value.connections.splice(index, 1);
-  disconnect(removed[0] as ConnectionInstance);
+
+  patcher.disconnect(
+    {
+      moduleId: removed[0]!.from.moduleId,
+      outputName: removed[0]!.from.output.name,
+    },
+    {
+      moduleId: removed[0]!.to.moduleId,
+      inputName: removed[0]!.to.input.name,
+    },
+  );
 
   console.log(
     "Deleting connection:",
@@ -108,22 +122,16 @@ const deleteModule = (moduleId: string) => {
   console.log("Deleting module id:", moduleId);
 
   // remove related connections from graph
-  patchGraph.value.connections
-    .filter((c) => c.from.moduleId === moduleId || c.to.moduleId === moduleId)
-    .forEach((connection) => {
-      disconnect(connection as ConnectionInstance);
-    });
-
   patchGraph.value.connections = patchGraph.value.connections.filter(
     (c) => c.from.moduleId !== moduleId && c.to.moduleId !== moduleId,
   );
-
   // remove module from graph
-  const index = patchGraph.value.modules.findIndex(
-    (m) => m.module.id === moduleId,
+  patchGraph.value.modules = patchGraph.value.modules.filter(
+    (m) => m.moduleId !== moduleId,
   );
-  const removed = patchGraph.value.modules.splice(index, 1);
-  removed[0]?.module.dispose();
+
+  // handle audio disconnection and cleanup in patcher
+  patcher.deleteModule(moduleId);
 };
 
 const onConnectionSelected = (connection: ConnectionInstance) => {
@@ -158,17 +166,16 @@ const isConnected = (
   return patchGraph.value.connections.some(
     (c) =>
       c.from.output.name === output.name &&
-      c.from.moduleId === moduleInstance.module.id,
+      c.from.moduleId === moduleInstance.moduleId,
   );
 };
 
-const onBeginPatching = (payload: {
-  moduleInstance: ModuleInstance;
-  outputInstance: OutputInstance;
-}) => {
-  console.log("Begin patching from output:", payload.outputInstance);
-
-  if (isConnected(payload.moduleInstance, payload.outputInstance)) {
+const onBeginPatching = (
+  moduleInstance: ModuleInstance,
+  outputInstance: OutputInstance,
+) => {
+  console.log("Begin patching from output:", outputInstance);
+  if (isConnected(moduleInstance, outputInstance)) {
     // todo: allow multiple connections from the same output
     console.warn("Output is already connected.");
     return;
@@ -176,17 +183,17 @@ const onBeginPatching = (payload: {
 
   inProgressConnection.value = {
     from: {
-      x: payload.outputInstance.position.x,
-      y: payload.outputInstance.position.y,
+      x: outputInstance.position.x,
+      y: outputInstance.position.y,
     },
     to: {
-      x: payload.outputInstance.position.x,
-      y: payload.outputInstance.position.y,
+      x: outputInstance.position.x,
+      y: outputInstance.position.y,
     },
   };
 
-  currentPatchingOutput = payload.outputInstance;
-  currentPatchingModule = payload.moduleInstance;
+  currentPatchingOutput = outputInstance;
+  currentPatchingModule = moduleInstance;
 
   abortPatchingController = new AbortController();
   abortPatchingSignal = abortPatchingController.signal;
@@ -208,29 +215,37 @@ const cancelPatching = () => {
   inProgressConnection.value = null;
 };
 
-const onFinishPatching = (payload: {
-  moduleInstance: ModuleInstance;
-  inputInstance: InputInstance;
-}) => {
-  console.log("Finish patching to input:", payload.inputInstance);
+const onFinishPatching = (
+  moduleInstance: ModuleInstance,
+  inputInstance: InputInstance,
+) => {
+  console.log("Finish patching to input:", inputInstance);
 
   stopMouseTracking();
 
   if (currentPatchingOutput && currentPatchingModule) {
     patchGraph.value.connections.push({
       from: {
-        moduleId: currentPatchingModule.module.id,
+        moduleId: currentPatchingModule.moduleId,
         output: currentPatchingOutput,
       },
       to: {
-        moduleId: payload.moduleInstance.module.id,
-        input: payload.inputInstance,
+        moduleId: moduleInstance.moduleId,
+        input: inputInstance,
       },
     });
 
-    currentPatchingOutput.moduleOutput.connect(
-      payload.inputInstance.moduleInput,
+    patcher.connect(
+      {
+        moduleId: currentPatchingModule.moduleId,
+        outputName: currentPatchingOutput.name,
+      },
+      {
+        moduleId: moduleInstance.moduleId,
+        inputName: inputInstance.name,
+      },
     );
+
     currentPatchingOutput = null;
     inProgressConnection.value = null;
   }
@@ -280,6 +295,11 @@ const onModuleOutputsUpdated = (
   });
 };
 
+const onModuleOptionsUpdated = (moduleId: string, options: Record<string, any>) => {
+  const module = patcher.getModule(moduleId);
+  module.updateOptions(options);
+}; 
+
 const onModuleDrag = (
   deltaX: number,
   deltaY: number,
@@ -290,11 +310,11 @@ const onModuleDrag = (
 
   // Update positions of connections related to this module
   patchGraph.value.connections.forEach((connection) => {
-    if (connection.from.moduleId === moduleInstance.module.id) {
+    if (connection.from.moduleId === moduleInstance.moduleId) {
       connection.from.output.position.x += deltaX;
       connection.from.output.position.y += deltaY;
     }
-    if (connection.to.moduleId === moduleInstance.module.id) {
+    if (connection.to.moduleId === moduleInstance.moduleId) {
       connection.to.input.position.x += deltaX;
       connection.to.input.position.y += deltaY;
     }
@@ -306,8 +326,10 @@ const { startMouseTracking, stopMouseTracking } =
   useMouseTracking(onPatchingMouseMove);
 
 useResizeObserver("patch-window", (entries) => {
-  patchWindowPageX = entries[0]!.target.getBoundingClientRect().x + window.scrollX;
-  patchWindowPageY = entries[0]!.target.getBoundingClientRect().y + window.scrollY;
+  patchWindowPageX =
+    entries[0]!.target.getBoundingClientRect().x + window.scrollX;
+  patchWindowPageY =
+    entries[0]!.target.getBoundingClientRect().y + window.scrollY;
 });
 
 let abortKeyListenersController: AbortController | null = null;
@@ -333,7 +355,7 @@ const assignKeyListners = () => {
             clearSelection();
           }
           if (selectedModule.value) {
-            deleteModule(selectedModule.value.module.id);
+            deleteModule(selectedModule.value.moduleId);
             clearSelection();
           }
           break;
@@ -368,27 +390,25 @@ onUnmounted(() => {
     @contextmenu.stop="onGraphContextMenu"
     @click="clearSelection"
   >
+    <!-- prettier-ignore -->
     <PatchModule
-      v-for="instance in patchGraph.modules"
-      :key="instance.module.id"
-      :moduleInstance="instance as ModuleInstance"
-      :class="['patch-module', { selected: instance.selected }]"
+      v-for="module in patchGraph.modules"
+      :key="module.moduleId"
+      :moduleInstance="(module as ModuleInstance)"
+      :class="['patch-module', { selected: module.selected }]"
       :style="{
-        left: instance.position.x + 'px',
-        top: instance.position.y + 'px',
+        left: module.position.x + 'px',
+        top: module.position.y + 'px',
       }"
       :ripple="false"
-      @mousedown="(e: MouseEvent) => onDragElementStart(e, instance)"
-      @touchstart="(e: TouchEvent) => onDragElementStart(e, instance)"
-      @begin-patching="onBeginPatching"
-      @finish-patching="onFinishPatching"
-      @inputs-updated="
-        (inputs) => onModuleInputsUpdated(instance.module.id, inputs)
-      "
-      @outputs-updated="
-        (outputs) => onModuleOutputsUpdated(instance.module.id, outputs)
-      "
-      @dblclick.stop="() => onModuleSelected(instance as ModuleInstance)"
+      @mousedown="(e: MouseEvent) => onDragElementStart(e, module)"
+      @touchstart="(e: TouchEvent) => onDragElementStart(e, module)"
+      @begin-patching="(output) => onBeginPatching(module, output)"
+      @finish-patching="(input) => onFinishPatching(module, input)"
+      @inputs-updated="(inputs) => onModuleInputsUpdated(module.moduleId, inputs)"
+      @outputs-updated="(outputs) => onModuleOutputsUpdated(module.moduleId, outputs)"
+      @dblclick.stop="() => onModuleSelected(module as ModuleInstance)"
+      @options-updated="(options) => onModuleOptionsUpdated(module.moduleId, options)"
     ></PatchModule>
 
     <svg
@@ -403,6 +423,7 @@ onUnmounted(() => {
         :endPosition="inProgressConnection.to"
       />
 
+      <!-- prettier-ignore -->
       <PatchConnection
         v-for="(connection, i) in patchGraph.connections"
         :key="i"

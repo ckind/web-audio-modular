@@ -9,19 +9,17 @@
 </template>
 
 <script setup lang="ts">
-import { createAudioModule } from "./classes/factory/AudioModuleFactory";
-import useAudioGlobalContext from "@/composables/useAudioGlobalContext";
+import { createAudioModule } from "@/classes/factory/AudioModuleFactory";
+import useToneAutoResume from "@/composables/useToneAutoResume";
 
-useAudioGlobalContext((ctx: AudioContext) => {
-  // example fm patch
+const test = () => {
+  const oscillator = createAudioModule("oscillator", "1");
+  const speakerOutput = createAudioModule("speaker-output", "2");
 
-  // const dst = createAudioModule("speaker-output", "1", ctx);
-  // const modulator = createAudioModule("oscillator", "2", ctx);
-  // const gain = createAudioModule("gain", "3", ctx, { gain: 1000 });
-  // const carrier = createAudioModule("oscillator", "4", ctx);
+  oscillator.outputs[0]!.connect(speakerOutput.inputs[0]!);
+};
 
-  // modulator.outputs[0]!.connect(gain.inputs[0]!);
-  // gain.outputs[0]!.connect(carrier.inputs[0]!);
-  // carrier.outputs[0]!.connect(dst.inputs[0]!);
-});
+// useToneAutoResume(test);
+
+
 </script>

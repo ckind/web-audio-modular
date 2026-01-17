@@ -14,25 +14,25 @@ const getDefaultOptions = (): ClockModuleOptions => ({
 
 export default class ClockModule extends AudioModule<ClockModuleOptions> {
   private _intervalSeconds: number;
-  private _outputNode: MessageOutputNode;
+  // private _outputNode: MessageOutputNode;
   private _running: boolean = false;
 
-  constructor(id: string, ctx: AudioContext, options?: ClockModuleOptions) {
-    super(id, ctx, options ?? getDefaultOptions());
+  constructor(id: string, options?: ClockModuleOptions) {
+    super(id, options ?? getDefaultOptions());
 
     this._intervalSeconds = 60 / this._options.bpm;
-    this._outputNode = new MessageOutputNode(ctx);
+    // this._outputNode = new MessageOutputNode(ctx);
 
-    this._outputs = [new ModuleOutput("clock-tick-output", this._outputNode)];
+    // this._outputs = [new ModuleOutput("clock-tick-output", this._outputNode)];
 
     // todo: need to implement the actual ticking logic
     // just schedule 100 message events for now
-    for (let i = 0; i < 100; i++) {
-      this._outputNode.scheduleMessage(
-        ctx.currentTime + i * this._intervalSeconds,
-        i + 1,
-      );
-    }
+    // for (let i = 0; i < 100; i++) {
+    //   this._outputNode.scheduleMessage(
+    //     ctx.currentTime + i * this._intervalSeconds,
+    //     i + 1,
+    //   );
+    // }
   }
 
   get type(): AudioModuleType {
@@ -57,11 +57,11 @@ export default class ClockModule extends AudioModule<ClockModuleOptions> {
   scheduleTick(time: number, data: any) {
     if (!this._running) return;
 
-    this._outputNode.scheduleMessage(time, data);
+    // this._outputNode.scheduleMessage(time, data);
   }
 
   dispose(): void {
-    this.stop(this._ctx.currentTime);
-    this._outputNode.disconnect();
+    // this.stop(this._ctx.currentTime);
+    // this._outputNode.disconnect();
   }
 }

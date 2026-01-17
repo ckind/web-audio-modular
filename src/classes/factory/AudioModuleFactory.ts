@@ -1,27 +1,26 @@
 import SpeakerOutputModule from "@/classes/audio-modules/SpeakerOutputModule";
 import OscillatorModule from "@/classes/audio-modules/OscillatorModule";
 import GainModule from "@/classes/audio-modules/GainModule";
-import { type AudioModuleType } from "@/classes/audio-modules/AudioModule";
+import { type AudioModuleType, type IAudioModule } from "@/classes/audio-modules/AudioModule";
 import ClockModule from "@/classes/audio-modules/ClockModule";
 import LoggerModule from "@/classes/audio-modules/LoggerModule";
 
 export function createAudioModule(
   type: AudioModuleType,
   id: string,
-  ctx: AudioContext,
-  options?: any
-) {
+  options?: any,
+): IAudioModule {
   switch (type) {
     case "speaker-output":
-      return new SpeakerOutputModule(id, ctx, options);
+      return new SpeakerOutputModule(id, options);
     case "oscillator":
-      return new OscillatorModule(id, ctx, options);
+      return new OscillatorModule(id, options);
     case "gain":
-      return new GainModule(id, ctx, options);
+      return new GainModule(id, options);
     case "clock":
-      return new ClockModule(id, ctx, options);
+      return new ClockModule(id, options);
     case "logger":
-      return new LoggerModule(id, ctx, options);
+      return new LoggerModule(id, options);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }

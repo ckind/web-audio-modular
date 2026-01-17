@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import useResizeObserver from "./useResizeObserver";
+import useResizeObserver from "@/composables/useResizeObserver";
 
 export default function useDynamicSize(refName: string) {
   const width = ref(0);

@@ -1,10 +1,15 @@
-import AudioParamNode from "./AudioParamNode";
-import MessageInputNode from "./MessageInputNode";
+import AudioParamNode from "@/classes/AudioParamNode";
+import MessageInputNode from "@/classes/MessageInputNode";
+import * as Tone from "tone";
 
-export type MessageBusDestinationNode = AudioParamNode | MessageInputNode;
-export type ModuleInputNode = AudioNode | MessageBusDestinationNode;
+export type ModuleInputNode = Tone.ToneAudioNode;
 
-export default class ModuleInput {
+export interface IModuleInput {
+  name: string;
+  node: ModuleInputNode;
+}
+
+export default class ModuleInput implements IModuleInput {
   public node: ModuleInputNode;
   public name: string;
 

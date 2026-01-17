@@ -1,4 +1,4 @@
-import type IMessageBusDestinationNode from "./interfaces/IMessageBusDestinationNode";
+import type IMessageBusDestinationNode from "@/classes/interfaces/IMessageBusDestinationNode";
 
 /**
  * AudioParamNode is wrapper around an AudioParam that allows it to be

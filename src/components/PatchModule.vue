@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { computed, ref, type PropType, watch, onUnmounted } from "vue";
-import AudioModule from "@/classes/audio-modules/AudioModule";
+import { computed, ref, type PropType, watch } from "vue";
 import {
   type ModuleInstance,
   type InputInstance,
   type OutputInstance,
 } from "@/types/patchTypes";
 import useDynamicSize from "@/composables/useDynamicSize";
-import PatchModuleInput from "./PatchModuleInput.vue";
+import PatchModuleInput from "@/components/PatchModuleInput.vue";
 import {
   computeInputPosition,
   computeOutputPosition,
@@ -19,6 +18,7 @@ const emit = defineEmits([
   "finish-patching",
   "inputs-updated",
   "outputs-updated",
+  "options-updated",
 ]);
 
 const props = defineProps({
@@ -32,20 +32,19 @@ const { width: moduleDisplayWidth, height: moduleDisplayHeight } =
   useDynamicSize("module-container");
 
 const moduleName = computed(() => {
-  return props.moduleInstance.module.type;
+  return props.moduleInstance.displayName;
 });
 
 const inputs = computed(() => {
-  const newInputs = props.moduleInstance.module.inputs.map((input, index) => {
+  const newInputs = props.moduleInstance.inputNames.map((inputName, index) => {
     return {
-      name: input.name,
-      moduleInput: input,
+      name: inputName,
       position: computeInputPosition(
         props.moduleInstance,
         index,
-        props.moduleInstance.module.inputs.length,
+        props.moduleInstance.inputNames.length,
         moduleDisplayWidth.value,
-        moduleDisplayHeight.value
+        moduleDisplayHeight.value,
       ),
     } as InputInstance;
   });
@@ -56,19 +55,20 @@ const inputs = computed(() => {
 });
 
 const outputs = computed(() => {
-  const newOutputs = props.moduleInstance.module.outputs.map((output, index) => {
-    return {
-      name: output.name,
-      moduleOutput: output,
-      position: computeOutputPosition(
-        props.moduleInstance,
-        index,
-        props.moduleInstance.module.outputs.length,
-        moduleDisplayWidth.value,
-        moduleDisplayHeight.value
-      ),
-    } as OutputInstance;
-  });
+  const newOutputs = props.moduleInstance.outputNames.map(
+    (outputName, index) => {
+      return {
+        name: outputName,
+        position: computeOutputPosition(
+          props.moduleInstance,
+          index,
+          props.moduleInstance.outputNames.length,
+          moduleDisplayWidth.value,
+          moduleDisplayHeight.value,
+        ),
+      } as OutputInstance;
+    },
+  );
 
   emit("outputs-updated", newOutputs);
 
@@ -76,49 +76,41 @@ const outputs = computed(() => {
 });
 
 const beginPatching = (outputInstance: OutputInstance) => {
-  emit("begin-patching", {
-    moduleInstance: props.moduleInstance,
-    outputInstance,
-  });
+  emit("begin-patching", outputInstance);
 };
 
 const finishPatching = (inputInstance: InputInstance) => {
-  emit("finish-patching", {
-    moduleInstance: props.moduleInstance,
-    inputInstance,
-  });
+  emit("finish-patching", inputInstance);
 };
 
-const moduleOptions = ref<{ name: string; value: any }[]>([]);
+const moduleOptions = ref<{ name: string; value: string }[]>([]);
 
 watch(
-  () => props.moduleInstance.module,
-  (newModule) => {
-    if (!newModule) {
-      moduleOptions.value = [];
-      return;
-    }
-
-    moduleOptions.value = Object.entries(newModule.options).map(
-      ([key, value]) => {
-        return { name: key, value: value };
-      }
-    );
+  () => props.moduleInstance.options,
+  (newOptions) => {
+    moduleOptions.value = Object.entries(newOptions).map(([name, value]) => ({
+      name,
+      value: String(value),
+    }));
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
   () => moduleOptions.value,
   (newOptions) => {
-    props.moduleInstance.module.updateOptions(
-      newOptions.reduce((acc, option) => {
-        acc[option.name] = option.value;
-        return acc;
-      }, {} as Record<string, any>)
+    emit(
+      "options-updated",
+      newOptions.reduce(
+        (acc, option) => {
+          acc[option.name] = option.value;
+          return acc;
+        },
+        {} as Record<string, any>,
+      ),
     );
   },
-  { deep: true }
+  { deep: true },
 );
 </script>
 

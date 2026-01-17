@@ -1,11 +1,19 @@
-import ModuleInput from "./ModuleInput";
-import AudioParamNode from "./AudioParamNode";
-import MessageOutputNode from "./MessageOutputNode";
-import MessageInputNode from "./MessageInputNode";
+import ModuleInput, { type IModuleInput } from "@/classes/ModuleInput";
+import AudioParamNode from "@/classes/AudioParamNode";
+import MessageOutputNode from "@/classes/MessageOutputNode";
+import MessageInputNode from "@/classes/MessageInputNode";
+import * as Tone from "tone";
 
-export type ModuleOutputNode = AudioNode | MessageOutputNode;
+export type ModuleOutputNode = Tone.ToneAudioNode;
 
-export default class ModuleOutput {
+export interface IModuleOutput {
+  name: string;
+  node: ModuleOutputNode;
+  connect(destination: IModuleInput): void;
+  disconnect(destination?: IModuleInput): void;
+}
+
+export default class ModuleOutput implements IModuleOutput {
   public name: string;
   public node: ModuleOutputNode;
 
@@ -14,51 +22,25 @@ export default class ModuleOutput {
     this.name = name;
   }
 
-  connect(destination: ModuleInput) {
-    if (this.node instanceof MessageOutputNode) {
-      if (destination.node instanceof MessageInputNode) {
-        this.node.connect(destination.node);
-      }
-      else if (destination.node instanceof AudioParamNode) {
-        this.node.connect(destination.node);
-      }
-    } else if (this.node instanceof AudioNode) {
-      if (destination.node instanceof AudioNode) {
-        this.node.connect(destination.node);
-      } else if (destination.node instanceof AudioParamNode) {
-        this.node.connect(destination.node.audioParam);
-      }
-    }
+  connect(destination: IModuleInput) {
+    console.log(this.node.context.rawContext === destination.node.context.rawContext);
+    
+    this.node.connect(destination.node);
   }
 
-  disconnect(destination?: ModuleInput) {
+  disconnect(destination?: IModuleInput) {
     console.log("disconnecting output:", this.name, "from input:", destination?.name);
+
     if (
       !destination ||
       destination.node === undefined ||
       destination.node === null
     ) {
-      if (this.node instanceof MessageOutputNode) {
-        this.node.disconnect();
-      } else if (this.node instanceof AudioNode) {
-        this.node.disconnect();
-      }
+      this.node.disconnect();
 
       return;
     }
 
-    if (this.node instanceof MessageOutputNode) {
-      if (destination.node instanceof MessageInputNode) {
-        this.node.disconnect(destination.node);
-      } else if (destination.node instanceof AudioParamNode) {
-        this.node.disconnect(destination.node);
-      }
-    } else if (this.node instanceof AudioNode) {
-      if (destination.node instanceof AudioNode) {
-        this.node.disconnect(destination.node);
-      } else if (destination.node instanceof AudioParamNode) {
-        this.node.disconnect(destination.node.audioParam);
-      }
-    }
+    this.node.disconnect(destination.node);
   }
 }

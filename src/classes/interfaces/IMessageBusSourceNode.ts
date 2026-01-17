@@ -1,4 +1,4 @@
-import type IMessageBusDestinationNode from "./IMessageBusDestinationNode";
+import type IMessageBusDestinationNode from "@/classes/interfaces/IMessageBusDestinationNode";
 
 /**
  * IMessageBusSourceNode represents a source of messages that can be scheduled

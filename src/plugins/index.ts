@@ -5,7 +5,7 @@
  */
 
 // Plugins
-import vuetify from './vuetify'
+import vuetify from '@/plugins/vuetify'
 import { createPinia } from 'pinia'
 
 // Types

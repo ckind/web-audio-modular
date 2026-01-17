@@ -1,7 +1,7 @@
 import AudioModule from "@/classes/audio-modules/AudioModule.ts";
 import ModuleInput from "@/classes//ModuleInput.ts";
 import { type AudioModuleType } from "@/classes/audio-modules/AudioModule.ts";
-import MessageInputNode from "../MessageInputNode";
+import MessageInputNode from "@/classes/MessageInputNode";
 
 type LoggerModuleOptions = {};
 
@@ -12,11 +12,11 @@ const logMessage = (message: any) => {
 };
 
 export default class LoggerModule extends AudioModule<LoggerModuleOptions> {
-  constructor(id: string, ctx: AudioContext, options?: LoggerModuleOptions) {
-    super(id, ctx, options ?? getDefaultOptions());
+  constructor(id: string, options?: LoggerModuleOptions) {
+    super(id, options ?? getDefaultOptions());
 
     this._inputs = [
-      new ModuleInput("message-input", new MessageInputNode(ctx, logMessage)),
+      // new ModuleInput("message-input", new MessageInputNode(ctx, logMessage)),
     ];
   }
 
