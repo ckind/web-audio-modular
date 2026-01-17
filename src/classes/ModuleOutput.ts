@@ -1,5 +1,4 @@
 import ModuleInput, { type IModuleInput } from "@/classes/ModuleInput";
-import AudioParamNode from "@/classes/AudioParamNode";
 import MessageOutputNode from "@/classes/MessageOutputNode";
 import MessageInputNode from "@/classes/MessageInputNode";
 import * as Tone from "tone";

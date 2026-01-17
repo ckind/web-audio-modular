@@ -1,8 +1,5 @@
 import AudioModule from "@/classes/audio-modules/AudioModule";
 import type { AudioModuleType } from "@/classes/audio-modules/AudioModule";
-import ModuleInput from "@/classes/ModuleInput";
-import ModuleOutput from "@/classes/ModuleOutput";
-import MessageOutputNode from "@/classes/MessageOutputNode";
 
 type ClockModuleOptions = {
   bpm: number;

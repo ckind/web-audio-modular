@@ -1,8 +1,6 @@
-import AudioParamNode from "@/classes/AudioParamNode";
-import MessageInputNode from "@/classes/MessageInputNode";
 import * as Tone from "tone";
 
-export type ModuleInputNode = Tone.ToneAudioNode;
+export type ModuleInputNode = Tone.ToneAudioNode | Tone.Param<any>;
 
 export interface IModuleInput {
   name: string;

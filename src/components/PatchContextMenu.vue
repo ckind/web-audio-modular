@@ -23,6 +23,7 @@ const availableModules = [
   { title: "gain", type: "gain" },
   { title: "clock", type: "clock" },
   { title: "logger", type: "logger" },
+  { title: "scale", type: "scale" },
 ];
 
 const addModule = (moduleType: string) => {

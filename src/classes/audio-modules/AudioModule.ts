@@ -6,7 +6,8 @@ export type AudioModuleType =
   | "oscillator"
   | "gain"
   | "clock"
-  | "logger";
+  | "logger"
+  | "scale";
 
 export type ModuleId = string;
 

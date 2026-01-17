@@ -4,6 +4,7 @@ import GainModule from "@/classes/audio-modules/GainModule";
 import { type AudioModuleType, type IAudioModule } from "@/classes/audio-modules/AudioModule";
 import ClockModule from "@/classes/audio-modules/ClockModule";
 import LoggerModule from "@/classes/audio-modules/LoggerModule";
+import ScaleModule from "@/classes/audio-modules/ScaleModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -21,6 +22,8 @@ export function createAudioModule(
       return new ClockModule(id, options);
     case "logger":
       return new LoggerModule(id, options);
+    case "scale":
+      return new ScaleModule(id, options);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }
