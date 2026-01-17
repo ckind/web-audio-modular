@@ -135,7 +135,7 @@ watch(
       :key="option.name"
       :name="option.name"
       type="text"
-      v-model="option.value"
+      v-model.lazy="option.value"
       @dblclick.stop=""
       class="module-option-input mr-2 d-inline-block"
     />
