@@ -1,7 +1,12 @@
 import ModuleInput from "../ModuleInput";
 import ModuleOutput from "../ModuleOutput";
 
-export type AudioModuleType = "speaker-output" | "oscillator" | "gain"| "clock" | "logger";
+export type AudioModuleType =
+  | "speaker-output"
+  | "oscillator"
+  | "gain"
+  | "clock"
+  | "logger";
 
 export default abstract class AudioModule<TModuleOptions> {
   protected _ctx: AudioContext;

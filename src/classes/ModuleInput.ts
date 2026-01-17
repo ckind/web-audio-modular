@@ -1,5 +1,5 @@
 import AudioParamNode from "./AudioParamNode";
-import type { MessageInputNode } from "./MessageInputNode";
+import MessageInputNode from "./MessageInputNode";
 
 export type MessageBusDestinationNode = AudioParamNode | MessageInputNode;
 export type ModuleInputNode = AudioNode | MessageBusDestinationNode;

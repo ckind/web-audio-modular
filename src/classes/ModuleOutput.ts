@@ -1,7 +1,7 @@
 import ModuleInput from "./ModuleInput";
 import AudioParamNode from "./AudioParamNode";
 import MessageOutputNode from "./MessageOutputNode";
-import { MessageInputNode } from "./MessageInputNode";
+import MessageInputNode from "./MessageInputNode";
 
 export type ModuleOutputNode = AudioNode | MessageOutputNode;
 

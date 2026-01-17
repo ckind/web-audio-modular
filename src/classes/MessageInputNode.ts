@@ -6,7 +6,7 @@ type MessageInputNodeCallback = (message: any) => void;
  * MessageInputNode is a MessageBusDestinationNode that allows us to
  * schedule changes to discrete parameters or trigger events at specific times
  */
-export class MessageInputNode implements IMessageBusDestinationNode {
+export default class MessageInputNode implements IMessageBusDestinationNode {
   private _controller = new AbortController();
   private _ctx: AudioContext;
   private _signal = this._controller.signal;

@@ -1,7 +1,7 @@
 import AudioModule from "@/classes/audio-modules/AudioModule.ts";
 import ModuleInput from "@/classes//ModuleInput.ts";
 import { type AudioModuleType } from "@/classes/audio-modules/AudioModule.ts";
-import { MessageInputNode } from "../MessageInputNode";
+import MessageInputNode from "../MessageInputNode";
 
 type LoggerModuleOptions = {};
 
