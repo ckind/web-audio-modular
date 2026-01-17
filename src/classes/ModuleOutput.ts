@@ -1,35 +1,32 @@
-import { de } from "vuetify/locale";
 import ModuleInput from "./ModuleInput";
-import TickDestinationNode from "./TickDestinationNode";
-import TickSourceNode from "./TickSourceNode";
+import AudioParamNode from "./AudioParamNode";
+import MessageOutputNode from "./MessageOutputNode";
+import { MessageInputNode } from "./MessageInputNode";
 
-export interface IModuleOutput {
-  node: AudioNode | TickSourceNode;
-  name: string;
-  connect(destination: ModuleInput): void;
-  disconnect(): void;
-  disconnect(destination: ModuleInput): void;
-}
+export type ModuleOutputNode = AudioNode | MessageOutputNode;
 
-export default class ModuleOutput implements IModuleOutput {
-  public node: AudioNode | TickSourceNode;
+export default class ModuleOutput {
   public name: string;
+  public node: ModuleOutputNode;
 
-  constructor(name: string, node: AudioNode | TickSourceNode) {
+  constructor(name: string, node: ModuleOutputNode) {
     this.node = node;
     this.name = name;
   }
 
   connect(destination: ModuleInput) {
-    if (this.node instanceof TickSourceNode) {
-      if (destination.node instanceof TickDestinationNode) {
+    if (this.node instanceof MessageOutputNode) {
+      if (destination.node instanceof MessageInputNode) {
+        this.node.connect(destination.node);
+      }
+      else if (destination.node instanceof AudioParamNode) {
         this.node.connect(destination.node);
       }
     } else if (this.node instanceof AudioNode) {
       if (destination.node instanceof AudioNode) {
         this.node.connect(destination.node);
-      } else if (destination.node instanceof AudioParam) {
-        this.node.connect(destination.node);
+      } else if (destination.node instanceof AudioParamNode) {
+        this.node.connect(destination.node.audioParam);
       }
     }
   }
@@ -41,7 +38,7 @@ export default class ModuleOutput implements IModuleOutput {
       destination.node === undefined ||
       destination.node === null
     ) {
-      if (this.node instanceof TickSourceNode) {
+      if (this.node instanceof MessageOutputNode) {
         this.node.disconnect();
       } else if (this.node instanceof AudioNode) {
         this.node.disconnect();
@@ -50,15 +47,17 @@ export default class ModuleOutput implements IModuleOutput {
       return;
     }
 
-    if (this.node instanceof TickSourceNode) {
-      if (destination.node instanceof TickDestinationNode) {
+    if (this.node instanceof MessageOutputNode) {
+      if (destination.node instanceof MessageInputNode) {
+        this.node.disconnect(destination.node);
+      } else if (destination.node instanceof AudioParamNode) {
         this.node.disconnect(destination.node);
       }
     } else if (this.node instanceof AudioNode) {
       if (destination.node instanceof AudioNode) {
         this.node.disconnect(destination.node);
-      } else if (destination.node instanceof AudioParam) {
-        this.node.disconnect(destination.node);
+      } else if (destination.node instanceof AudioParamNode) {
+        this.node.disconnect(destination.node.audioParam);
       }
     }
   }

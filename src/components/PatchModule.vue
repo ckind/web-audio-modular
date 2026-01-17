@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, type PropType, watch, onUnmounted } from "vue";
-import AudioModule from "@/classes/audioModules/AudioModule";
+import AudioModule from "@/classes/audio-modules/AudioModule";
 import {
   type ModuleInstance,
   type InputInstance,

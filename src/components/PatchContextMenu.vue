@@ -21,6 +21,8 @@ const availableModules = [
   { title: "oscillator", type: "oscillator" },
   { title: "speaker-output", type: "speaker-output" },
   { title: "gain", type: "gain" },
+  { title: "clock", type: "clock" },
+  { title: "logger", type: "logger" },
 ];
 
 const addModule = (moduleType: string) => {

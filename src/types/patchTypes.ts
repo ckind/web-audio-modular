@@ -1,6 +1,6 @@
 import ModuleInput from "@/classes/ModuleInput";
 import ModuleOutput from "@/classes/ModuleOutput";
-import AudioModule from "@/classes/audioModules/AudioModule";
+import AudioModule from "@/classes/audio-modules/AudioModule";
 import type { AudioModuleType } from "@/classes/factory/AudioModuleFactory";
 
 export type Position = {

@@ -1,7 +1,8 @@
-import AudioModule from "@/classes/audioModules/AudioModule";
-import type { AudioModuleType } from "@/classes/factory/AudioModuleFactory";
+import AudioModule from "@/classes/audio-modules/AudioModule";
+import type { AudioModuleType } from "@/classes/audio-modules/AudioModule";
 import ModuleInput from "@/classes/ModuleInput";
 import ModuleOutput from "@/classes/ModuleOutput";
+import AudioParamNode from "@/classes/AudioParamNode";
 
 type GainModuleOptions = {
   gain: number;
@@ -23,7 +24,7 @@ export default class GainModule extends AudioModule<GainModuleOptions> {
     this._outputs = [new ModuleOutput("gain-signal-output", this._gainNode)];
     this._inputs = [
       new ModuleInput("gain-signal-input", this._gainNode),
-      new ModuleInput("gain-param", this._gainNode.gain),
+      new ModuleInput("gain-param", new AudioParamNode(ctx, this._gainNode.gain)),
     ];
   }
 

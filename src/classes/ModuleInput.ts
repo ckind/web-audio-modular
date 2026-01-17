@@ -1,15 +1,14 @@
-import TickDestinationNode from "./TickDestinationNode";
+import AudioParamNode from "./AudioParamNode";
+import type { MessageInputNode } from "./MessageInputNode";
 
-export interface IModuleInput {
-  name: string;
-  node: AudioNode | AudioParam | TickDestinationNode;
-}
+export type MessageBusDestinationNode = AudioParamNode | MessageInputNode;
+export type ModuleInputNode = AudioNode | MessageBusDestinationNode;
 
-export default class ModuleInput implements IModuleInput {
-  public node: AudioNode | AudioParam | TickDestinationNode;
+export default class ModuleInput {
+  public node: ModuleInputNode;
   public name: string;
 
-  constructor(name: string, node: AudioNode | AudioParam | TickDestinationNode) {
+  constructor(name: string, node: ModuleInputNode) {
     this.name = name;
     this.node = node;
   }

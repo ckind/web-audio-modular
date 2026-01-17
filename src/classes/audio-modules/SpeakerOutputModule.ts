@@ -1,6 +1,6 @@
-import AudioModule from "./AudioModule.ts";
-import type { AudioModuleType } from "../factory/AudioModuleFactory.ts";
-import ModuleInput from "../ModuleInput.ts";
+import AudioModule from "@/classes/audio-modules/AudioModule.ts";
+import type { AudioModuleType } from "@/classes/audio-modules/AudioModule.ts";
+import ModuleInput from "@/classes/ModuleInput.ts";
 
 type SpeakerOutputModuleOptions = {};
 
