@@ -34,6 +34,7 @@ const availableModules = [
     GUIComponent: "DisplayMessageModule",
   },
   { title: "filter", type: "filter" },
+  { title: "convolution-reverb", type: "convolution-reverb" },
 ];
 
 const addModule = (moduleType: string, GUIComponent?: string) => {

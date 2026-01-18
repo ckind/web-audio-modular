@@ -11,6 +11,7 @@ import SliderModule from "@/classes/audio-modules/SliderModule";
 import DisplayMessageModule from "@/classes/audio-modules/DisplayMessageModule";
 import FilterModule from "@/classes/audio-modules/FilterModule";
 import ScaleExpModule from "@/classes/audio-modules/ScaleExpModule";
+import ConvolutionReverbModule from "../audio-modules/ConvolutionReverbModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -42,6 +43,8 @@ export function createAudioModule(
       return new DisplayMessageModule(id, options);
     case "filter":
       return new FilterModule(id, options);
+    case "convolution-reverb":
+      return new ConvolutionReverbModule(id, options);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }

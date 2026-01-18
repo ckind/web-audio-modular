@@ -13,7 +13,8 @@ export type AudioModuleType =
   | "sequence"
   | "slider"
   | "display-message"
-  | "filter";
+  | "filter"
+  | "convolution-reverb";
 
 export type ModuleId = string;
 
