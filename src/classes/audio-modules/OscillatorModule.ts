@@ -50,13 +50,10 @@ export default class OscillatorModule extends AudioModule<OscillatorModuleOption
   }
 
   oscillatorTypeCallback(time: number, data: any) {
-    Tone.getTransport().schedule(() => {
-      // todo: validate type?
-      // todo: seems like tone/web audio api is not actually able to change
-      // the oscillator type at a-rate or k-rate
-      this._oscillatorNode.type = data;
-      this._options.type = data;
-    }, time);
+    // todo: validate type?
+    // todo: seems like tone/web audio api is not actually able to change
+    this._oscillatorNode.type = data;
+    this._options.type = data;
   }
 
   updateOptions(options: Partial<OscillatorModuleOptions>): void {
