@@ -13,6 +13,8 @@ import FilterModule from "@/classes/audio-modules/FilterModule";
 import ScaleExpModule from "@/classes/audio-modules/ScaleExpModule";
 import ConvolutionReverbModule from "../audio-modules/ConvolutionReverbModule";
 import ButtonTrigModule from "@/classes/audio-modules/ButtonTrigModule";
+import NoiseModule from "@/classes/audio-modules/NoiseModule";
+import ADSREnvelopeModule from "@/classes/audio-modules/ADSREnvelopeModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -48,6 +50,10 @@ export function createAudioModule(
       return new ConvolutionReverbModule(id, options);
     case "button-trig":
       return new ButtonTrigModule(id, options);
+    case "noise":
+      return new NoiseModule(id, options);
+    case "adsr-envelope":
+      return new ADSREnvelopeModule(id, options);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }

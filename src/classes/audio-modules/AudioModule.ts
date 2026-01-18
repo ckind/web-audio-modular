@@ -15,7 +15,9 @@ export type AudioModuleType =
   | "display-message"
   | "filter"
   | "convolution-reverb"
-  | "button-trig";
+  | "button-trig"
+  | "noise"
+  | "adsr-envelope";
 
 export type ModuleId = string;
 

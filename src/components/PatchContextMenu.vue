@@ -40,6 +40,8 @@ const availableModules = [
     type: "button-trig",
     GUIComponent: "ButtonTrigModule",
   },
+  { title: "noise", type: "noise" },
+  { title: "adsr-envelope", type: "adsr-envelope" },
 ];
 
 const addModule = (moduleType: string, GUIComponent?: string) => {
