@@ -92,6 +92,7 @@ const inProgressConnection = ref<PatchCableInstance | null>(null);
 const showContextMenu = ref(false);
 const contextMenuX = ref(0);
 const contextMenuY = ref(0);
+const showClearConfirm = ref(false);
 
 const savePatch = () => {
   const patchData = JSON.stringify(patchGraph.value);
@@ -150,6 +151,16 @@ const loadPatch = () => {
     reader.readAsText(file);
   };
   input.click();
+};
+
+const clearPatch = () => {
+  patcher.clear();
+  patchGraph.value = { modules: [], connections: [] };
+};
+
+const confirmClearPatch = () => {
+  clearPatch();
+  showClearConfirm.value = false;
 };
 
 const onGraphContextMenu = (e: MouseEvent) => {
@@ -504,7 +515,24 @@ onUnmounted(() => {
   <div class="d-flex justify-center mb-2" :style="{ width: width + 'px' }">
     <v-btn class="mx-2" @click="savePatch">Save Patch</v-btn>
     <v-btn class="mx-2" @click="loadPatch">Load Patch</v-btn>
+    <v-btn class="mx-2" @click="showClearConfirm = true">
+      Clear Patch
+    </v-btn>
   </div>
+
+  <v-dialog v-model="showClearConfirm" max-width="360">
+    <v-card>
+      <v-card-title>Clear Patch</v-card-title>
+      <v-card-text>
+        Any unsaved work will be lost. Are you sure you want to continue?
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn variant="text" @click="showClearConfirm = false">Cancel</v-btn>
+        <v-btn color="error" variant="text" @click="confirmClearPatch">Continue</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   <div
     ref="patch-window"
     class="patch-window"
