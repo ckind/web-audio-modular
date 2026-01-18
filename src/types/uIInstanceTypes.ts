@@ -37,7 +37,7 @@ export type ModuleOutputInstance = {
 
 export type ModuleInstance = {
   moduleId: ModuleId;
-  displayName: string;
+  type: string;
   options: Record<string, any>;
   outputs: ModuleOutputInstance[];
   inputs: ModuleInputInstance[];

@@ -79,6 +79,15 @@ export default class Patcher {
     return a.moduleId === b.moduleId && a.inputName === b.inputName;
   }
 
+  clear() {
+    for (const module of this._modules.values()) {
+      this.deleteModule(module.id);
+    }
+
+    this._modules.clear();
+    this._connections = [];
+  }
+
   addModule(module: IAudioModule) {
     this._modules.set(module.id, module);
   }

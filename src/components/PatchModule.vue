@@ -35,7 +35,7 @@ const { width: moduleDisplayWidth, height: moduleDisplayHeight } =
   useDynamicSize("module-container");
 
 const moduleName = computed(() => {
-  return props.moduleInstance.displayName;
+  return props.moduleInstance.type;
 });
 
 const inputs = computed(() => {

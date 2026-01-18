@@ -106,6 +106,52 @@ const savePatch = () => {
   URL.revokeObjectURL(url);
 };
 
+const loadPatch = () => {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "application/json";
+  input.onchange = (e: Event) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      try {
+        const loadedGraph = JSON.parse(content) as PatchGraph;
+        patchGraph.value = loadedGraph;
+
+        // Reconstruct patcher state
+        patcher.clear();
+        loadedGraph.modules.forEach((m) => {
+          const module = createAudioModule(
+            m.type as AudioModuleType,
+            m.moduleId,
+          );
+          module.updateOptions(m.options);
+          patcher.addModule(module);
+        });
+        loadedGraph.connections.forEach((c) => {
+          patcher.connect(
+            {
+              moduleId: c.from.moduleId,
+              outputName: c.from.output.name,
+            },
+            {
+              moduleId: c.to.moduleId,
+              inputName: c.to.input.name,
+            },
+          );
+        });
+      } catch (error) {
+        console.error("Error loading patch:", error);
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+};
+
 const onGraphContextMenu = (e: MouseEvent) => {
   e.preventDefault();
   contextMenuX.value = e.pageX;
@@ -117,7 +163,7 @@ const addModule = (moduleType: AudioModuleType, guiComponent?: string) => {
   const module = createAudioModule(moduleType, crypto.randomUUID());
   const moduleInstance = {
     moduleId: module.id,
-    displayName: module.type,
+    type: module.type,
     guiComponent: guiComponent,
     options: module.options,
     outputs: module.outputs.map((o) => {
@@ -455,7 +501,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <v-btn @click="savePatch">Save Patch</v-btn>
+  <v-btn class="mx-2" @click="savePatch">Save Patch</v-btn>
+  <v-btn class="mx-2" @click="loadPatch">Load Patch</v-btn>
   <div
     ref="patch-window"
     class="patch-window"
