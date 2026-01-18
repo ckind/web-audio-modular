@@ -123,18 +123,28 @@ const onGuiOptionsUpdated = (options: Record<string, any>) => {
 
 <template>
   <v-card ref="module-container" class="audio-module user-select-none">
-    <patch-module-input
+    <v-tooltip
+      :open-on-click="false"
+      :open-on-focus="false"
+      location="top"
       v-for="input in inputs"
-      :key="input.name"
-      @click.stop="finishPatching(input)"
-      :style="{
-        left: `${input.position.x - moduleInstance.position.x - BORDER_SIZE}px`,
-        top: `${input.position.y - moduleInstance.position.y - BORDER_SIZE}px`,
-      }"
-      :type="input.type"
-      class="module-input-output"
+      :text="input.name"
     >
-    </patch-module-input>
+      <template v-slot:activator="{ props }">
+        <patch-module-input
+          v-bind="props"
+          :key="input.name"
+          @click.stop="finishPatching(input)"
+          :style="{
+            left: `${input.position.x - moduleInstance.position.x - BORDER_SIZE}px`,
+            top: `${input.position.y - moduleInstance.position.y - BORDER_SIZE}px`,
+          }"
+          :type="input.type"
+          class="module-input-output"
+        >
+        </patch-module-input>
+      </template>
+    </v-tooltip>
 
     <div v-if="!moduleInstance.guiComponent">
       <div class="ma-2 d-inline-block">{{ moduleName }}</div>
@@ -158,20 +168,30 @@ const onGuiOptionsUpdated = (options: Record<string, any>) => {
       @options-updated="onGuiOptionsUpdated"
     ></component>
 
-    <patch-module-output
+    <v-tooltip
+      :open-on-click="false"
+      :open-on-focus="false"
+      location="bottom"
       v-for="output in outputs"
-      :key="output.name"
-      @click.stop="beginPatching(output)"
-      :style="{
-        left: `${
-          output.position.x - moduleInstance.position.x - BORDER_SIZE
-        }px`,
-        top: `${output.position.y - moduleInstance.position.y - BORDER_SIZE}px`,
-      }"
-      :type="output.type"
-      class="module-input-output"
+      :text="output.name"
     >
-    </patch-module-output>
+      <template v-slot:activator="{ props }">
+        <patch-module-output
+          v-bind="props"
+          :key="output.name"
+          @click.stop="beginPatching(output)"
+          :style="{
+            left: `${
+              output.position.x - moduleInstance.position.x - BORDER_SIZE
+            }px`,
+            top: `${output.position.y - moduleInstance.position.y - BORDER_SIZE}px`,
+          }"
+          :type="output.type"
+          class="module-input-output"
+        >
+        </patch-module-output>
+      </template>
+    </v-tooltip>
   </v-card>
 </template>
 

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { type PropType, computed } from "vue";
 import type { ConnectionType } from "@/types/connectionTypes";
-import useConnectionTypeColors from "@/composables/useConnectionTypeColors"
+import useConnectionTypeColors from "@/composables/useConnectionTypeColors";
 
 const { signalColor, messageBusColor } = useConnectionTypeColors();
 
 const nodeColor = computed(() => {
-  return props.type === 'signal' ? signalColor : messageBusColor
+  return props.type === "signal" ? signalColor : messageBusColor;
 });
 
 const props = defineProps({
@@ -19,6 +19,7 @@ const props = defineProps({
 
 <template>
   <svg
+    v-bind="props"
     xmlns="http://www.w3.org/2000/svg"
     width="5"
     height="5"
