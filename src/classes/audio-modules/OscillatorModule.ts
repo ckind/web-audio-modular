@@ -17,7 +17,7 @@ const getDefaultOptions = (): OscillatorModuleOptions => ({
 
 export default class OscillatorModule extends AudioModule<OscillatorModuleOptions> {
   private _oscillatorNode: Tone.Oscillator;
-  private _frequencySum: Tone.Add;
+  private _frequencyInput: Tone.Gain;
 
   constructor(id: string, options?: OscillatorModuleOptions) {
     super(id, options ?? getDefaultOptions());
@@ -26,18 +26,17 @@ export default class OscillatorModule extends AudioModule<OscillatorModuleOption
       this._options.frequency,
       this._options.type,
     );
-    this._frequencySum = new Tone.Add(this._options.frequency);
-    this._frequencySum.connect(this._oscillatorNode.frequency);
     this._oscillatorNode.start();
+
+    // inputs are summed
+    this._frequencyInput = new Tone.Gain(1);
+    this._frequencyInput.connect(this._oscillatorNode.frequency);
 
     this._outputs = [
       new ModuleOutput("osc-signal-output", this._oscillatorNode),
     ];
-    // use an add node to sum multiple frequency inputs
-    // this also fixes an issue with Tone Oscillators where the frequency
-    // parameter isn't responsive after disconnecting all incoming signals from it
     this._inputs = [
-      new ModuleInput("frequency-param", this._frequencySum),
+      new ModuleInput("frequency-param", this._frequencyInput),
       new ModuleInput(
         "osc-type",
         new MessageInputNode(this.oscillatorTypeCallback.bind(this)),
@@ -51,7 +50,8 @@ export default class OscillatorModule extends AudioModule<OscillatorModuleOption
 
   oscillatorTypeCallback(time: number, data: any) {
     // todo: validate type?
-    // todo: seems like tone/web audio api is not actually able to change
+    // seems like tone/web audio api is not actually able to change osc type
+    // at a or k-rate
     this._oscillatorNode.type = data;
     this._options.type = data;
   }
@@ -61,7 +61,7 @@ export default class OscillatorModule extends AudioModule<OscillatorModuleOption
       options.frequency !== undefined &&
       options.frequency !== this._options.frequency
     ) {
-      this._frequencySum.value = options.frequency;
+      this._oscillatorNode.frequency.value = options.frequency;
       this._options.frequency = options.frequency;
     }
     if (options.type !== undefined && options.type !== this._options.type) {
@@ -72,7 +72,11 @@ export default class OscillatorModule extends AudioModule<OscillatorModuleOption
 
   dispose(): void {
     this._oscillatorNode.stop();
-    this._frequencySum.dispose();
+
+    this._frequencyInput.disconnect();
+    this._frequencyInput.dispose();
+
+    this._oscillatorNode.disconnect();
     this._oscillatorNode.dispose();
   }
 }
