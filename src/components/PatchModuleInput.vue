@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { type PropType, computed } from "vue";
+import { type PropType, computed, watch } from "vue";
 import type { ConnectionType } from "@/types/connectionTypes";
-import useConnectionTypeColors from "@/composables/useConnectionTypeColors";
+import { useAppColors } from "@/store/appColors";
 
-const { signalColor, messageBusColor } = useConnectionTypeColors();
+const appColors = useAppColors();
 
 const nodeColor = computed(() => {
-  return props.type === "signal" ? signalColor : messageBusColor;
+  return props.type === "signal" ? appColors.signalColor : appColors.messageBusColor;
 });
 
 const props = defineProps({

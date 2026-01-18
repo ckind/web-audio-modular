@@ -2,16 +2,16 @@
 import { type PropType, ref, computed } from "vue";
 import type { Position } from "@/types/uIInstanceTypes";
 import type { ConnectionType } from "@/types/connectionTypes";
-import useConnectionTypeColors from "@/composables/useConnectionTypeColors"
+import { useAppColors } from "@/store/appColors";
 
-const { signalColor, messageBusColor } = useConnectionTypeColors();
+const appColors = useAppColors();
 
 const lineColor = computed(() => {
-  return props.connectionType === "signal" ? signalColor : messageBusColor;
+  return props.connectionType === "signal" ? appColors.signalColor : appColors.messageBusColor;
 });
 
 const nodeColor = computed(() => {
-  return props.connectionType === "signal" ? signalColor : messageBusColor;
+  return props.connectionType === "signal" ? appColors.signalColor : appColors.messageBusColor;
 });
 
 const lineOpacity = computed(() => {

@@ -23,9 +23,7 @@ export default class ScaleModule extends AudioModule<ScaleModuleOptions> {
     this._scaleNode = new Tone.Scale(this._options.min, this._options.max);
 
     this._outputs = [new ModuleOutput("scale-signal-output", this._scaleNode)];
-    this._inputs = [
-      new ModuleInput("scale-signal-input", this._scaleNode)
-    ];
+    this._inputs = [new ModuleInput("scale-signal-input", this._scaleNode)];
   }
 
   get type(): AudioModuleType {
@@ -35,12 +33,13 @@ export default class ScaleModule extends AudioModule<ScaleModuleOptions> {
   updateOptions(options: Partial<ScaleModuleOptions>): void {
     if (options.min !== undefined) {
       this._scaleNode.min = options.min;
+      this._options.min = options.min;
     }
     if (options.max !== undefined) {
       this._scaleNode.max = options.max;
+      this._options.max = options.max;
     }
   }
-
 
   dispose(): void {
     this._scaleNode.dispose();

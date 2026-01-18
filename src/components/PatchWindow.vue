@@ -18,10 +18,11 @@ import { createAudioModule } from "@/classes/factory/AudioModuleFactory";
 import useResizeObserver from "@/composables/useResizeObserver.ts";
 import useToneAutoResume from "@/composables/useToneAutoResume";
 import Patcher from "@/classes/Patcher";
+import { useAppColors } from "@/store/appColors";
 
-function test() {
+const appColors = useAppColors();
 
-}
+function test() {}
 
 useToneAutoResume(test);
 
@@ -479,7 +480,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="d-flex justify-center mb-2" :style="{ width: width + 'px' }">
+  <div
+    class="d-flex justify-center mb-4"
+    :style="{ width: width + 'px', borderColor: appColors.textColor }"
+  >
     <v-btn class="mx-2" @click="savePatch">Save Patch</v-btn>
     <v-btn class="mx-2" @click="loadPatch">Load Patch</v-btn>
     <v-btn class="mx-2" @click="showClearConfirm = true"> Clear Patch </v-btn>
@@ -516,6 +520,8 @@ onUnmounted(() => {
       :style="{
         left: module.position.x + 'px',
         top: module.position.y + 'px',
+        borderColor: appColors.textColor,
+        backgroundColor: appColors.backgroundColor,
       }"
       :ripple="false"
       @mousedown="(e: MouseEvent) => onDragElementStart(e, module)"
@@ -563,7 +569,7 @@ onUnmounted(() => {
 .patch-window {
   position: relative;
   cursor: default;
-  border: 1px solid white;
+  border: 1px solid;
   border-radius: 5px;
 }
 .patch-module {
@@ -571,7 +577,7 @@ onUnmounted(() => {
   cursor: pointer;
 }
 .patch-module.selected {
-  background-color: gray;
+  box-shadow: 0 0 5px 2px;
 }
 .button-container {
   width: 100%;

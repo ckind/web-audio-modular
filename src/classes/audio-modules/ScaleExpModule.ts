@@ -35,9 +35,11 @@ export default class ScaleExpModule extends AudioModule<ScaleExpModuleOptions> {
   updateOptions(options: Partial<ScaleExpModuleOptions>): void {
     if (options.min !== undefined) {
       this._scaleNode.min = options.min;
+      this._options.min = options.min;
     }
     if (options.max !== undefined) {
       this._scaleNode.max = options.max;
+      this._options.max = options.max;
     }
   }
 

@@ -202,9 +202,8 @@ const onGuiOptionsUpdated = (options: Record<string, any>) => {
 <style scoped>
 .audio-module {
   display: inline-block;
-  background-color: black;
   overflow: visible;
-  border: 1px solid #fff;
+  border: 1px solid;
 }
 .module-input-output {
   position: absolute;
