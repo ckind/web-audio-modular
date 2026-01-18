@@ -104,6 +104,10 @@ const openAddModuleDialog = () => {
   showAddModuleDialog.value = true;
 };
 
+const showHelp = (moduleType: string) => {
+  console.log(`Help requested for module type: ${moduleType}`);
+}
+
 const searchTerm = ref("");
 
 const filteredModules = computed(() => {
@@ -145,7 +149,9 @@ const groupedModules = computed(() => {
   return order.map((category) => ({ category, modules: buckets[category] }));
 });
 
-const addModuleDialogWidth = computed(() => Math.max(window.innerWidth * 0.35, 400));
+const addModuleDialogWidth = computed(() =>
+  Math.max(window.innerWidth * 0.35, 400),
+);
 </script>
 
 <template>
@@ -166,7 +172,7 @@ const addModuleDialogWidth = computed(() => Math.max(window.innerWidth * 0.35, 4
   <v-dialog
     v-model="showAddModuleDialog"
     :width="addModuleDialogWidth"
-    height="75vh"
+    height="85vh"
     scrollable
   >
     <v-card>
@@ -236,6 +242,9 @@ const addModuleDialogWidth = computed(() => Math.max(window.innerWidth * 0.35, 4
               class="cursor-pointer"
             >
               <v-list-item-title>{{ module.title }}</v-list-item-title>
+              <template #append>
+                <v-icon @click.stop="showHelp(module.type)" size="small" class="text-secondary">mdi-help-circle-outline</v-icon>
+              </template>
             </v-list-item>
           </div>
 
