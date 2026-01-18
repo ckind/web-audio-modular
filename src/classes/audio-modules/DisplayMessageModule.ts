@@ -32,7 +32,6 @@ export default class DisplayMessageModule extends AudioModule<DisplayMessageModu
 
   messageCallback(time: number, message: any) {
     if (this.updateUIInstanceOptions) {
-      console.log('received message: ', message);
       this.updateUIInstanceOptions({ message });
     }
   }

@@ -49,6 +49,13 @@ export default class ClockModule extends AudioModule<ClockModuleOptions> {
     if (options.bpm !== undefined) {
       this._options.bpm = options.bpm;
       this._intervalSeconds = 60 / this._options.bpm;
+      // rescheduled repeated event
+      // todo: sample accurate way to do this?
+      Tone.getTransport().clear(this._eventId);
+      this._eventId = Tone.getTransport().scheduleRepeat(
+        (time: number) => this._clockCallback(time),
+        this._intervalSeconds,
+      );
     }
   }
 
