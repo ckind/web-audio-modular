@@ -501,8 +501,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <v-btn class="mx-2" @click="savePatch">Save Patch</v-btn>
-  <v-btn class="mx-2" @click="loadPatch">Load Patch</v-btn>
+  <div class="d-flex justify-center mb-2" :style="{ width: width + 'px' }">
+    <v-btn class="mx-2" @click="savePatch">Save Patch</v-btn>
+    <v-btn class="mx-2" @click="loadPatch">Load Patch</v-btn>
+  </div>
   <div
     ref="patch-window"
     class="patch-window"
@@ -575,5 +577,8 @@ onUnmounted(() => {
 }
 .patch-module.selected {
   background-color: gray;
+}
+.button-container {
+  width: 100%;
 }
 </style>
