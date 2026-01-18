@@ -8,10 +8,12 @@ export type AudioModuleType =
   | "clock"
   | "logger"
   | "scale"
+  | "scale-exp"
   | "message-to-signal"
   | "sequence"
   | "slider"
-  | "display-message";
+  | "display-message"
+  | "filter";
 
 export type ModuleId = string;
 

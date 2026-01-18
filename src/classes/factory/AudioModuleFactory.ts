@@ -1,7 +1,7 @@
 import SpeakerOutputModule from "@/classes/audio-modules/SpeakerOutputModule";
 import OscillatorModule from "@/classes/audio-modules/OscillatorModule";
 import GainModule from "@/classes/audio-modules/GainModule";
-import type { AudioModuleType, IAudioModule, UpdateUIStateCallback } from "@/classes/audio-modules/AudioModule";
+import type { AudioModuleType, IAudioModule } from "@/classes/audio-modules/AudioModule";
 import ClockModule from "@/classes/audio-modules/ClockModule";
 import LoggerModule from "@/classes/audio-modules/LoggerModule";
 import ScaleModule from "@/classes/audio-modules/ScaleModule";
@@ -9,6 +9,8 @@ import MessageToSignalModule from "@/classes/audio-modules/MessageToSignalModule
 import SequenceModule from "@/classes/audio-modules/SequenceModule";
 import SliderModule from "@/classes/audio-modules/SliderModule";
 import DisplayMessageModule from "@/classes/audio-modules/DisplayMessageModule";
+import FilterModule from "@/classes/audio-modules/FilterModule";
+import ScaleExpModule from "@/classes/audio-modules/ScaleExpModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -28,6 +30,8 @@ export function createAudioModule(
       return new LoggerModule(id, options);
     case "scale":
       return new ScaleModule(id, options);
+    case "scale-exp":
+      return new ScaleExpModule(id, options);
     case "message-to-signal":
       return new MessageToSignalModule(id, options);
     case "sequence":
@@ -36,6 +40,8 @@ export function createAudioModule(
       return new SliderModule(id, options);
     case "display-message":
       return new DisplayMessageModule(id, options);
+    case "filter":
+      return new FilterModule(id, options);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }

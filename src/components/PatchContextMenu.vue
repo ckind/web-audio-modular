@@ -24,6 +24,7 @@ const availableModules = [
   { title: "clock", type: "clock" },
   { title: "logger", type: "logger" },
   { title: "scale", type: "scale" },
+  { title: "scale-exp", type: "scale-exp" },
   { title: "message-to-signal", type: "message-to-signal" },
   { title: "sequence", type: "sequence" },
   { title: "slider", type: "slider", GUIComponent: "SliderModule" },
@@ -32,6 +33,7 @@ const availableModules = [
     type: "display-message",
     GUIComponent: "DisplayMessageModule",
   },
+  { title: "filter", type: "filter" },
 ];
 
 const addModule = (moduleType: string, GUIComponent?: string) => {
