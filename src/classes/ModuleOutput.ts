@@ -1,14 +1,15 @@
 import ModuleInput, { type IModuleInput } from "@/classes/ModuleInput";
 import MessageOutputNode from "@/classes/MessageOutputNode";
 import MessageInputNode from "@/classes/MessageInputNode";
+import type { ConnectionType } from "@/types/connectionTypes"
 import * as Tone from "tone";
 
 export type ModuleOutputNode = Tone.ToneAudioNode | MessageOutputNode;
-export type ModuleOutputType = "signal" | "message-bus";
 
 export interface IModuleOutput {
   name: string;
   node: ModuleOutputNode;
+  type: ConnectionType;
   connect(destination: IModuleInput): void;
   disconnect(destination?: IModuleInput): void;
 }
@@ -22,13 +23,13 @@ export default class ModuleOutput implements IModuleOutput {
     this.name = name;
   }
 
-  get type(): ModuleOutputType {
+  get type(): ConnectionType {
     if (this.node instanceof Tone.ToneAudioNode) {
       return "signal";
     } else if (this.node instanceof MessageOutputNode) {
       return "message-bus";
     } else {
-      throw new Error("Unknown module output node type");
+      throw new Error("unknown connection type");
     }
   }
 

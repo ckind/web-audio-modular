@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type PropType, onUnmounted } from "vue";
-import type { Position } from "@/types/patchTypes";
+import type { Position } from "@/types/uIInstanceTypes";
 
 const props = defineProps({
   startPosition: {

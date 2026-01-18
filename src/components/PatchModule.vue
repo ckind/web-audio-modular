@@ -2,9 +2,9 @@
 import { computed, ref, type PropType, watch } from "vue";
 import {
   type ModuleInstance,
-  type InputInstance,
-  type OutputInstance,
-} from "@/types/patchTypes";
+  type ConnectionInputInstance,
+  type ConnectionOutputInstance,
+} from "@/types/uIInstanceTypes";
 import useDynamicSize from "@/composables/useDynamicSize";
 import PatchModuleInput from "@/components/PatchModuleInput.vue";
 import {
@@ -49,7 +49,7 @@ const inputs = computed(() => {
         moduleDisplayWidth.value,
         moduleDisplayHeight.value,
       ),
-    } as InputInstance;
+    } as ConnectionInputInstance;
   });
 
   emit("inputs-updated", newInputs);
@@ -69,7 +69,7 @@ const outputs = computed(() => {
           moduleDisplayWidth.value,
           moduleDisplayHeight.value,
         ),
-      } as OutputInstance;
+      } as ConnectionOutputInstance;
     },
   );
 
@@ -78,11 +78,11 @@ const outputs = computed(() => {
   return newOutputs;
 });
 
-const beginPatching = (outputInstance: OutputInstance) => {
+const beginPatching = (outputInstance: ConnectionOutputInstance) => {
   emit("begin-patching", outputInstance);
 };
 
-const finishPatching = (inputInstance: InputInstance) => {
+const finishPatching = (inputInstance: ConnectionInputInstance) => {
   emit("finish-patching", inputInstance);
 };
 

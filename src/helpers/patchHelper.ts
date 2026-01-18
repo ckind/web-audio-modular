@@ -1,4 +1,4 @@
-import type { ConnectionInstance, ModuleInstance, PatchGraph } from "@/types/patchTypes";
+import type { ConnectionInstance, ModuleInstance, PatchGraph } from "@/types/uIInstanceTypes";
 
 export const computeInputPosition = (
   moduleInstance: ModuleInstance,

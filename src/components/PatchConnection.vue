@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type PropType, onUnmounted } from "vue";
-import type { ConnectionInstance } from "@/types/patchTypes";
+import type { ConnectionInstance } from "@/types/uIInstanceTypes";
 import PatchCable from "@/components/PatchCable.vue";
 
 const props = defineProps({

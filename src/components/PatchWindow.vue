@@ -9,9 +9,9 @@ import type {
   PatchCableInstance,
   ModuleInstance,
   ConnectionInstance,
-  InputInstance,
-  OutputInstance,
-} from "@/types/patchTypes";
+  ConnectionInputInstance,
+  ConnectionOutputInstance,
+} from "@/types/uIInstanceTypes";
 import PatchContextMenu from "@/components/PatchContextMenu.vue";
 import type { AudioModuleType } from "@/classes/audio-modules/AudioModule";
 import { createAudioModule } from "@/classes/factory/AudioModuleFactory";
@@ -81,7 +81,7 @@ const patchGraph = ref<PatchGraph>({
 });
 
 let currentPatchingModule: ModuleInstance | null = null;
-let currentPatchingOutput: OutputInstance | null = null;
+let currentPatchingOutput: ConnectionOutputInstance | null = null;
 let abortPatchingController: AbortController | null = null;
 let abortPatchingSignal: AbortSignal | null = null;
 // todo: multiple selected modules and connections
@@ -204,7 +204,7 @@ const clearSelection = () => {
 
 const isConnected = (
   moduleInstance: ModuleInstance,
-  output: OutputInstance,
+  output: ConnectionOutputInstance,
 ): boolean => {
   return patchGraph.value.connections.some(
     (c) =>
@@ -215,7 +215,7 @@ const isConnected = (
 
 const onBeginPatching = (
   moduleInstance: ModuleInstance,
-  outputInstance: OutputInstance,
+  outputInstance: ConnectionOutputInstance,
 ) => {
   console.log("Begin patching from output:", outputInstance);
   if (isConnected(moduleInstance, outputInstance)) {
@@ -260,7 +260,7 @@ const cancelPatching = () => {
 
 const onFinishPatching = (
   moduleInstance: ModuleInstance,
-  inputInstance: InputInstance,
+  inputInstance: ConnectionInputInstance,
 ) => {
   console.log("Finish patching to input:", inputInstance);
 
@@ -307,7 +307,7 @@ const onPatchingMouseMove = (deltaX: number, deltaY: number) => {
   }
 };
 
-const onModuleInputsUpdated = (moduleId: string, inputs: InputInstance[]) => {
+const onModuleInputsUpdated = (moduleId: string, inputs: ConnectionInputInstance[]) => {
   // update positions of connections related to this module
   patchGraph.value.connections.forEach((connection) => {
     if (connection.to.moduleId === moduleId) {
@@ -323,7 +323,7 @@ const onModuleInputsUpdated = (moduleId: string, inputs: InputInstance[]) => {
 
 const onModuleOutputsUpdated = (
   moduleId: string,
-  outputs: OutputInstance[],
+  outputs: ConnectionOutputInstance[],
 ) => {
   // update positions of connections related to this module
   patchGraph.value.connections.forEach((connection) => {

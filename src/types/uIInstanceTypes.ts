@@ -1,4 +1,5 @@
 import { type ModuleId } from "@/classes/audio-modules/AudioModule";
+import type { ConnectionType } from "@/types/connectionTypes";
 
 export type Position = {
   x: number;
@@ -11,12 +12,12 @@ export type PatchCableInstance = {
   selected?: boolean;
 };
 
-export type InputInstance = {
+export type ConnectionInputInstance = {
   name: string;
   position: Position;
 };
 
-export type OutputInstance = {
+export type ConnectionOutputInstance = {
   name: string;
   position: Position;
 };
@@ -35,11 +36,11 @@ export type ModuleInstance = {
 export type ConnectionInstance = {
   from: {
     moduleId: ModuleId;
-    output: OutputInstance;
+    output: ConnectionOutputInstance;
   };
   to: {
     moduleId: ModuleId;
-    input: InputInstance;
+    input: ConnectionInputInstance;
   };
   selected?: boolean;
 };
