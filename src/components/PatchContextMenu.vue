@@ -205,7 +205,7 @@ const addModuleDialogWidth = computed(() => Math.max(window.innerWidth * 0.35, 4
 
       <v-card-text>
         <v-list>
-          <template
+          <div
             v-for="(group, groupIndex) in groupedModules"
             :key="group.category"
           >
@@ -229,15 +229,15 @@ const addModuleDialogWidth = computed(() => Math.max(window.innerWidth * 0.35, 4
             </div>
 
             <v-list-item
-              v-for="(module, index) in group.modules"
-              :key="`${group.category}-${index}`"
-              :value="index"
+              v-for="module in group.modules"
+              :key="module.type"
+              :value="module.type"
               @click="addModule(module.type, module.GUIComponent)"
               class="cursor-pointer"
             >
               <v-list-item-title>{{ module.title }}</v-list-item-title>
             </v-list-item>
-          </template>
+          </div>
 
           <v-list-item v-if="filteredModules.length === 0" disabled>
             <v-list-item-title>No modules found</v-list-item-title>
