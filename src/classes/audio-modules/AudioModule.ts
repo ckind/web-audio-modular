@@ -9,7 +9,8 @@ export type AudioModuleType =
   | "logger"
   | "scale"
   | "message-to-signal"
-  | "sequence";
+  | "sequence"
+  | "slider";
 
 export type ModuleId = string;
 

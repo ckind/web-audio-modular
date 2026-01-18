@@ -6,7 +6,8 @@ import ClockModule from "@/classes/audio-modules/ClockModule";
 import LoggerModule from "@/classes/audio-modules/LoggerModule";
 import ScaleModule from "@/classes/audio-modules/ScaleModule";
 import MessageToSignalModule from "@/classes/audio-modules/MessageToSignalModule";
-import SequenceModule from "../audio-modules/SequenceModule";
+import SequenceModule from "@/classes/audio-modules/SequenceModule";
+import SliderModule from "@/classes/audio-modules/SliderModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -30,6 +31,8 @@ export function createAudioModule(
       return new MessageToSignalModule(id, options);
     case "sequence":
       return new SequenceModule(id, options);
+    case "slider":
+      return new SliderModule(id, options);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }

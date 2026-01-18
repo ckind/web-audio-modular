@@ -26,10 +26,11 @@ const availableModules = [
   { title: "scale", type: "scale" },
   { title: "message-to-signal", type: "message-to-signal" },
   { title: "sequence", type: "sequence" },
+  { title: "slider", type: "slider", GUIComponent: "SliderModule" },
 ];
 
-const addModule = (moduleType: string) => {
-  emit("add-module", moduleType);
+const addModule = (moduleType: string, GUIComponent?: string) => {
+  emit("add-module", moduleType, GUIComponent);
 };
 </script>
 
@@ -54,7 +55,7 @@ const addModule = (moduleType: string) => {
             v-for="(module, index) in availableModules"
             :key="index"
             :value="index"
-            @click="addModule(module.type)"
+            @click="addModule(module.type, module.GUIComponent)"
           >
             <v-list-item-title>{{ module.title }}</v-list-item-title>
           </v-list-item>

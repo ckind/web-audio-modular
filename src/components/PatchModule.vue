@@ -11,6 +11,9 @@ import {
   computeInputPosition,
   computeOutputPosition,
 } from "@/helpers/patchHelper.ts";
+import useGUIComponents from "@/composables/useGUIComponents";
+
+const guiComponents = useGUIComponents();
 
 const BORDER_SIZE = 1;
 const emit = defineEmits([
@@ -112,6 +115,10 @@ watch(
   },
   { deep: true },
 );
+
+const onGuiOptionsUpdated = (options: Record<string, any>) => {
+  emit("options-updated", options);
+};
 </script>
 
 <template>
@@ -128,17 +135,27 @@ watch(
     >
     </patch-module-input>
 
-    <div class="ma-2 d-inline-block">{{ moduleName }}</div>
+    <div v-if="!moduleInstance.guiComponent">
+      <div class="ma-2 d-inline-block">{{ moduleName }}</div>
 
-    <input
-      v-for="option in moduleOptions"
-      :key="option.name"
-      :name="option.name"
-      type="text"
-      v-model.lazy="option.value"
-      @dblclick.stop=""
-      class="module-option-input mr-2 d-inline-block"
-    />
+      <input
+        v-for="option in moduleOptions"
+        :key="option.name"
+        :name="option.name"
+        type="text"
+        v-model.lazy="option.value"
+        @dblclick.stop=""
+        class="module-option-input mr-2 d-inline-block"
+      />
+    </div>
+
+    <component
+      v-if="moduleInstance.guiComponent"
+      class="ma-2 d-inline-block"
+      :is="guiComponents[moduleInstance.guiComponent]"
+      :options="moduleInstance.options"
+      @options-updated="onGuiOptionsUpdated"
+    ></component>
 
     <patch-module-output
       v-for="output in outputs"

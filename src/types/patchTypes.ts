@@ -29,6 +29,7 @@ export type ModuleInstance = {
   inputNames: string[];
   position: Position;
   selected?: boolean;
+  guiComponent?: string;
 };
 
 export type ConnectionInstance = {

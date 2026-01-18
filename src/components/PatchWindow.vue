@@ -45,19 +45,24 @@ function test() {
 
   // osc.connect(ctx.destination);
 
-  // // const gain = new Tone.Gain(1);
+
+  ///////////////////////////////////
+
+
   // const osc = new Tone.Oscillator(220).start();
   // const src1 = new Tone.Signal(220);
   // const src2 = new Tone.Signal(220);
 
   // src1.connect(osc.frequency);
-  // src2.connect(osc.frequency);
+  // src2.connect(src1);
+
+  // console.log(osc.frequency.value);
 
   // osc.toDestination();
 
   // window.setTimeout(() => {
   //   src1.disconnect(osc.frequency);
-  //   src2.disconnect(osc.frequency);
+  //   src2.disconnect(src1);
   // }, 2000);
 
   // window.setTimeout(() => {
@@ -65,7 +70,6 @@ function test() {
   //   console.log("Oscillator stopped");
   // }, 4000);
 
-  // const signal = new Tone.Signal(220).connect(gain).connect(osc.frequency);
 }
 
 useToneAutoResume(test);
@@ -124,12 +128,13 @@ const onGraphContextMenu = (e: MouseEvent) => {
   showContextMenu.value = true;
 };
 
-const addModule = (moduleType: AudioModuleType) => {
+const addModule = (moduleType: AudioModuleType, guiComponent?: string) => {
   const module = createAudioModule(moduleType, crypto.randomUUID());
   patcher.addModule(module);
   patchGraph.value.modules.push({
     moduleId: module.id,
     displayName: module.type,
+    guiComponent: guiComponent,
     options: module.options,
     outputNames: module.outputs.map((o) => o.name),
     inputNames: module.inputs.map((i) => i.name),
