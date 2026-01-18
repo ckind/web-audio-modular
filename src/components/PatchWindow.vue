@@ -500,6 +500,7 @@ onUnmounted(() => {
       </v-card-actions>
     </v-card>
   </v-dialog>
+
   <div
     ref="patch-window"
     class="patch-window"
@@ -564,7 +565,6 @@ onUnmounted(() => {
   cursor: default;
   border: 1px solid white;
   border-radius: 5px;
-  overflow: auto;
 }
 .patch-module {
   position: absolute;
