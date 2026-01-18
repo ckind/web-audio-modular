@@ -10,7 +10,8 @@ export type AudioModuleType =
   | "scale"
   | "message-to-signal"
   | "sequence"
-  | "slider";
+  | "slider"
+  | "display-message";
 
 export type ModuleId = string;
 
@@ -23,7 +24,10 @@ export interface IAudioModule {
 
   updateOptions(options: Partial<any>): void;
   dispose(): void;
+  updateUIInstanceOptions?: UpdateUIStateCallback
 }
+
+export type UpdateUIStateCallback = (data: any) => void;
 
 export default abstract class AudioModule<TModuleOptions> implements IAudioModule {
   protected _inputs: IModuleInput[] = [];
@@ -31,8 +35,10 @@ export default abstract class AudioModule<TModuleOptions> implements IAudioModul
   protected _options: TModuleOptions;
 
   public id: ModuleId;
+  // optional callback used to send data to the view model
+  public updateUIInstanceOptions?: UpdateUIStateCallback;
 
-  constructor(id: ModuleId, options: TModuleOptions) {
+  constructor(id: ModuleId, options: TModuleOptions)  {
     this.id = id;
     this._options = options;
   }

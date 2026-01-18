@@ -16,7 +16,7 @@ export default class LoggerModule extends AudioModule<LoggerModuleOptions> {
     super(id, options ?? getDefaultOptions());
 
     this._inputs = [
-      // new ModuleInput("message-input", new MessageInputNode(ctx, logMessage)),
+      new ModuleInput("message-input", new MessageInputNode(logMessage)),
     ];
   }
 

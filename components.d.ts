@@ -12,6 +12,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AudioModule: typeof import('./src/components/AudioModule.vue')['default']
+    DisplayMessageModule: typeof import('./src/components/gui-module-components/DisplayMessageModule.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     PatchCable: typeof import('./src/components/PatchCable.vue')['default']
     PatchConnection: typeof import('./src/components/PatchConnection.vue')['default']

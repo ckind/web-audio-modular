@@ -21,60 +21,42 @@ import Patcher from "@/classes/Patcher";
 import * as Tone from "tone";
 
 function test() {
-
   // const ctx = new AudioContext();
   // const osc = ctx.createOscillator();
   // osc.frequency.value = 220;
   // osc.start();
-
   // const src = ctx.createConstantSource();
   // src.offset.value = 220;
   // src.start();
-
   // src.connect(osc.frequency);
-
   // window.setTimeout(() => {
   //   src.disconnect(osc.frequency);
   //   console.log("Source disconnected from oscillator frequency");
   // }, 2000);
-
   // window.setTimeout(() => {
   //   osc.stop();
   //   console.log("Oscillator stopped");
   // }, 4000);
-
   // osc.connect(ctx.destination);
-
-
   ///////////////////////////////////
-
-
   // const osc = new Tone.Oscillator(220).start();
   // const src1 = new Tone.Signal(220);
   // const src2 = new Tone.Signal(220);
-
   // src1.connect(osc.frequency);
   // src2.connect(src1);
-
   // console.log(osc.frequency.value);
-
   // osc.toDestination();
-
   // window.setTimeout(() => {
   //   src1.disconnect(osc.frequency);
   //   src2.disconnect(src1);
   // }, 2000);
-
   // window.setTimeout(() => {
   //   osc.stop();
   //   console.log("Oscillator stopped");
   // }, 4000);
-
 }
 
 useToneAutoResume(test);
-
-const patcher = new Patcher();
 
 let patchWindowPageX = 0;
 let patchWindowPageY = 0;
@@ -90,6 +72,9 @@ defineProps({
   },
 });
 
+// pather is used to manage internal audio modules and connections
+const patcher = new Patcher();
+// patchGraph is used to manage the state of the UI representation of the patch
 const patchGraph = ref<PatchGraph>({
   modules: [],
   connections: [],
@@ -130,8 +115,7 @@ const onGraphContextMenu = (e: MouseEvent) => {
 
 const addModule = (moduleType: AudioModuleType, guiComponent?: string) => {
   const module = createAudioModule(moduleType, crypto.randomUUID());
-  patcher.addModule(module);
-  patchGraph.value.modules.push({
+  const moduleInstance = {
     moduleId: module.id,
     displayName: module.type,
     guiComponent: guiComponent,
@@ -142,7 +126,15 @@ const addModule = (moduleType: AudioModuleType, guiComponent?: string) => {
       x: contextMenuX.value - patchWindowPageX,
       y: contextMenuY.value - patchWindowPageY,
     },
-  });
+  };
+
+  patcher.addModule(module);
+  patchGraph.value.modules.push(moduleInstance);
+
+  module.updateUIInstanceOptions = (data: any) => {
+    const i = patchGraph.value.modules.find(m => m.moduleId == module.id);
+    i!.options = { ...moduleInstance.options, ...data };
+  };
 
   showContextMenu.value = false;
 };

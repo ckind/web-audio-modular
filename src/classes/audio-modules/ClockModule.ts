@@ -41,7 +41,7 @@ export default class ClockModule extends AudioModule<ClockModuleOptions> {
 
   private _clockCallback(time: number) {
     if (this._running) {
-      this._messageOutput.scheduleMessage(time, Math.random() * 1000);
+      this._messageOutput.scheduleMessage(time, "tick");
     }
   }
 

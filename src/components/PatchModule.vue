@@ -151,7 +151,7 @@ const onGuiOptionsUpdated = (options: Record<string, any>) => {
 
     <component
       v-if="moduleInstance.guiComponent"
-      class="ma-2 d-inline-block"
+      class="ma-2"
       :is="guiComponents[moduleInstance.guiComponent]"
       :options="moduleInstance.options"
       @options-updated="onGuiOptionsUpdated"

@@ -11,7 +11,7 @@ type SliderModuleOptions = {
 };
 
 const getDefaultOptions = (): SliderModuleOptions => ({
-  min: 0,
+  min: -1,
   max: 1,
   value: 0,
 });

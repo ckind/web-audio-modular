@@ -27,6 +27,11 @@ const availableModules = [
   { title: "message-to-signal", type: "message-to-signal" },
   { title: "sequence", type: "sequence" },
   { title: "slider", type: "slider", GUIComponent: "SliderModule" },
+  {
+    title: "display-message",
+    type: "display-message",
+    GUIComponent: "DisplayMessageModule",
+  },
 ];
 
 const addModule = (moduleType: string, GUIComponent?: string) => {
