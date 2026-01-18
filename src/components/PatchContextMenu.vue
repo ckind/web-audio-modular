@@ -144,6 +144,8 @@ const groupedModules = computed(() => {
 
   return order.map((category) => ({ category, modules: buckets[category] }));
 });
+
+const addModuleDialogWidth = computed(() => Math.max(window.innerWidth * 0.35, 400));
 </script>
 
 <template>
@@ -163,7 +165,7 @@ const groupedModules = computed(() => {
 
   <v-dialog
     v-model="showAddModuleDialog"
-    max-width="400"
+    :width="addModuleDialogWidth"
     height="75vh"
     scrollable
   >
