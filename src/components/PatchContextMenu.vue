@@ -111,7 +111,7 @@ const showHelp = (moduleType: string) => {
 const searchTerm = ref("");
 
 const filteredModules = computed(() => {
-  const needle = searchTerm.value.trim().toLowerCase();
+  const needle = searchTerm.value?.trim().toLowerCase() ?? "";
   const categories = selectedCategories.value;
 
   return availableModules.filter((module) => {
