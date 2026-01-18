@@ -150,7 +150,7 @@ const groupedModules = computed(() => {
 });
 
 const addModuleDialogWidth = computed(() =>
-  Math.max(window.innerWidth * 0.35, 400),
+  Math.max(window.innerWidth * 0.4, 400),
 );
 </script>
 
