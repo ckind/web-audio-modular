@@ -120,8 +120,8 @@ const addModule = (moduleType: AudioModuleType, guiComponent?: string) => {
     displayName: module.type,
     guiComponent: guiComponent,
     options: module.options,
-    outputNames: module.outputs.map((o) => o.name),
-    inputNames: module.inputs.map((i) => i.name),
+    outputs: module.outputs.map((o) => { return { name: o.name, type: o.type }}),
+    inputs: module.inputs.map((i) => { return { name: i.name, type: i.type }}),
     position: {
       x: contextMenuX.value - patchWindowPageX,
       y: contextMenuY.value - patchWindowPageY,
@@ -233,6 +233,7 @@ const onBeginPatching = (
       x: outputInstance.position.x,
       y: outputInstance.position.y,
     },
+    connectionType: outputInstance.type
   };
 
   currentPatchingOutput = outputInstance;
@@ -467,6 +468,7 @@ onUnmounted(() => {
         v-if="inProgressConnection != null"
         :startPosition="inProgressConnection.from"
         :endPosition="inProgressConnection.to"
+        :connectionType="inProgressConnection.connectionType"
       />
 
       <!-- prettier-ignore -->

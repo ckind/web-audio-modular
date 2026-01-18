@@ -23,6 +23,7 @@ const connectionClick = () => {
     :startPosition="connection.from.output.position"
     :endPosition="connection.to.input.position"
     :selected="connection.selected"
+    :connectionType="connection.from.output.type"
     @cable-selected="connectionClick"
   />
 </template>

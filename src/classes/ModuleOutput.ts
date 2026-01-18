@@ -1,4 +1,4 @@
-import ModuleInput, { type IModuleInput } from "@/classes/ModuleInput";
+import { type IModuleInput } from "@/classes/ModuleInput";
 import MessageOutputNode from "@/classes/MessageOutputNode";
 import MessageInputNode from "@/classes/MessageInputNode";
 import type { ConnectionType } from "@/types/connectionTypes"

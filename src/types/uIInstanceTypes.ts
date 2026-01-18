@@ -9,25 +9,38 @@ export type Position = {
 export type PatchCableInstance = {
   from: Position;
   to: Position;
+  connectionType: ConnectionType;
   selected?: boolean;
 };
 
 export type ConnectionInputInstance = {
   name: string;
+  type: ConnectionType;
   position: Position;
+};
+
+export type ModuleInputInstance = {
+  name: string;
+  type: ConnectionType;
 };
 
 export type ConnectionOutputInstance = {
   name: string;
+  type: ConnectionType;
   position: Position;
+};
+
+export type ModuleOutputInstance = {
+  name: string;
+  type: ConnectionType;
 };
 
 export type ModuleInstance = {
   moduleId: ModuleId;
   displayName: string;
   options: Record<string, any>;
-  outputNames: string[];
-  inputNames: string[];
+  outputs: ModuleOutputInstance[];
+  inputs: ModuleInputInstance[];
   position: Position;
   selected?: boolean;
   guiComponent?: string;

@@ -39,13 +39,14 @@ const moduleName = computed(() => {
 });
 
 const inputs = computed(() => {
-  const newInputs = props.moduleInstance.inputNames.map((inputName, index) => {
+  const newInputs = props.moduleInstance.inputs.map((i, index) => {
     return {
-      name: inputName,
+      name: i.name,
+      type: i.type,
       position: computeInputPosition(
         props.moduleInstance,
         index,
-        props.moduleInstance.inputNames.length,
+        props.moduleInstance.inputs.length,
         moduleDisplayWidth.value,
         moduleDisplayHeight.value,
       ),
@@ -58,20 +59,19 @@ const inputs = computed(() => {
 });
 
 const outputs = computed(() => {
-  const newOutputs = props.moduleInstance.outputNames.map(
-    (outputName, index) => {
-      return {
-        name: outputName,
-        position: computeOutputPosition(
-          props.moduleInstance,
-          index,
-          props.moduleInstance.outputNames.length,
-          moduleDisplayWidth.value,
-          moduleDisplayHeight.value,
-        ),
-      } as ConnectionOutputInstance;
-    },
-  );
+  const newOutputs = props.moduleInstance.outputs.map((o, index) => {
+    return {
+      name: o.name,
+      type: o.type,
+      position: computeOutputPosition(
+        props.moduleInstance,
+        index,
+        props.moduleInstance.outputs.length,
+        moduleDisplayWidth.value,
+        moduleDisplayHeight.value,
+      ),
+    } as ConnectionOutputInstance;
+  });
 
   emit("outputs-updated", newOutputs);
 
@@ -131,6 +131,7 @@ const onGuiOptionsUpdated = (options: Record<string, any>) => {
         left: `${input.position.x - moduleInstance.position.x - BORDER_SIZE}px`,
         top: `${input.position.y - moduleInstance.position.y - BORDER_SIZE}px`,
       }"
+      :type="input.type"
       class="module-input-output"
     >
     </patch-module-input>
@@ -167,6 +168,7 @@ const onGuiOptionsUpdated = (options: Record<string, any>) => {
         }px`,
         top: `${output.position.y - moduleInstance.position.y - BORDER_SIZE}px`,
       }"
+      :type="output.type"
       class="module-input-output"
     >
     </patch-module-output>
