@@ -134,6 +134,8 @@ const onGuiOptionsUpdated = (options: Record<string, any>) => {
         <patch-module-input
           v-bind="props"
           :key="input.name"
+          @mousedown.stop
+          @touchstart.stop
           @click.stop="finishPatching(input)"
           :style="{
             left: `${input.position.x - moduleInstance.position.x - BORDER_SIZE}px`,
@@ -179,6 +181,8 @@ const onGuiOptionsUpdated = (options: Record<string, any>) => {
         <patch-module-output
           v-bind="props"
           :key="output.name"
+          @mousedown.stop
+          @touchstart.stop
           @click.stop="beginPatching(output)"
           :style="{
             left: `${
