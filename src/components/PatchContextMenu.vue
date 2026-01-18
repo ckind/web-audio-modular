@@ -35,6 +35,11 @@ const availableModules = [
   },
   { title: "filter", type: "filter" },
   { title: "convolution-reverb", type: "convolution-reverb" },
+  {
+    title: "button-trig",
+    type: "button-trig",
+    GUIComponent: "ButtonTrigModule",
+  },
 ];
 
 const addModule = (moduleType: string, GUIComponent?: string) => {

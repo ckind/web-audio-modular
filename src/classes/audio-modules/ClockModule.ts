@@ -3,7 +3,8 @@ import type { AudioModuleType } from "@/classes/audio-modules/AudioModule";
 import MessageInputNode from "@/classes/MessageInputNode";
 import MessageOutputNode from "@/classes/MessageOutputNode";
 import * as Tone from "tone";
-import ModuleOutput from "../ModuleOutput";
+import ModuleOutput from "@/classes/ModuleOutput";
+import ModuleInput from "@/classes/ModuleInput";
 
 type ClockModuleOptions = {
   bpm: number;
@@ -31,8 +32,16 @@ export default class ClockModule extends AudioModule<ClockModuleOptions> {
 
     this._messageOutput = new MessageOutputNode();
     this._outputs = [new ModuleOutput("clock-output", this._messageOutput)];
+    this._inputs = [
+      new ModuleInput(
+        "clock-start-stop",
+        new MessageInputNode((time, data) => {
+          this.toggleRunning(time, data);
+        }),
+      ),
+    ];
 
-    this.start();
+    this._running = true;
   }
 
   get type(): AudioModuleType {
@@ -59,12 +68,8 @@ export default class ClockModule extends AudioModule<ClockModuleOptions> {
     }
   }
 
-  start(time?: number) {
-    this._running = true;
-  }
-
-  stop(time?: number) {
-    this._running = false;
+  toggleRunning(time: number, _: any): void {
+    this._running = !this._running;
   }
 
   dispose(): void {

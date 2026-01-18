@@ -12,6 +12,7 @@ import DisplayMessageModule from "@/classes/audio-modules/DisplayMessageModule";
 import FilterModule from "@/classes/audio-modules/FilterModule";
 import ScaleExpModule from "@/classes/audio-modules/ScaleExpModule";
 import ConvolutionReverbModule from "../audio-modules/ConvolutionReverbModule";
+import ButtonTrigModule from "@/classes/audio-modules/ButtonTrigModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -45,6 +46,8 @@ export function createAudioModule(
       return new FilterModule(id, options);
     case "convolution-reverb":
       return new ConvolutionReverbModule(id, options);
+    case "button-trig":
+      return new ButtonTrigModule(id, options);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }

@@ -14,7 +14,8 @@ export type AudioModuleType =
   | "slider"
   | "display-message"
   | "filter"
-  | "convolution-reverb";
+  | "convolution-reverb"
+  | "button-trig";
 
 export type ModuleId = string;
 
