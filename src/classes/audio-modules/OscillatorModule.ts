@@ -2,6 +2,7 @@ import AudioModule from "@/classes/audio-modules/AudioModule";
 import type { AudioModuleType } from "@/classes/audio-modules/AudioModule";
 import ModuleInput from "@/classes/ModuleInput";
 import ModuleOutput from "@/classes/ModuleOutput";
+import MessageInputNode from "@/classes/MessageInputNode";
 import * as Tone from "tone";
 
 type OscillatorModuleOptions = {
@@ -37,6 +38,10 @@ export default class OscillatorModule extends AudioModule<OscillatorModuleOption
     // parameter isn't responsive after disconnecting all incoming signals from it
     this._inputs = [
       new ModuleInput("frequency-param", this._frequencySum),
+      new ModuleInput(
+        "osc-type",
+        new MessageInputNode(this.oscillatorTypeCallback.bind(this)),
+      ),
     ];
   }
 
@@ -44,8 +49,21 @@ export default class OscillatorModule extends AudioModule<OscillatorModuleOption
     return "oscillator";
   }
 
+  oscillatorTypeCallback(time: number, data: any) {
+    Tone.getTransport().schedule(() => {
+      // todo: validate type?
+      // todo: seems like tone/web audio api is not actually able to change
+      // the oscillator type at a-rate or k-rate
+      this._oscillatorNode.type = data;
+      this._options.type = data;
+    }, time);
+  }
+
   updateOptions(options: Partial<OscillatorModuleOptions>): void {
-    if (options.frequency !== undefined && options.frequency !== this._options.frequency) {
+    if (
+      options.frequency !== undefined &&
+      options.frequency !== this._options.frequency
+    ) {
       this._frequencySum.value = options.frequency;
       this._options.frequency = options.frequency;
     }
