@@ -120,8 +120,12 @@ const addModule = (moduleType: AudioModuleType, guiComponent?: string) => {
     displayName: module.type,
     guiComponent: guiComponent,
     options: module.options,
-    outputs: module.outputs.map((o) => { return { name: o.name, type: o.type }}),
-    inputs: module.inputs.map((i) => { return { name: i.name, type: i.type }}),
+    outputs: module.outputs.map((o) => {
+      return { name: o.name, type: o.type };
+    }),
+    inputs: module.inputs.map((i) => {
+      return { name: i.name, type: i.type };
+    }),
     position: {
       x: contextMenuX.value - patchWindowPageX,
       y: contextMenuY.value - patchWindowPageY,
@@ -132,7 +136,7 @@ const addModule = (moduleType: AudioModuleType, guiComponent?: string) => {
   patchGraph.value.modules.push(moduleInstance);
 
   module.updateUIInstanceOptions = (data: any) => {
-    const i = patchGraph.value.modules.find(m => m.moduleId == module.id);
+    const i = patchGraph.value.modules.find((m) => m.moduleId == module.id);
     i!.options = { ...moduleInstance.options, ...data };
   };
 
@@ -203,13 +207,22 @@ const clearSelection = () => {
 };
 
 const isConnected = (
-  moduleInstance: ModuleInstance,
-  output: ConnectionOutputInstance,
+  outputModule: ModuleInstance | null,
+  output: ConnectionOutputInstance | null,
+  inputModule: ModuleInstance | null,
+  input: ConnectionInputInstance | null,
 ): boolean => {
-  return patchGraph.value.connections.some(
-    (c) =>
-      c.from.output.name === output.name &&
-      c.from.moduleId === moduleInstance.moduleId,
+  if (!outputModule || !output || !inputModule || !input) return false;
+
+  return (
+    patchGraph.value.connections.find((c) => {
+      return (
+        c.from.output.name === output.name &&
+        c.from.moduleId === outputModule.moduleId &&
+        c.to.input.name === input.name &&
+        c.to.moduleId === inputModule.moduleId
+      );
+    }) != undefined
   );
 };
 
@@ -218,11 +231,6 @@ const onBeginPatching = (
   outputInstance: ConnectionOutputInstance,
 ) => {
   console.log("Begin patching from output:", outputInstance);
-  if (isConnected(moduleInstance, outputInstance)) {
-    // todo: allow multiple connections from the same output
-    console.warn("Output is already connected.");
-    return;
-  }
 
   inProgressConnection.value = {
     from: {
@@ -233,7 +241,7 @@ const onBeginPatching = (
       x: outputInstance.position.x,
       y: outputInstance.position.y,
     },
-    connectionType: outputInstance.type
+    connectionType: outputInstance.type,
   };
 
   currentPatchingOutput = outputInstance;
@@ -264,6 +272,20 @@ const onFinishPatching = (
   inputInstance: ConnectionInputInstance,
 ) => {
   console.log("Finish patching to input:", inputInstance);
+
+  if (
+    isConnected(
+      currentPatchingModule,
+      currentPatchingOutput,
+      moduleInstance,
+      inputInstance,
+    )
+  ) {
+    console.warn(
+      `${currentPatchingOutput?.name} is already connected to ${inputInstance.name}`,
+    );
+    return;
+  }
 
   stopMouseTracking();
 
@@ -308,7 +330,10 @@ const onPatchingMouseMove = (deltaX: number, deltaY: number) => {
   }
 };
 
-const onModuleInputsUpdated = (moduleId: string, inputs: ConnectionInputInstance[]) => {
+const onModuleInputsUpdated = (
+  moduleId: string,
+  inputs: ConnectionInputInstance[],
+) => {
   // update positions of connections related to this module
   patchGraph.value.connections.forEach((connection) => {
     if (connection.to.moduleId === moduleId) {
