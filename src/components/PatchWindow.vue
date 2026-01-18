@@ -18,42 +18,9 @@ import { createAudioModule } from "@/classes/factory/AudioModuleFactory";
 import useResizeObserver from "@/composables/useResizeObserver.ts";
 import useToneAutoResume from "@/composables/useToneAutoResume";
 import Patcher from "@/classes/Patcher";
-import * as Tone from "tone";
 
 function test() {
-  // const ctx = new AudioContext();
-  // const osc = ctx.createOscillator();
-  // osc.frequency.value = 220;
-  // osc.start();
-  // const src = ctx.createConstantSource();
-  // src.offset.value = 220;
-  // src.start();
-  // src.connect(osc.frequency);
-  // window.setTimeout(() => {
-  //   src.disconnect(osc.frequency);
-  //   console.log("Source disconnected from oscillator frequency");
-  // }, 2000);
-  // window.setTimeout(() => {
-  //   osc.stop();
-  //   console.log("Oscillator stopped");
-  // }, 4000);
-  // osc.connect(ctx.destination);
-  ///////////////////////////////////
-  // const osc = new Tone.Oscillator(220).start();
-  // const src1 = new Tone.Signal(220);
-  // const src2 = new Tone.Signal(220);
-  // src1.connect(osc.frequency);
-  // src2.connect(src1);
-  // console.log(osc.frequency.value);
-  // osc.toDestination();
-  // window.setTimeout(() => {
-  //   src1.disconnect(osc.frequency);
-  //   src2.disconnect(src1);
-  // }, 2000);
-  // window.setTimeout(() => {
-  //   osc.stop();
-  //   console.log("Oscillator stopped");
-  // }, 4000);
+
 }
 
 useToneAutoResume(test);
@@ -515,9 +482,7 @@ onUnmounted(() => {
   <div class="d-flex justify-center mb-2" :style="{ width: width + 'px' }">
     <v-btn class="mx-2" @click="savePatch">Save Patch</v-btn>
     <v-btn class="mx-2" @click="loadPatch">Load Patch</v-btn>
-    <v-btn class="mx-2" @click="showClearConfirm = true">
-      Clear Patch
-    </v-btn>
+    <v-btn class="mx-2" @click="showClearConfirm = true"> Clear Patch </v-btn>
   </div>
 
   <v-dialog v-model="showClearConfirm" max-width="360">
@@ -529,7 +494,9 @@ onUnmounted(() => {
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn variant="text" @click="showClearConfirm = false">Cancel</v-btn>
-        <v-btn color="error" variant="text" @click="confirmClearPatch">Continue</v-btn>
+        <v-btn color="error" variant="text" @click="confirmClearPatch"
+          >Continue</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
