@@ -19,6 +19,7 @@ import ButtonTrigModule from "@/classes/audio-modules/ButtonTrigModule";
 import NoiseModule from "@/classes/audio-modules/NoiseModule";
 import ADSREnvelopeModule from "@/classes/audio-modules/ADSREnvelopeModule";
 import MidiInputModule from "@/classes/audio-modules/MidiInputModule";
+import MidiCCToSignalModule from "@/classes/audio-modules/MidiCCToSignal";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -60,6 +61,8 @@ export function createAudioModule(
       return new ADSREnvelopeModule(id, options);
     case "midi-input":
       return new MidiInputModule(id, options);
+    case "midi-cc-to-signal":
+      return new MidiCCToSignalModule(id, options);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }

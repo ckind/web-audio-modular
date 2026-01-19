@@ -11,21 +11,18 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    AudioModule: typeof import('./src/components/AudioModule.vue')['default']
     ButtonTrigModule: typeof import('./src/components/gui-module-components/ButtonTrigModule.vue')['default']
     DisplayMessageModule: typeof import('./src/components/gui-module-components/DisplayMessageModule.vue')['default']
-    HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    MidiCCToSignal: typeof import('./src/components/gui-module-components/MidiCCToSignal.vue')['default']
     MidiInputModule: typeof import('./src/components/gui-module-components/MidiInputModule.vue')['default']
     PatchCable: typeof import('./src/components/PatchCable.vue')['default']
     PatchConnection: typeof import('./src/components/PatchConnection.vue')['default']
     PatchContextMenu: typeof import('./src/components/PatchContextMenu.vue')['default']
-    PatchGraph: typeof import('./src/components/PatchGraph.vue')['default']
     PatchModule: typeof import('./src/components/PatchModule.vue')['default']
     PatchModuleInput: typeof import('./src/components/PatchModuleInput.vue')['default']
     PatchModuleOptionsInput: typeof import('./src/components/PatchModuleOptionsInput.vue')['default']
     PatchModuleOutput: typeof import('./src/components/PatchModuleOutput.vue')['default']
     PatchWindow: typeof import('./src/components/PatchWindow.vue')['default']
     SliderModule: typeof import('./src/components/gui-module-components/SliderModule.vue')['default']
-    Test: typeof import('./src/components/test.vue')['default']
   }
 }

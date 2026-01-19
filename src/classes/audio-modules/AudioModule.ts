@@ -19,6 +19,7 @@ export type AudioModuleType =
   | "noise"
   | "adsr-envelope"
   | "midi-input"
+  | "midi-cc-to-signal"
   ;
 
 export type ModuleId = string;

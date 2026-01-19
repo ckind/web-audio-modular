@@ -16,15 +16,10 @@ import PatchContextMenu from "@/components/PatchContextMenu.vue";
 import type { AudioModuleType } from "@/classes/audio-modules/AudioModule";
 import { createAudioModule } from "@/classes/factory/AudioModuleFactory";
 import useResizeObserver from "@/composables/useResizeObserver.ts";
-import useToneAutoResume from "@/composables/useToneAutoResume";
 import Patcher from "@/classes/Patcher";
 import { useAppColors } from "@/store/appColors";
 
 const appColors = useAppColors();
-
-function test() {}
-
-useToneAutoResume(test);
 
 let patchWindowPageX = 0;
 let patchWindowPageY = 0;

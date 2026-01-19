@@ -99,6 +99,12 @@ const availableModules: ModuleDescriptor[] = [
     GUIComponent: "MidiInputModule",
     categories: ["midi", "message-bus"],
   },
+  {
+    title: "midi-cc-to-signal",
+    type: "midi-cc-to-signal",
+    GUIComponent: "MidiCCToSignal",
+    categories: ["midi", "signal"],
+  },
 ];
 
 const addModule = (moduleType: string, GUIComponent?: string) => {

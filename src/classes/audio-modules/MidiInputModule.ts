@@ -59,6 +59,7 @@ export default class MidiInputModule extends AudioModule<MidiInputModuleOptions>
   }
 
   onMidiMessage(event: MIDIMessageEvent) {
+    console.log("MIDI message received:", event.data);
     this._messageOutput.scheduleMessage(Tone.now(), event.data);
   }
 

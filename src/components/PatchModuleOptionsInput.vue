@@ -1,9 +1,16 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, } from "vue";
 
 const options = defineModel({
   type: Object,
   required: true,
+});
+
+const props = defineProps({
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const stringOptions = ref<Record<string, string>>({
@@ -40,6 +47,7 @@ watch(
 
 <template>
   <input
+    :disabled="disabled"
     v-for="(value, key) in stringOptions"
     :key="key"
     type="text"

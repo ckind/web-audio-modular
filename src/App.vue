@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import useResizeObserver from "@/composables/useResizeObserver";
 import { useAppColors } from "./store/appColors";
 import { useTheme } from "vuetify";
+import { useAudioSettings } from "@/store/audioSettings";
+import { init } from "@/toneInit";
 
 const theme = useTheme();
 const appColors = useAppColors();
@@ -30,6 +32,13 @@ useResizeObserver("patchWindowContainer", onContainerResize);
 
 const patchWindowWidth = ref(0);
 const patchWindowHeight = ref(0);
+
+onMounted(() => {
+  init(() => {
+    const audioSettings = useAudioSettings();
+    audioSettings.setInitialized(true);
+  });
+});
 </script>
 
 <template>
