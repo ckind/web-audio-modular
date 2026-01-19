@@ -51,16 +51,15 @@ class ScaleWorkletProcessor extends AudioWorkletProcessor {
 
     // assume only one input channel and output channel for now
     const inputChannel = input[0];
-    const outputChannel = output[0]
+    const outputChannel = output[0];
 
     if (!inputChannel || !outputChannel) return true;
 
     for (let i = 0; i < inputChannel.length; ++i) {
-      outputChannel[i] = scaleValue(inputChannel[i], inputMin, inputMax, outputMin, outputMax);
-    }
+      outputChannel[i] = scaleValue(inputChannel[i], inputMin, inputMax, outputMin, outputMax);    }
 
     return true;
   }
 }
 
-registerProcessor("scale-processor", ScaleWorkletProcessor);
+registerProcessor("scale-worklet-processor", ScaleWorkletProcessor);

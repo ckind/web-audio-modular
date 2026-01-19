@@ -42,16 +42,6 @@ const patchWindowHeight = ref(0);
 init(() => {
   const audioSettings = useAudioSettings();
   audioSettings.setInitialized(true);
-
-  // const scaleWorkletNode = new ScaleWorkletNode(Tone.getContext().rawContext, {
-  //   inputMin: -1,
-  //   inputMax: 1,
-  //   outputMin: -0.000001,
-  //   outputMax: 0.000001,
-  // });
-
-  // const testOsc = new Tone.Oscillator(440, "sine").start();
-  // testOsc.connect(scaleWorkletNode).toDestination();
 });
 </script>
 
