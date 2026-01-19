@@ -19,6 +19,14 @@ const getDefaultOptions = (): ADSRAmplitudeModuleOptions => ({
   release: 1,
 });
 
+const isNormalRange = (value: any): value is number => {
+  return typeof value === "number" && value >= 0 && value <= 1;
+};
+
+const isMidiRange = (value: any): value is number => {
+  return Number.isInteger(value) && value >= 0 && value <= 127;
+}
+
 export default class ADSRAmplitudeModule extends AudioModule<ADSRAmplitudeModuleOptions> {
   private _ampEnvNode: Tone.AmplitudeEnvelope;
 
@@ -42,7 +50,7 @@ export default class ADSRAmplitudeModule extends AudioModule<ADSRAmplitudeModule
       new ModuleInput(
         "trigger-release",
         new MessageInputNode(this.triggerReleaseCallback.bind(this)),
-      )
+      ),
     ];
   }
 
@@ -51,7 +59,17 @@ export default class ADSRAmplitudeModule extends AudioModule<ADSRAmplitudeModule
   }
 
   triggerAttackCallback(time: number, data: any) {
-    this._ampEnvNode.triggerAttack(time);
+    if (data !== undefined) {
+      if (isNormalRange(data)) {
+        this._ampEnvNode.triggerAttack(time, data);
+        return;
+      } else if (isMidiRange(data)) {
+        const normalizedValue = data / 127;
+        this._ampEnvNode.triggerAttack(time, normalizedValue);
+        return;
+      }
+    }
+    this._ampEnvNode.triggerAttack(time, data);
   }
 
   triggerReleaseCallback(time: number, data: any) {

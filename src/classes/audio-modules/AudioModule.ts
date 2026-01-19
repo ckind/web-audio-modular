@@ -55,7 +55,7 @@ export default abstract class AudioModule<TModuleOptions> implements IAudioModul
 
   // optional callback used to send options data back to the view model
   public updateUIInstanceOptions?: UpdateUIStateCallback;
-    // optional callback used to send outputs data back to the view model
+  // optional callback used to send outputs data back to the view model
   public updateUIInstanceOutputs?: UpdateUIStateCallback;
 
   constructor(id: ModuleId, options: TModuleOptions)  {

@@ -19,19 +19,17 @@ const getDefaultOptions = (): SplitModuleOptions => ({
 export default class SplitModule extends AudioModule<SplitModuleOptions> {
   private _delimiter: string;
   private _messageInputNode: MessageInputNode;
-  private _numOutputs: number = 2;
   private _messageOutputNodes: MessageOutputNode[] = [];
 
   constructor(id: string, options?: SplitModuleOptions) {
     super(id, options ?? getDefaultOptions());
 
     this._delimiter = this._options.delimiter;
-    this._numOutputs = this._options.numOutputs;
     this._messageInputNode = new MessageInputNode(
       this._messageInputCallback.bind(this),
     );
     this._messageOutputNodes = Array.from(
-      { length: this._numOutputs },
+      { length: this._options.numOutputs },
       () => new MessageOutputNode(),
     );
 
@@ -47,15 +45,14 @@ export default class SplitModule extends AudioModule<SplitModuleOptions> {
 
   private _messageInputCallback(time: number, message: any) {
     if (Array.isArray(message)) {
-      console.log("SplitModule received array message:", message);
-      for (let i = 0; i < this._numOutputs; i++) {
+      for (let i = 0; i < this._options.numOutputs; i++) {
         if (i < message.length) {
           this._messageOutputNodes[i]!.scheduleMessage(time, message[i]);
         }
       }
     } else if (typeof message === "string") {
       const parts = message.split(this._delimiter);
-      for (let i = 0; i < this._numOutputs; i++) {
+      for (let i = 0; i < this._options.numOutputs; i++) {
         if (i < parts.length) {
           this._messageOutputNodes[i]!.scheduleMessage(time, parts[i]!.trim());
         }
@@ -70,17 +67,23 @@ export default class SplitModule extends AudioModule<SplitModuleOptions> {
     }
     if (options.numOutputs !== undefined) {
       this._options.numOutputs = options.numOutputs;
-      this._numOutputs = options.numOutputs;
 
       // todo: should we nuke all old outputs?
       // or only add/remove the difference in number of outputs?
       this._messageOutputNodes = Array.from(
-        { length: this._numOutputs },
+        { length: options.numOutputs },
         () => new MessageOutputNode(),
       );
       this._outputs = this._messageOutputNodes.map(
         (node, index) => new ModuleOutput(`message-output-${index + 1}`, node),
       );
+
+      if (this.updateUIInstanceOutputs) {
+        const outputs = this._outputs.map((o) => {
+          return { name: o.name, type: o.type };
+        });
+        this.updateUIInstanceOutputs(outputs);
+      }
     }
   }
 

@@ -53,6 +53,7 @@ watch(
     type="text"
     v-model.lazy="stringOptions[key]"
     @dblclick.stop=""
+    placeholder="..."
     class="module-option-input mr-2 d-inline-block"
   />
 </template>

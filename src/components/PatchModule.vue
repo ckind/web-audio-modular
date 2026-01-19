@@ -14,6 +14,7 @@ import {
 import useGUIComponents from "@/composables/useGUIComponents";
 import PatchModuleOptionsInput from "./PatchModuleOptionsInput.vue";
 
+const DEFAULT_MIN_WIDTH = 50;
 const guiComponents = useGUIComponents();
 
 const BORDER_SIZE = 1;
@@ -30,6 +31,10 @@ const props = defineProps({
     type: Object as PropType<ModuleInstance>,
     required: true,
   },
+});
+
+const minWidth = computed(() => {
+  return Math.max(DEFAULT_MIN_WIDTH, 30 * props.moduleInstance.outputs.length);
 });
 
 const { width: moduleDisplayWidth, height: moduleDisplayHeight } =
@@ -90,7 +95,7 @@ const finishPatching = (inputInstance: ConnectionInputInstance) => {
 watch(
   () => props.moduleInstance.options,
   (newOptions) => {
-    emit("options-updated", newOptions)
+    emit("options-updated", newOptions);
   },
   { deep: true },
 );
@@ -101,7 +106,11 @@ const onGuiOptionsUpdated = (options: Record<string, any>) => {
 </script>
 
 <template>
-  <v-card ref="module-container" class="audio-module user-select-none">
+  <v-card
+    ref="module-container"
+    class="audio-module user-select-none"
+    :style="{ minWidth: `${minWidth}px` }"
+  >
     <v-tooltip
       :open-on-click="false"
       :open-on-focus="false"

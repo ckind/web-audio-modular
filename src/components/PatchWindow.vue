@@ -87,16 +87,29 @@ const loadPatch = () => {
 
         // Reconstruct patcher state
         patcher.clear();
-        
+
         patchGraph.value.modules.forEach((m) => {
           const module = createAudioModule(
             m.type as AudioModuleType,
             m.moduleId,
+            m.options,
           );
           module.updateUIInstanceOptions = (data: any) => {
             m.options = { ...m.options, ...data };
           };
-          module.updateOptions(m.options);
+          module.updateUIInstanceOutputs = (
+            outputs: ConnectionOutputInstance[],
+          ) => {
+            m.outputs = outputs.map((o) => {
+              return { name: o.name, type: o.type };
+            });
+
+            // nuke all outgoing connections
+            // todo: only update changed ones?
+            patchGraph.value.connections
+              .filter((c) => c.from.moduleId === m.moduleId)
+              .forEach((c) => deleteConnection(c));
+          };
           patcher.addModule(module);
         });
 
@@ -161,7 +174,23 @@ const addModule = (moduleType: AudioModuleType, guiComponent?: string) => {
   patchGraph.value.modules.push(moduleInstance);
 
   module.updateUIInstanceOptions = (data: any) => {
-    moduleInstance.options = { ...moduleInstance.options, ...data };
+    // need to query the graph to reference to exact ui instance
+    patchGraph.value.modules.find(
+      (m) => m.moduleId === moduleInstance.moduleId,
+    )!.options = { ...moduleInstance.options, ...data };
+  };
+  module.updateUIInstanceOutputs = (outputs: ConnectionOutputInstance[]) => {
+    // need to query the graph to reference to exact ui instance
+    patchGraph.value.modules.find(
+      (m) => m.moduleId === moduleInstance.moduleId,
+    )!.outputs = outputs.map((o) => {
+      return { name: o.name, type: o.type };
+    });
+
+    // nuke all outgoing connections
+    patchGraph.value.connections
+      .filter((c) => c.from.moduleId === moduleInstance.moduleId)
+      .forEach((c) => deleteConnection(c));
   };
 
   showContextMenu.value = false;
@@ -190,8 +219,6 @@ const deleteConnection = (connection: ConnectionInstance) => {
 };
 
 const deleteModule = (moduleId: string) => {
-  console.log("Deleting module id:", moduleId);
-
   // remove related connections from graph
   patchGraph.value.connections = patchGraph.value.connections.filter(
     (c) => c.from.moduleId !== moduleId && c.to.moduleId !== moduleId,

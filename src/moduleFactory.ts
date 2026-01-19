@@ -26,6 +26,7 @@ import MidiNoteMessageModule from "@/classes/audio-modules/MidiNoteMessageModule
 import ADSRAmplitudeModule from "@/classes/audio-modules/ADSRAmplitudeModule";
 import MessageTrigModule from "@/classes/audio-modules/MessageTrig";
 import MidiNumToHzModule from "@/classes/audio-modules/MidiNumToHzModule";
+import SplitModule from "@/classes/audio-modules/SplitModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -81,6 +82,8 @@ export function createAudioModule(
       return new MessageTrigModule(id, options);
     case "midi-num-to-hz":
       return new MidiNumToHzModule(id, options);
+    case "split":
+      return new SplitModule(id, options);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }
