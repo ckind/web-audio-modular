@@ -135,4 +135,9 @@ export const availableModules: ModuleDescriptor[] = [
     type: "adsr-amplitude",
     categories: ["envelope", "signal"],
   },
+  {
+    title: "split",
+    type: "split",
+    categories: ["utility", "message-bus"],
+  },
 ];

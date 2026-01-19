@@ -26,6 +26,7 @@ export type AudioModuleType =
   | "adsr-amplitude"
   | "message-trig"
   | "midi-num-to-hz"
+  | "split"
   ;
 
 export type ModuleId = string;
@@ -39,7 +40,8 @@ export interface IAudioModule {
 
   updateOptions(options: Partial<any>): void;
   dispose(): void;
-  updateUIInstanceOptions?: UpdateUIStateCallback
+  updateUIInstanceOptions?: UpdateUIStateCallback;
+  updateUIInstanceOutputs?: UpdateUIStateCallback;
 }
 
 export type UpdateUIStateCallback = (data: any) => void;
@@ -50,8 +52,11 @@ export default abstract class AudioModule<TModuleOptions> implements IAudioModul
   protected _options: TModuleOptions;
 
   public id: ModuleId;
-  // optional callback used to send data to the view model
+
+  // optional callback used to send options data back to the view model
   public updateUIInstanceOptions?: UpdateUIStateCallback;
+    // optional callback used to send outputs data back to the view model
+  public updateUIInstanceOutputs?: UpdateUIStateCallback;
 
   constructor(id: ModuleId, options: TModuleOptions)  {
     this.id = id;

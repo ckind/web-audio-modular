@@ -87,20 +87,19 @@ const loadPatch = () => {
 
         // Reconstruct patcher state
         patcher.clear();
-        loadedGraph.modules.forEach((m) => {
+        
+        patchGraph.value.modules.forEach((m) => {
           const module = createAudioModule(
             m.type as AudioModuleType,
             m.moduleId,
           );
           module.updateUIInstanceOptions = (data: any) => {
-            const i = patchGraph.value.modules.find(
-              (m) => m.moduleId == module.id,
-            );
-            i!.options = { ...m.options, ...data };
+            m.options = { ...m.options, ...data };
           };
           module.updateOptions(m.options);
           patcher.addModule(module);
         });
+
         loadedGraph.connections.forEach((c) => {
           patcher.connect(
             {
@@ -162,8 +161,7 @@ const addModule = (moduleType: AudioModuleType, guiComponent?: string) => {
   patchGraph.value.modules.push(moduleInstance);
 
   module.updateUIInstanceOptions = (data: any) => {
-    const i = patchGraph.value.modules.find((m) => m.moduleId == module.id);
-    i!.options = { ...moduleInstance.options, ...data };
+    moduleInstance.options = { ...moduleInstance.options, ...data };
   };
 
   showContextMenu.value = false;
