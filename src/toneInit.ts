@@ -1,5 +1,6 @@
 import * as Tone from "tone";
 import { onMounted } from "vue";
+import { createAudioContext } from "./composables/useAudioGlobalContext";
 
 export function setupAutoResume() {
   document.addEventListener(
@@ -15,11 +16,15 @@ export function setupAutoResume() {
 
 export function init(callback?: () => void) {
   onMounted(async () => {
+    const ctx = await createAudioContext();
     const workletUrl = new URL(
       "./classes/audio-worklets/ScaleWorkletProcessor.js",
       import.meta.url,
     );
-    await Tone.getContext().addAudioWorkletModule(workletUrl.href);
+
+    await ctx.audioWorklet.addModule(workletUrl.href);
+    
+    Tone.setContext(ctx);
 
     setupAutoResume();
 

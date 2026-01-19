@@ -5,14 +5,20 @@ import { useAppColors } from "./store/appColors";
 import { useTheme } from "vuetify";
 import { useAudioSettings } from "@/store/audioSettings";
 import { init } from "@/toneInit";
+import ScaleWorkletNode from "./classes/audio-nodes/ScaleWorkletNode";
+import * as Tone from "tone";
 
 const theme = useTheme();
 const appColors = useAppColors();
 const updateAppColors = () => {
-  appColors.setMessageBusColor(theme.current.value.colors["secondary"] ?? "#fff");
+  appColors.setMessageBusColor(
+    theme.current.value.colors["secondary"] ?? "#fff",
+  );
   appColors.setSignalColor(theme.current.value.colors["on-surface"] ?? "#fff");
   appColors.setTextColor(theme.current.value.colors["on-surface"] ?? "#fff");
-  appColors.setBackgroundColor(theme.current.value.colors["background"] ?? "#fff");
+  appColors.setBackgroundColor(
+    theme.current.value.colors["background"] ?? "#fff",
+  );
 };
 updateAppColors();
 
@@ -33,11 +39,19 @@ useResizeObserver("patchWindowContainer", onContainerResize);
 const patchWindowWidth = ref(0);
 const patchWindowHeight = ref(0);
 
-onMounted(() => {
-  init(() => {
-    const audioSettings = useAudioSettings();
-    audioSettings.setInitialized(true);
-  });
+init(() => {
+  const audioSettings = useAudioSettings();
+  audioSettings.setInitialized(true);
+
+  // const scaleWorkletNode = new ScaleWorkletNode(Tone.getContext().rawContext, {
+  //   inputMin: -1,
+  //   inputMax: 1,
+  //   outputMin: -0.000001,
+  //   outputMax: 0.000001,
+  // });
+
+  // const testOsc = new Tone.Oscillator(440, "sine").start();
+  // testOsc.connect(scaleWorkletNode).toDestination();
 });
 </script>
 
@@ -57,10 +71,7 @@ onMounted(() => {
         <v-card-text>
           <div class="d-flex align-center justify-space-between">
             <span>Dark Mode</span>
-            <v-switch
-              v-model="isDarkMode"
-              hide-details
-            ></v-switch>
+            <v-switch v-model="isDarkMode" hide-details></v-switch>
           </div>
         </v-card-text>
         <v-card-actions>
