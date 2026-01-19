@@ -23,6 +23,7 @@ export type AudioModuleType =
   | "pow-curve"
   | "patch-notes"
   | "midi-note-to-trig"
+  | "adsr-amplitude"
   ;
 
 export type ModuleId = string;

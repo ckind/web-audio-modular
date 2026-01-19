@@ -119,5 +119,10 @@ export const availableModules: ModuleDescriptor[] = [
     GUIComponent: "MidiNoteToTrigModule",
     categories: ["midi", "message-bus"],
   },
+  {
+    title: "adsr-amplitude",
+    type: "adsr-amplitude",
+    categories: ["envelope", "signal"],
+  },
 ];
 

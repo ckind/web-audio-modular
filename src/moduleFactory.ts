@@ -23,6 +23,7 @@ import MidiCCToSignalModule from "@/classes/audio-modules/MidiCCToSignal";
 import PowCurveModule from "@/classes/audio-modules/PowCurveModule";
 import PatchNotesModule from "@/classes/audio-modules/PatchNotesModule";
 import MidiNoteToTrigModule from "@/classes/audio-modules/MidiNoteToTrigModule";
+import ADSRAmplitudeModule from "@/classes/audio-modules/ADSRAmplitudeModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -72,6 +73,8 @@ export function createAudioModule(
       return new PatchNotesModule(id, options);
     case "midi-note-to-trig":
       return new MidiNoteToTrigModule(id, options);
+    case "adsr-amplitude":
+      return new ADSRAmplitudeModule(id, options);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }

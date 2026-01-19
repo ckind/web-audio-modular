@@ -9,7 +9,13 @@ const trig = () => {
 </script>
 
 <template>
-  <v-btn class="ma-3" density="compact" @dblclick.stop @click="trig"></v-btn>
+  <v-btn
+    class="ma-3"
+    density="compact"
+    @dblclick.stop
+    @mousedown.stop="trig"
+    @touchstart.stop="trig"
+  ></v-btn>
 </template>
 
 <style scoped></style>
