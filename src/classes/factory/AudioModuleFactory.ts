@@ -1,7 +1,10 @@
 import SpeakerOutputModule from "@/classes/audio-modules/SpeakerOutputModule";
 import OscillatorModule from "@/classes/audio-modules/OscillatorModule";
 import GainModule from "@/classes/audio-modules/GainModule";
-import type { AudioModuleType, IAudioModule } from "@/classes/audio-modules/AudioModule";
+import type {
+  AudioModuleType,
+  IAudioModule,
+} from "@/classes/audio-modules/AudioModule";
 import ClockModule from "@/classes/audio-modules/ClockModule";
 import LoggerModule from "@/classes/audio-modules/LoggerModule";
 import ScaleModule from "@/classes/audio-modules/ScaleModule";
@@ -15,11 +18,12 @@ import ConvolutionReverbModule from "../audio-modules/ConvolutionReverbModule";
 import ButtonTrigModule from "@/classes/audio-modules/ButtonTrigModule";
 import NoiseModule from "@/classes/audio-modules/NoiseModule";
 import ADSREnvelopeModule from "@/classes/audio-modules/ADSREnvelopeModule";
+import MidiInputModule from "@/classes/audio-modules/MidiInputModule";
 
 export function createAudioModule(
   type: AudioModuleType,
   id: string,
-  options?: any
+  options?: any,
 ): IAudioModule {
   switch (type) {
     case "speaker-output":
@@ -54,6 +58,8 @@ export function createAudioModule(
       return new NoiseModule(id, options);
     case "adsr-envelope":
       return new ADSREnvelopeModule(id, options);
+    case "midi-input":
+      return new MidiInputModule(id, options);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }

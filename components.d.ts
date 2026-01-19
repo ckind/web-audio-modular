@@ -15,6 +15,7 @@ declare module 'vue' {
     ButtonTrigModule: typeof import('./src/components/gui-module-components/ButtonTrigModule.vue')['default']
     DisplayMessageModule: typeof import('./src/components/gui-module-components/DisplayMessageModule.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    MidiInputModule: typeof import('./src/components/gui-module-components/MidiInputModule.vue')['default']
     PatchCable: typeof import('./src/components/PatchCable.vue')['default']
     PatchConnection: typeof import('./src/components/PatchConnection.vue')['default']
     PatchContextMenu: typeof import('./src/components/PatchContextMenu.vue')['default']

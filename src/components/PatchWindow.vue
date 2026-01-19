@@ -97,6 +97,12 @@ const loadPatch = () => {
             m.type as AudioModuleType,
             m.moduleId,
           );
+          module.updateUIInstanceOptions = (data: any) => {
+            const i = patchGraph.value.modules.find(
+              (m) => m.moduleId == module.id,
+            );
+            i!.options = { ...m.options, ...data };
+          };
           module.updateOptions(m.options);
           patcher.addModule(module);
         });

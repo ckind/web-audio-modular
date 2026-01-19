@@ -17,7 +17,9 @@ export type AudioModuleType =
   | "convolution-reverb"
   | "button-trig"
   | "noise"
-  | "adsr-envelope";
+  | "adsr-envelope"
+  | "midi-input"
+  ;
 
 export type ModuleId = string;
 

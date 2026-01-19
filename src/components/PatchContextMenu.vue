@@ -93,6 +93,12 @@ const availableModules: ModuleDescriptor[] = [
     type: "adsr-envelope",
     categories: ["envelope", "signal"],
   },
+  {
+    title: "midi-input",
+    type: "midi-input",
+    GUIComponent: "MidiInputModule",
+    categories: ["midi", "message-bus"],
+  },
 ];
 
 const addModule = (moduleType: string, GUIComponent?: string) => {
@@ -106,7 +112,7 @@ const openAddModuleDialog = () => {
 
 const showHelp = (moduleType: string) => {
   console.log(`Help requested for module type: ${moduleType}`);
-}
+};
 
 const searchTerm = ref("");
 
@@ -243,7 +249,12 @@ const addModuleDialogWidth = computed(() =>
             >
               <v-list-item-title>{{ module.title }}</v-list-item-title>
               <template #append>
-                <v-icon @click.stop="showHelp(module.type)" size="small" class="text-secondary">mdi-help-circle-outline</v-icon>
+                <v-icon
+                  @click.stop="showHelp(module.type)"
+                  size="small"
+                  class="text-secondary"
+                  >mdi-help-circle-outline</v-icon
+                >
               </template>
             </v-list-item>
           </div>
