@@ -14,7 +14,7 @@ import SliderModule from "@/classes/audio-modules/SliderModule";
 import DisplayMessageModule from "@/classes/audio-modules/DisplayMessageModule";
 import FilterModule from "@/classes/audio-modules/FilterModule";
 import ScaleExpModule from "@/classes/audio-modules/ScaleExpModule";
-import ConvolutionReverbModule from "../audio-modules/ConvolutionReverbModule";
+import ConvolutionReverbModule from "@/classes/audio-modules/ConvolutionReverbModule";
 import ButtonTrigModule from "@/classes/audio-modules/ButtonTrigModule";
 import NoiseModule from "@/classes/audio-modules/NoiseModule";
 import ADSREnvelopeModule from "@/classes/audio-modules/ADSREnvelopeModule";
@@ -22,6 +22,7 @@ import MidiInputModule from "@/classes/audio-modules/MidiInputModule";
 import MidiCCToSignalModule from "@/classes/audio-modules/MidiCCToSignal";
 import PowCurveModule from "@/classes/audio-modules/PowCurveModule";
 import PatchNotesModule from "@/classes/audio-modules/PatchNotesModule";
+import MidiNoteToTrigModule from "@/classes/audio-modules/MidiNoteToTrigModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -69,6 +70,8 @@ export function createAudioModule(
       return new MidiCCToSignalModule(id, options);
     case "patch-notes":
       return new PatchNotesModule(id, options);
+    case "midi-note-to-trig":
+      return new MidiNoteToTrigModule(id, options);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }

@@ -5,6 +5,7 @@ import ButtonTrigModule from "@/components/gui-module-components/ButtonTrigModul
 import MidiInputModule from "@/components/gui-module-components/MidiInputModule.vue";
 import MidiCCToSignal from "@/components/gui-module-components/MidiCCToSignal.vue";
 import PatchNotesModule from "@/components/gui-module-components/PatchNotesModule.vue";
+import MidiNoteToTrigModule from "@/components/gui-module-components/MidiNoteToTrigModule.vue";
 
 export default function useGUIComponents() {
   const components: Record<string, Component> = {
@@ -13,7 +14,8 @@ export default function useGUIComponents() {
     ButtonTrigModule,
     MidiInputModule,
     MidiCCToSignal,
-    PatchNotesModule
+    PatchNotesModule,
+    MidiNoteToTrigModule
   };
 
   return components;

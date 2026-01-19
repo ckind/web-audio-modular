@@ -14,7 +14,7 @@ import type {
 } from "@/types/uIInstanceTypes";
 import PatchContextMenu from "@/components/PatchContextMenu.vue";
 import type { AudioModuleType } from "@/classes/audio-modules/AudioModule";
-import { createAudioModule } from "@/classes/factory/AudioModuleFactory";
+import { createAudioModule } from "@/moduleFactory";
 import useResizeObserver from "@/composables/useResizeObserver.ts";
 import Patcher from "@/classes/Patcher";
 import { useAppColors } from "@/store/appColors";

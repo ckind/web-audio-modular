@@ -23,6 +23,8 @@ const updateNotes = () => {
     @mousedown.stop
     @touchstart.stop
     hide-details
+    variant="solo"
+    resize="both"
   ></v-textarea>
 </template>
 

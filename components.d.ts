@@ -15,6 +15,8 @@ declare module 'vue' {
     DisplayMessageModule: typeof import('./src/components/gui-module-components/DisplayMessageModule.vue')['default']
     MidiCCToSignal: typeof import('./src/components/gui-module-components/MidiCCToSignal.vue')['default']
     MidiInputModule: typeof import('./src/components/gui-module-components/MidiInputModule.vue')['default']
+    MidiNoteToTrig: typeof import('./src/components/gui-module-components/MidiNoteToTrig.vue')['default']
+    MidiNoteToTrigModule: typeof import('./src/components/gui-module-components/MidiNoteToTrigModule.vue')['default']
     PatchCable: typeof import('./src/components/PatchCable.vue')['default']
     PatchConnection: typeof import('./src/components/PatchConnection.vue')['default']
     PatchContextMenu: typeof import('./src/components/PatchContextMenu.vue')['default']

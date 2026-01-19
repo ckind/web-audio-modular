@@ -22,6 +22,7 @@ export type AudioModuleType =
   | "midi-cc-to-signal"
   | "pow-curve"
   | "patch-notes"
+  | "midi-note-to-trig"
   ;
 
 export type ModuleId = string;
