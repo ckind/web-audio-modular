@@ -126,6 +126,11 @@ export const availableModules: ModuleDescriptor[] = [
     categories: ["midi", "message-bus"],
   },
   {
+    title: "midi-num-to-hz",
+    type: "midi-num-to-hz",
+    categories: ["midi", "signal"],
+  },
+  {
     title: "adsr-amplitude",
     type: "adsr-amplitude",
     categories: ["envelope", "signal"],

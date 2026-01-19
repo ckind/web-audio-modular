@@ -25,6 +25,7 @@ export type AudioModuleType =
   | "midi-note-to-trig"
   | "adsr-amplitude"
   | "message-trig"
+  | "midi-num-to-hz"
   ;
 
 export type ModuleId = string;

@@ -25,6 +25,7 @@ import PatchNotesModule from "@/classes/audio-modules/PatchNotesModule";
 import MidiNoteToTrigModule from "@/classes/audio-modules/MidiNoteToTrigModule";
 import ADSRAmplitudeModule from "@/classes/audio-modules/ADSRAmplitudeModule";
 import MessageTrigModule from "@/classes/audio-modules/MessageTrig";
+import MidiNumToHzModule from "@/classes/audio-modules/MidiNumToHzModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -78,6 +79,8 @@ export function createAudioModule(
       return new ADSRAmplitudeModule(id, options);
     case "message-trig":
       return new MessageTrigModule(id, options);
+    case "midi-num-to-hz":
+      return new MidiNumToHzModule(id, options);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }
