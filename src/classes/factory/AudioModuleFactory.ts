@@ -20,6 +20,7 @@ import NoiseModule from "@/classes/audio-modules/NoiseModule";
 import ADSREnvelopeModule from "@/classes/audio-modules/ADSREnvelopeModule";
 import MidiInputModule from "@/classes/audio-modules/MidiInputModule";
 import MidiCCToSignalModule from "@/classes/audio-modules/MidiCCToSignal";
+import PowCurveModule from "@/classes/audio-modules/PowCurveModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -41,6 +42,8 @@ export function createAudioModule(
       return new ScaleModule(id, options);
     case "scale-exp":
       return new ScaleExpModule(id, options);
+    case "pow-curve":
+      return new PowCurveModule(id, options);
     case "message-to-signal":
       return new MessageToSignalModule(id, options);
     case "sequence":

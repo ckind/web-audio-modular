@@ -20,6 +20,7 @@ export type AudioModuleType =
   | "adsr-envelope"
   | "midi-input"
   | "midi-cc-to-signal"
+  | "pow-curve"
   ;
 
 export type ModuleId = string;

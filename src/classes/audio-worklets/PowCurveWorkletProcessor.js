@@ -1,36 +1,33 @@
-// scales an input value along the input range to the output range
-function scaleValue(inputValue, inputMin, inputMax, outputMin, outputMax) {
-  return (
-    outputMin +
-    (outputMax - outputMin) * ((inputValue - inputMin) / (inputMax - inputMin))
-  );
+function logBaseN(n, x) {
+  return Math.log(x) / Math.log(n);
+}
+function powBaseN(n, x) {
+  return Math.pow(n, x);
 }
 
 /**
- * scales an input value along the input range to the output range
+ * maps the input value along an n^x curve from min to max
+ * where x is the sampled value of the signal and n is the given base
+ * works best with min > 1 and max > 1
+ * clamps values outside of [min, max]
  */
-class ScaleWorkletProcessor extends AudioWorkletProcessor {
+class PowCurveWorkletProcessor extends AudioWorkletProcessor {
   // https://webaudio.github.io/web-audio-api/#AudioParamDescriptor
   static get parameterDescriptors() {
     return [
       {
-        name: "inputMin",
-        defaultValue: -1,
-        automationRate: "k-rate",
-      },
-      {
-        name: "inputMax",
+        name: "min",
         defaultValue: 1,
         automationRate: "k-rate",
       },
       {
-        name: "outputMin",
-        defaultValue: -1,
+        name: "max",
+        defaultValue: 100,
         automationRate: "k-rate",
       },
       {
-        name: "outputMax",
-        defaultValue: 1,
+        name: "base",
+        defaultValue: 2,
         automationRate: "k-rate",
       },
     ];
@@ -61,11 +58,15 @@ class ScaleWorkletProcessor extends AudioWorkletProcessor {
     const output = outputs[0];
 
     // k-rate params only have one value per render quantum
-    // todo: do extra variable assignments in process callback affect performance?
-    const inputMin = parameters.inputMin[0];
-    const inputMax = parameters.inputMax[0];
-    const outputMin = parameters.outputMin[0];
-    const outputMax = parameters.outputMax[0];
+    // todo: these could be a-rate
+    const min = parameters.min[0];
+    const max = parameters.max[0];
+    const n = parameters.base[0];
+
+    const range = max - min;
+    const logMin = logBaseN(n, min);
+    const logMax = logBaseN(n, max);
+    const logRange = logMax - logMin;
 
     // assume only one input channel and output channel for now
     const inputChannel = input[0];
@@ -74,17 +75,12 @@ class ScaleWorkletProcessor extends AudioWorkletProcessor {
     if (!inputChannel || !outputChannel) return true;
 
     for (let i = 0; i < inputChannel.length; ++i) {
-      outputChannel[i] = scaleValue(
-        inputChannel[i],
-        inputMin,
-        inputMax,
-        outputMin,
-        outputMax,
-      );
+      const t = (inputChannel[i] - min) / range;
+      outputChannel[i] = powBaseN(n, t * logRange + logMin);
     }
 
     return true;
   }
 }
 
-registerProcessor("scale-worklet-processor", ScaleWorkletProcessor);
+registerProcessor("pow-curve-worklet-processor", PowCurveWorkletProcessor);

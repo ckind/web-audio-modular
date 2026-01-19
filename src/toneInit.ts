@@ -2,7 +2,7 @@ import * as Tone from "tone";
 import { onMounted } from "vue";
 import { createAudioContext } from "./composables/useAudioGlobalContext";
 
-export function setupAutoResume() {
+function setupAutoResume() {
   document.addEventListener(
     "mousedown",
     () => {
@@ -14,16 +14,29 @@ export function setupAutoResume() {
   );
 }
 
+async function registerAudioWorklets(
+  ctx: AudioContext,
+  workletPaths: string[],
+) {
+  const promises = new Array(workletPaths.length);
+
+  for (let i = 0; i < workletPaths.length; i++) {
+    const path = workletPaths[i]!;
+    const workletUrl = new URL(path, import.meta.url);
+    promises[i] = ctx.audioWorklet.addModule(workletUrl.href);
+  }
+
+  await Promise.all(promises);
+}
+
 export function init(callback?: () => void) {
   onMounted(async () => {
     const ctx = await createAudioContext();
-    const workletUrl = new URL(
+    await registerAudioWorklets(ctx, [
       "./classes/audio-worklets/ScaleWorkletProcessor.js",
-      import.meta.url,
-    );
+      "./classes/audio-worklets/PowCurveWorkletProcessor.js",
+    ]);
 
-    await ctx.audioWorklet.addModule(workletUrl.href);
-    
     Tone.setContext(ctx);
 
     setupAutoResume();

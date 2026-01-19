@@ -105,6 +105,11 @@ const availableModules: ModuleDescriptor[] = [
     GUIComponent: "MidiCCToSignal",
     categories: ["midi", "signal"],
   },
+  {
+    title: "pow-curve",
+    type: "pow-curve",
+    categories: ["signal-operator", "signal"],
+  },
 ];
 
 const addModule = (moduleType: string, GUIComponent?: string) => {
