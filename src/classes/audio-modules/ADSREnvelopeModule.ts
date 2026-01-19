@@ -4,6 +4,7 @@ import ModuleInput from "@/classes/ModuleInput";
 import ModuleOutput from "@/classes/ModuleOutput";
 import MessageInputNode from "@/classes/MessageInputNode";
 import * as Tone from "tone";
+import { da } from "vuetify/locale";
 
 type ADSREnvelopeModuleOptions = {
   attack: number;
@@ -18,6 +19,14 @@ const getDefaultOptions = (): ADSREnvelopeModuleOptions => ({
   sustain: 0.5,
   release: 1,
 });
+
+const isNormalRange = (value: any): value is number => {
+  return typeof value === "number" && value >= 0 && value <= 1;
+};
+
+const isMidiRange = (value: any): value is number => {
+  return Number.isInteger(value) && value >= 0 && value <= 127;
+}
 
 export default class ADSREnvelopeModule extends AudioModule<ADSREnvelopeModuleOptions> {
   private _envelopeNode: Tone.Envelope;
@@ -41,11 +50,7 @@ export default class ADSREnvelopeModule extends AudioModule<ADSREnvelopeModuleOp
       new ModuleInput(
         "trigger-release",
         new MessageInputNode(this.triggerReleaseCallback.bind(this)),
-      ),
-      new ModuleInput(
-        "trigger-attack-release",
-        new MessageInputNode(this.triggerAttackReleaseCallback.bind(this)),
-      ),
+      )
     ];
   }
 
@@ -54,15 +59,22 @@ export default class ADSREnvelopeModule extends AudioModule<ADSREnvelopeModuleOp
   }
 
   triggerAttackCallback(time: number, data: any) {
+    if (data !== undefined) {
+      if (isNormalRange(data)) {
+        this._envelopeNode.triggerAttack(time, data);
+        return;
+      } else if (isMidiRange(data)) {
+        const normalizedValue = data / 127;
+        this._envelopeNode.triggerAttack(time, normalizedValue);
+        return;
+      }
+    }
+
     this._envelopeNode.triggerAttack(time);
   }
 
   triggerReleaseCallback(time: number, data: any) {
     this._envelopeNode.triggerRelease(time);
-  }
-
-  triggerAttackReleaseCallback(time: number, data: any) {
-    this._envelopeNode.triggerAttackRelease(time, data);
   }
 
   updateOptions(options: Partial<ADSREnvelopeModuleOptions>): void {

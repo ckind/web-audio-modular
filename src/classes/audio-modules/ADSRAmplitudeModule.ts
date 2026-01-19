@@ -42,11 +42,7 @@ export default class ADSRAmplitudeModule extends AudioModule<ADSRAmplitudeModule
       new ModuleInput(
         "trigger-release",
         new MessageInputNode(this.triggerReleaseCallback.bind(this)),
-      ),
-      new ModuleInput(
-        "trigger-attack-release",
-        new MessageInputNode(this.triggerAttackReleaseCallback.bind(this)),
-      ),
+      )
     ];
   }
 
@@ -60,10 +56,6 @@ export default class ADSRAmplitudeModule extends AudioModule<ADSRAmplitudeModule
 
   triggerReleaseCallback(time: number, data: any) {
     this._ampEnvNode.triggerRelease(time);
-  }
-
-  triggerAttackReleaseCallback(time: number, data: any) {
-    this._ampEnvNode.triggerAttackRelease(time, data);
   }
 
   updateOptions(options: Partial<ADSRAmplitudeModuleOptions>): void {
