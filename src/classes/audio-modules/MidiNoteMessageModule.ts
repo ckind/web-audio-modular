@@ -17,8 +17,11 @@ const getDefaultOptions = (): MidiNoteMessageModuleOptions => ({
 });
 
 export default class MidiNoteMessageModule extends AudioModule<MidiNoteMessageModuleOptions> {
-  private _noteOnMessageNode: MessageOutputNode;
+  private _noteOnNoteMessageNode: MessageOutputNode;
+  private _noteOnVelocityMessageNode: MessageOutputNode;
   private _noteOffMessageNode: MessageOutputNode;
+  private _sustainPedalDown: boolean = false;
+  private _notesDown: Set<number> = new Set();
 
   constructor(id: string, options?: MidiNoteMessageModuleOptions) {
     super(id, options ?? getDefaultOptions());
@@ -31,11 +34,13 @@ export default class MidiNoteMessageModule extends AudioModule<MidiNoteMessageMo
         ),
       ),
     ];
-    this._noteOnMessageNode = new MessageOutputNode();
+    this._noteOnNoteMessageNode = new MessageOutputNode();
+    this._noteOnVelocityMessageNode = new MessageOutputNode();
     this._noteOffMessageNode = new MessageOutputNode();
     this._outputs = [
-      new ModuleOutput("note-on", this._noteOnMessageNode),
-      new ModuleOutput("note-off", this._noteOffMessageNode)
+      new ModuleOutput("note-on-note", this._noteOnNoteMessageNode),
+      new ModuleOutput("note-on-velocity", this._noteOnVelocityMessageNode),
+      new ModuleOutput("note-off-note", this._noteOffMessageNode),
     ];
   }
 
@@ -59,19 +64,35 @@ export default class MidiNoteMessageModule extends AudioModule<MidiNoteMessageMo
     ) {
       const noteNumber = message[1]!; // MIDI note number (0-127)
       const velocity = message[2]!; // MIDI velocity (0-127)
+      this._notesDown.add(noteNumber);
       this._forwardNoteOn(noteNumber, velocity);
     } else if (
+      !this._sustainPedalDown && // if sustain pedal is down, ignore note off messages
       (message[0]! & 0xf0) === 0x80 && // note off message
       (message[0]! & 0x0f) === this._options.channel // check for the specified channel
     ) {
       const noteNumber = message[1]!; // MIDI note number (0-127)
+      this._notesDown.delete(noteNumber);
       this._forwardNoteOff(noteNumber);
+    } else if ((message[0]! & 0xf0) === 0xb0 && message[1]! === 64) {
+      const sustainOn = message[2]! >= 64;
+      if (sustainOn) {
+        this._sustainPedalDown = true;
+      } else {
+        this._sustainPedalDown = false;
+        // When the sustain pedal is released, send note off messages for any notes that are still marked as down
+        this._notesDown.forEach((noteNumber) => {
+          this._forwardNoteOff(noteNumber);
+        });
+        this._notesDown.clear();
+      }
     }
   }
 
   private _forwardNoteOn(noteNumber: number, velocity: number) {
     const now = Tone.now();
-    this._noteOnMessageNode.scheduleMessage(now, [noteNumber, velocity]);
+    this._noteOnNoteMessageNode.scheduleMessage(now, noteNumber);
+    this._noteOnVelocityMessageNode.scheduleMessage(now, velocity);
   }
 
   private _forwardNoteOff(noteNumber: number) {
