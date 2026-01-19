@@ -12,6 +12,7 @@ import {
   computeOutputPosition,
 } from "@/helpers/patchHelper.ts";
 import useGUIComponents from "@/composables/useGUIComponents";
+import PatchModuleOptionsInput from "./PatchModuleOptionsInput.vue";
 
 const guiComponents = useGUIComponents();
 
@@ -86,32 +87,10 @@ const finishPatching = (inputInstance: ConnectionInputInstance) => {
   emit("finish-patching", inputInstance);
 };
 
-const moduleOptions = ref<{ name: string; value: string }[]>([]);
-
 watch(
   () => props.moduleInstance.options,
   (newOptions) => {
-    moduleOptions.value = Object.entries(newOptions).map(([name, value]) => ({
-      name,
-      value: String(value),
-    }));
-  },
-  { immediate: true },
-);
-
-watch(
-  () => moduleOptions.value,
-  (newOptions) => {
-    emit(
-      "options-updated",
-      newOptions.reduce(
-        (acc, option) => {
-          acc[option.name] = option.value;
-          return acc;
-        },
-        {} as Record<string, any>,
-      ),
-    );
+    emit("options-updated", newOptions)
   },
   { deep: true },
 );
@@ -151,15 +130,19 @@ const onGuiOptionsUpdated = (options: Record<string, any>) => {
     <div v-if="!moduleInstance.guiComponent">
       <div class="ma-2 d-inline-block">{{ moduleName }}</div>
 
-      <input
-        v-for="option in moduleOptions"
-        :key="option.name"
-        :name="option.name"
+      <!-- <input
+        v-for="(value, key) in moduleInstance.options"
+        :key="key"
+        :name="key"
         type="text"
-        v-model.lazy="option.value"
+        v-model.lazy="moduleInstance.options[key]"
         @dblclick.stop=""
         class="module-option-input mr-2 d-inline-block"
-      />
+      /> -->
+
+      <patch-module-options-input
+        v-model="moduleInstance.options"
+      ></patch-module-options-input>
     </div>
 
     <component
@@ -208,8 +191,5 @@ const onGuiOptionsUpdated = (options: Record<string, any>) => {
 .module-input-output {
   position: absolute;
   overflow: visible;
-}
-.module-option-input {
-  field-sizing: content;
 }
 </style>

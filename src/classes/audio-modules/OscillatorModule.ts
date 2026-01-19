@@ -57,14 +57,11 @@ export default class OscillatorModule extends AudioModule<OscillatorModuleOption
   }
 
   updateOptions(options: Partial<OscillatorModuleOptions>): void {
-    if (
-      options.frequency !== undefined &&
-      options.frequency !== this._options.frequency
-    ) {
+    if (options.frequency !== undefined) {
       this._oscillatorNode.frequency.value = options.frequency;
       this._options.frequency = options.frequency;
     }
-    if (options.type !== undefined && options.type !== this._options.type) {
+    if (options.type !== undefined) {
       this._oscillatorNode.type = options.type;
       this._options.type = options.type;
     }
