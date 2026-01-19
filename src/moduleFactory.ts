@@ -22,7 +22,7 @@ import MidiInputModule from "@/classes/audio-modules/MidiInputModule";
 import MidiCCToSignalModule from "@/classes/audio-modules/MidiCCToSignal";
 import PowCurveModule from "@/classes/audio-modules/PowCurveModule";
 import PatchNotesModule from "@/classes/audio-modules/PatchNotesModule";
-import MidiNoteToTrigModule from "@/classes/audio-modules/MidiNoteToTrigModule";
+import MidiNoteMessageModule from "@/classes/audio-modules/MidiNoteMessageModule";
 import ADSRAmplitudeModule from "@/classes/audio-modules/ADSRAmplitudeModule";
 import MessageTrigModule from "@/classes/audio-modules/MessageTrig";
 import MidiNumToHzModule from "@/classes/audio-modules/MidiNumToHzModule";
@@ -73,8 +73,8 @@ export function createAudioModule(
       return new MidiCCToSignalModule(id, options);
     case "patch-notes":
       return new PatchNotesModule(id, options);
-    case "midi-note-to-trig":
-      return new MidiNoteToTrigModule(id, options);
+    case "midi-note-message":
+      return new MidiNoteMessageModule(id, options);
     case "adsr-amplitude":
       return new ADSRAmplitudeModule(id, options);
     case "message-trig":

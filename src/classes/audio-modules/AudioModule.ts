@@ -22,7 +22,7 @@ export type AudioModuleType =
   | "midi-cc-to-signal"
   | "pow-curve"
   | "patch-notes"
-  | "midi-note-to-trig"
+  | "midi-note-message"
   | "adsr-amplitude"
   | "message-trig"
   | "midi-num-to-hz"

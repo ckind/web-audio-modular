@@ -6,22 +6,21 @@ import MessageInputNode from "@/classes/MessageInputNode";
 import MessageOutputNode from "@/classes/MessageOutputNode";
 import * as Tone from "tone";
 
-type MidiNoteToTrigModuleOptions = {
+type MidiNoteMessageModuleOptions = {
   channel: number;
   listenForChannel: boolean;
 };
 
-const getDefaultOptions = (): MidiNoteToTrigModuleOptions => ({
+const getDefaultOptions = (): MidiNoteMessageModuleOptions => ({
   channel: 0,
   listenForChannel: false,
 });
 
-export default class MidiNoteToTrigModule extends AudioModule<MidiNoteToTrigModuleOptions> {
+export default class MidiNoteMessageModule extends AudioModule<MidiNoteMessageModuleOptions> {
   private _noteOnMessageNode: MessageOutputNode;
   private _noteOffMessageNode: MessageOutputNode;
-  private _noteNumberMessageNode: MessageOutputNode;
 
-  constructor(id: string, options?: MidiNoteToTrigModuleOptions) {
+  constructor(id: string, options?: MidiNoteMessageModuleOptions) {
     super(id, options ?? getDefaultOptions());
 
     this._inputs = [
@@ -34,16 +33,14 @@ export default class MidiNoteToTrigModule extends AudioModule<MidiNoteToTrigModu
     ];
     this._noteOnMessageNode = new MessageOutputNode();
     this._noteOffMessageNode = new MessageOutputNode();
-    this._noteNumberMessageNode = new MessageOutputNode();
     this._outputs = [
       new ModuleOutput("note-on", this._noteOnMessageNode),
-      new ModuleOutput("note-off", this._noteOffMessageNode),
-      new ModuleOutput("note-num", this._noteNumberMessageNode),
+      new ModuleOutput("note-off", this._noteOffMessageNode)
     ];
   }
 
   get type(): AudioModuleType {
-    return "midi-note-to-trig";
+    return "midi-note-message";
   }
 
   private _messageCallback(time: number, message: Uint8Array) {
@@ -74,17 +71,15 @@ export default class MidiNoteToTrigModule extends AudioModule<MidiNoteToTrigModu
 
   private _forwardNoteOn(noteNumber: number, velocity: number) {
     const now = Tone.now();
-    this._noteOnMessageNode.scheduleMessage(now, velocity);
-    this._noteNumberMessageNode.scheduleMessage(now, noteNumber);
+    this._noteOnMessageNode.scheduleMessage(now, [noteNumber, velocity]);
   }
 
   private _forwardNoteOff(noteNumber: number) {
     const now = Tone.now();
-    this._noteOffMessageNode.scheduleMessage(now, 0);
-    this._noteNumberMessageNode.scheduleMessage(now, noteNumber);
+    this._noteOffMessageNode.scheduleMessage(now, noteNumber);
   }
 
-  updateOptions(options: Partial<MidiNoteToTrigModuleOptions>): void {
+  updateOptions(options: Partial<MidiNoteMessageModuleOptions>): void {
     if (options.channel !== undefined) {
       this._options.channel = options.channel;
     }

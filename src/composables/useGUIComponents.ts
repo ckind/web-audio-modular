@@ -6,7 +6,7 @@ import MessageTrigModule from "@/components/gui-module-components/MessageTrigMod
 import MidiInputModule from "@/components/gui-module-components/MidiInputModule.vue";
 import MidiCCToSignal from "@/components/gui-module-components/MidiCCToSignal.vue";
 import PatchNotesModule from "@/components/gui-module-components/PatchNotesModule.vue";
-import MidiNoteToTrigModule from "@/components/gui-module-components/MidiNoteToTrigModule.vue";
+import MidiNoteMessageModule from "@/components/gui-module-components/MidiNoteMessageModule.vue";
 
 export default function useGUIComponents() {
   const components: Record<string, Component> = {
@@ -17,7 +17,7 @@ export default function useGUIComponents() {
     MidiInputModule,
     MidiCCToSignal,
     PatchNotesModule,
-    MidiNoteToTrigModule
+    MidiNoteMessageModule
   };
 
   return components;

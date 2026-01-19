@@ -20,7 +20,7 @@ export default class MidiNumToHzModule extends AudioModule<MidiNumToHzModuleOpti
 
     this._inputs = [
       new ModuleInput(
-        "midi-input",
+        "midi-note-num",
         new MessageInputNode((time, message) =>
           this._messageCallback(time, message),
         ),

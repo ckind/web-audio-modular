@@ -120,9 +120,9 @@ export const availableModules: ModuleDescriptor[] = [
     categories: ["utility"],
   },
   {
-    title: "midi-note-to-trig",
-    type: "midi-note-to-trig",
-    GUIComponent: "MidiNoteToTrigModule",
+    title: "midi-note-message",
+    type: "midi-note-message",
+    GUIComponent: "MidiNoteMessageModule",
     categories: ["midi", "message-bus"],
   },
   {
