@@ -81,6 +81,12 @@ export const availableModules: ModuleDescriptor[] = [
     categories: ["ui-control", "message-bus"],
   },
   {
+    title: "message-trig",
+    type: "message-trig",
+    GUIComponent: "MessageTrigModule",
+    categories: ["ui-control", "message-bus"],
+  },
+  {
     title: "noise",
     type: "noise",
     categories: ["sound-source", "signal"]
@@ -125,4 +131,3 @@ export const availableModules: ModuleDescriptor[] = [
     categories: ["envelope", "signal"],
   },
 ];
-

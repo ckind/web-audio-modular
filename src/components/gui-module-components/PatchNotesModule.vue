@@ -25,6 +25,7 @@ const updateNotes = () => {
     hide-details
     variant="solo"
     resize="both"
+    auto-grow
   ></v-textarea>
 </template>
 

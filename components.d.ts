@@ -13,6 +13,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     ButtonTrigModule: typeof import('./src/components/gui-module-components/ButtonTrigModule.vue')['default']
     DisplayMessageModule: typeof import('./src/components/gui-module-components/DisplayMessageModule.vue')['default']
+    MessageTrigModule: typeof import('./src/components/gui-module-components/MessageTrigModule.vue')['default']
     MidiCCToSignal: typeof import('./src/components/gui-module-components/MidiCCToSignal.vue')['default']
     MidiInputModule: typeof import('./src/components/gui-module-components/MidiInputModule.vue')['default']
     MidiNoteToTrig: typeof import('./src/components/gui-module-components/MidiNoteToTrig.vue')['default']

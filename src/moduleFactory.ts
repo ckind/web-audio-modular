@@ -1,10 +1,10 @@
-import SpeakerOutputModule from "@/classes/audio-modules/SpeakerOutputModule";
-import OscillatorModule from "@/classes/audio-modules/OscillatorModule";
-import GainModule from "@/classes/audio-modules/GainModule";
 import type {
   AudioModuleType,
   IAudioModule,
 } from "@/classes/audio-modules/AudioModule";
+import SpeakerOutputModule from "@/classes/audio-modules/SpeakerOutputModule";
+import OscillatorModule from "@/classes/audio-modules/OscillatorModule";
+import GainModule from "@/classes/audio-modules/GainModule";
 import ClockModule from "@/classes/audio-modules/ClockModule";
 import LoggerModule from "@/classes/audio-modules/LoggerModule";
 import ScaleModule from "@/classes/audio-modules/ScaleModule";
@@ -24,6 +24,7 @@ import PowCurveModule from "@/classes/audio-modules/PowCurveModule";
 import PatchNotesModule from "@/classes/audio-modules/PatchNotesModule";
 import MidiNoteToTrigModule from "@/classes/audio-modules/MidiNoteToTrigModule";
 import ADSRAmplitudeModule from "@/classes/audio-modules/ADSRAmplitudeModule";
+import MessageTrigModule from "@/classes/audio-modules/MessageTrig";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -75,6 +76,8 @@ export function createAudioModule(
       return new MidiNoteToTrigModule(id, options);
     case "adsr-amplitude":
       return new ADSRAmplitudeModule(id, options);
+    case "message-trig":
+      return new MessageTrigModule(id, options);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }

@@ -24,6 +24,7 @@ export type AudioModuleType =
   | "patch-notes"
   | "midi-note-to-trig"
   | "adsr-amplitude"
+  | "message-trig"
   ;
 
 export type ModuleId = string;
