@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
+import { useAppColors } from "@/store/appColors";
+
+const appColors = useAppColors();
 
 const props = defineProps({
   options: {
@@ -25,6 +28,7 @@ watch(value, (newValue) => {
       :min="options.min"
       :max="options.max"
       :step="0.0001"
+      :style="{ accentColor: appColors.messageBusColor }"
       @mousedown.stop
       @touchstart.stop
     />
@@ -35,7 +39,7 @@ watch(value, (newValue) => {
 input[type="range"] {
   writing-mode: vertical-lr;
   direction: rtl; /* This ensures higher values are at the top */
-  width: 16px;    /* Set an appropriate width/height */
-  height: 100px;  /* Set an appropriate width/height */
+  width: 16px; /* Set an appropriate width/height */
+  height: 100px; /* Set an appropriate width/height */
 }
 </style>
