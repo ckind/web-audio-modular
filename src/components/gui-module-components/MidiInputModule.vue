@@ -16,7 +16,6 @@ const emit = defineEmits(["options-updated"]);
 const selectedDeviceId = ref(props.options.selectedDeviceId);
 
 watch(selectedDeviceId, (newValue) => {
-  console.log("Selected MIDI device ID changed:", newValue);
   emit("options-updated", { selectedDeviceId: newValue });
 });
 </script>

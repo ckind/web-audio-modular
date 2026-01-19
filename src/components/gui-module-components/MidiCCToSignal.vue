@@ -41,8 +41,8 @@ const listen = () => {
 
 <template>
   <div>
-    <v-btn :disabled="listening" density="compact" @click="listen" class="mr-2">
-      {{ listening ? "Listening..." : "Listen" }}
+    <v-btn :disabled="listening" density="compact" @click="listen" class="mr-2 text-lowercase">
+      {{ listening ? "Listening..." : "map cc" }}
     </v-btn>
     <patch-module-options-input
       :disabled="listening"

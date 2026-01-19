@@ -25,7 +25,6 @@ export default class MidiInputModule extends AudioModule<MidiInputModuleOptions>
     this._outputs = [new ModuleOutput("midi-message", this._messageOutput)];
     requestMidiDevices().then((devices) => {
       this._options.availableDevices = devices;
-      console.log("Available MIDI devices:", devices);
 
       if (devices.length > 0) {
         this._options.selectedDeviceId = devices![0]!.id;
@@ -59,7 +58,6 @@ export default class MidiInputModule extends AudioModule<MidiInputModuleOptions>
   }
 
   onMidiMessage(event: MIDIMessageEvent) {
-    console.log("MIDI message received:", event.data);
     this._messageOutput.scheduleMessage(Tone.now(), event.data);
   }
 
