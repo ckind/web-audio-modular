@@ -21,6 +21,7 @@ import ADSREnvelopeModule from "@/classes/audio-modules/ADSREnvelopeModule";
 import MidiInputModule from "@/classes/audio-modules/MidiInputModule";
 import MidiCCToSignalModule from "@/classes/audio-modules/MidiCCToSignal";
 import PowCurveModule from "@/classes/audio-modules/PowCurveModule";
+import PatchNotesModule from "@/classes/audio-modules/PatchNotesModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -66,6 +67,8 @@ export function createAudioModule(
       return new MidiInputModule(id, options);
     case "midi-cc-to-signal":
       return new MidiCCToSignalModule(id, options);
+    case "patch-notes":
+      return new PatchNotesModule(id, options);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }

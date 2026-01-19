@@ -21,6 +21,7 @@ export type AudioModuleType =
   | "midi-input"
   | "midi-cc-to-signal"
   | "pow-curve"
+  | "patch-notes"
   ;
 
 export type ModuleId = string;

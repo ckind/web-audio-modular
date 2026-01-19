@@ -110,6 +110,12 @@ const availableModules: ModuleDescriptor[] = [
     type: "pow-curve",
     categories: ["signal-operator", "signal"],
   },
+  {
+    title: "patch-notes",
+    type: "patch-notes",
+    GUIComponent: "PatchNotesModule",
+    categories: ["utility"],
+  },
 ];
 
 const addModule = (moduleType: string, GUIComponent?: string) => {

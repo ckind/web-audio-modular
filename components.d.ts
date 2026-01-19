@@ -22,6 +22,7 @@ declare module 'vue' {
     PatchModuleInput: typeof import('./src/components/PatchModuleInput.vue')['default']
     PatchModuleOptionsInput: typeof import('./src/components/PatchModuleOptionsInput.vue')['default']
     PatchModuleOutput: typeof import('./src/components/PatchModuleOutput.vue')['default']
+    PatchNotesModule: typeof import('./src/components/gui-module-components/PatchNotesModule.vue')['default']
     PatchWindow: typeof import('./src/components/PatchWindow.vue')['default']
     SliderModule: typeof import('./src/components/gui-module-components/SliderModule.vue')['default']
   }
