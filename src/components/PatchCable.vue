@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type PropType, ref, computed } from "vue";
+import { type PropType, computed } from "vue";
 import type { Position } from "@/types/uIInstanceTypes";
 import type { ConnectionType } from "@/types/connectionTypes";
 import { useAppColors } from "@/store/appColors";
@@ -38,6 +38,8 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["cable-selected"]);
+
+
 
 const cableClick = () => {
   emit("cable-selected");

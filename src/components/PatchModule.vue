@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, type PropType, watch, onMounted } from "vue";
+import { computed, type PropType, watch } from "vue";
 import {
   type ModuleInstance,
   type ConnectionInputInstance,
@@ -14,6 +14,18 @@ import PatchModuleOptionsInput from "./PatchModuleOptionsInput.vue";
 
 const DEFAULT_MIN_WIDTH = 30;
 const guiComponents = useGUIComponents();
+
+const elementCache = new Map<string, HTMLElement>();
+const getElement = (id: string): HTMLElement | null => {
+  if (elementCache.has(id)) {
+    return elementCache.get(id)!;
+  }
+  const element = document.getElementById(id);
+  if (element) {
+    elementCache.set(id, element);
+  }
+  return element;
+}
 
 const BORDER_SIZE = 1;
 const emit = defineEmits([
@@ -62,8 +74,7 @@ const updateModuleInputPositionStyles = (inputs: ModuleInputInstance[]) => {
   window.requestAnimationFrame(() => {
     for (let i = 0; i < inputs.length; i++) {
       const position = computeInputPosition(i, inputs.length);
-      // todo: cache dom element lookups
-      const inputElement = document.getElementById(
+      const inputElement = getElement(
         `${props.moduleInstance.moduleId}-input-${inputs[i]!.name}`,
       );
       if (inputElement) {
@@ -78,8 +89,7 @@ const updateModuleOutputPositionStyles = (outputs: ModuleOutputInstance[]) => {
   window.requestAnimationFrame(() => {
     for (let i = 0; i < outputs.length; i++) {
       const position = computeOutputPosition(i, outputs.length);
-      // todo: cache dom element lookups
-      const outputElement = document.getElementById(
+      const outputElement = getElement(
         `${props.moduleInstance.moduleId}-output-${outputs[i]!.name}`,
       );
       if (outputElement) {

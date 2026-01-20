@@ -22,6 +22,18 @@ import { useAppColors } from "@/store/appColors";
 
 const appColors = useAppColors();
 
+const elementCache = new Map<string, HTMLElement>();
+const getElement = (id: string): HTMLElement | null => {
+  if (elementCache.has(id)) {
+    return elementCache.get(id)!;
+  }
+  const element = document.getElementById(id);
+  if (element) {
+    elementCache.set(id, element);
+  }
+  return element;
+}
+
 let patchWindowPageX = 0;
 let patchWindowPageY = 0;
 
@@ -428,8 +440,7 @@ const onModuleOptionsUpdated = (
 
 const updateModulePositionStyle = (moduleId: string, position: Position) => {
   window.requestAnimationFrame(() => {
-    // todo: optimize by caching element references
-    const moduleEl = document.getElementById(moduleId);
+    const moduleEl = getElement(moduleId);
     if (moduleEl) {
       moduleEl.style.left = `${position.x}px`;
       moduleEl.style.top = `${position.y}px`;
