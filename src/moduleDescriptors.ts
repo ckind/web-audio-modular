@@ -8,9 +8,9 @@ export type ModuleDescriptor = {
 // prettier-ignore
 export const availableModules: ModuleDescriptor[] = [
   {
-    title: "oscillator",
-    type: "oscillator",
-    categories: ["sound-source", "signal"],
+    title: "osc",
+    type: "osc",
+    categories: ["source", "signal"],
   },
   {
     title: "speaker-output",
@@ -43,9 +43,9 @@ export const availableModules: ModuleDescriptor[] = [
     categories: ["signal-operator", "signal"],
   },
   {
-    title: "message-to-signal",
-    type: "message-to-signal",
-    categories: ["utility", "signal"],
+    title: "msg-to-signal",
+    type: "msg-to-signal",
+    categories: ["message", "signal"],
   },
   {
     title: "sequence",
@@ -53,47 +53,47 @@ export const availableModules: ModuleDescriptor[] = [
     categories: ["timing", "message-bus"],
   },
   {
-    title: "slider",
-    type: "slider",
+    title: "ui-slider",
+    type: "ui-slider",
     GUIComponent: "SliderModule",
     categories: ["ui-control", "signal"],
   },
   {
-    title: "display-message",
-    type: "display-message",
+    title: "msg-display",
+    type: "msg-display",
     GUIComponent: "DisplayMessageModule",
-    categories: ["utility", "message-bus"],
+    categories: ["message", "message-bus"],
   },
   {
     title: "filter",
     type: "filter",
+    categories: ["filter", "signal"],
+  },
+  {
+    title: "fx-convolution-reverb",
+    type: "fx-convolution-reverb",
     categories: ["effect", "signal"],
   },
   {
-    title: "convolution-reverb",
-    type: "convolution-reverb",
-    categories: ["effect", "signal"],
-  },
-  {
-    title: "button-trig",
-    type: "button-trig",
+    title: "ui-button",
+    type: "ui-button",
     GUIComponent: "ButtonTrigModule",
     categories: ["ui-control", "message-bus"],
   },
   {
-    title: "message-trig",
-    type: "message-trig",
+    title: "msg-box",
+    type: "msg-box",
     GUIComponent: "MessageTrigModule",
-    categories: ["ui-control", "message-bus"],
+    categories: ["message", "message-bus"],
   },
   {
     title: "noise",
     type: "noise",
-    categories: ["sound-source", "signal"]
+    categories: ["source", "signal"]
   },
   {
-    title: "adsr-envelope",
-    type: "adsr-envelope",
+    title: "env-adsr",
+    type: "env-adsr",
     categories: ["envelope", "signal"],
   },
   {
@@ -131,8 +131,8 @@ export const availableModules: ModuleDescriptor[] = [
     categories: ["midi", "signal"],
   },
   {
-    title: "adsr-amplitude",
-    type: "adsr-amplitude",
+    title: "env-amp",
+    type: "env-amp",
     categories: ["envelope", "signal"],
   },
   {

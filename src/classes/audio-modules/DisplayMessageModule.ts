@@ -27,7 +27,7 @@ export default class DisplayMessageModule extends AudioModule<DisplayMessageModu
   }
 
   get type(): AudioModuleType {
-    return "display-message";
+    return "msg-display";
   }
 
   messageCallback(time: number, message: any) {

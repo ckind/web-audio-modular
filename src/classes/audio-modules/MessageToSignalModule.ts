@@ -26,7 +26,7 @@ export default class MessageToSignalModule extends AudioModule<MessageToSignalMo
   }
 
   get type(): AudioModuleType {
-    return "message-to-signal";
+    return "msg-to-signal";
   }
 
   private _messageCallback(time: number, message: any) {

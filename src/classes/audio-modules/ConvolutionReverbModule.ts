@@ -35,7 +35,7 @@ export default class ConvolutionReverbModule extends AudioModule<ConvolutionReve
   }
 
   get type(): AudioModuleType {
-    return "convolution-reverb";
+    return "fx-convolution-reverb";
   }
 
   updateOptions(options: Partial<ConvolutionReverbModuleOptions>): void {

@@ -28,7 +28,7 @@ export default class SliderModule extends AudioModule<SliderModuleOptions> {
   }
 
   get type(): AudioModuleType {
-    return "slider";
+    return "ui-slider";
   }
 
   updateOptions(options: Partial<SliderModuleOptions>): void {

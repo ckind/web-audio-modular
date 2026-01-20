@@ -130,6 +130,7 @@ const addModuleDialogWidth = computed(() =>
               :value="category"
               size="small"
               variant="outlined"
+              filter
             >
               {{ category }}
             </v-chip>
@@ -169,7 +170,9 @@ const addModuleDialogWidth = computed(() =>
               @click="addModule(module.type, module.GUIComponent)"
               class="cursor-pointer"
             >
-              <v-list-item-title>{{ module.title }}</v-list-item-title>
+              <v-list-item-title>
+                {{ module.categories.includes("signal") ? "~" : ""}}{{ module.title }}
+              </v-list-item-title>
               <template #append>
                 <v-icon
                   @click.stop="showHelp(module.type)"

@@ -55,7 +55,7 @@ export default class ADSREnvelopeModule extends AudioModule<ADSREnvelopeModuleOp
   }
 
   get type(): AudioModuleType {
-    return "adsr-envelope";
+    return "env-adsr";
   }
 
   triggerAttackCallback(time: number, data: any) {

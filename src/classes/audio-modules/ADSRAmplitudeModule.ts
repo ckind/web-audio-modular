@@ -55,7 +55,7 @@ export default class ADSRAmplitudeModule extends AudioModule<ADSRAmplitudeModule
   }
 
   get type(): AudioModuleType {
-    return "adsr-amplitude";
+    return "env-amp";
   }
 
   triggerAttackCallback(time: number, data: any) {

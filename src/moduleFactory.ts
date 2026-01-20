@@ -36,7 +36,7 @@ export function createAudioModule(
   switch (type) {
     case "speaker-output":
       return new SpeakerOutputModule(id, options);
-    case "oscillator":
+    case "osc":
       return new OscillatorModule(id, options);
     case "gain":
       return new GainModule(id, options);
@@ -50,23 +50,23 @@ export function createAudioModule(
       return new ScaleExpModule(id, options);
     case "pow-curve":
       return new PowCurveModule(id, options);
-    case "message-to-signal":
+    case "msg-to-signal":
       return new MessageToSignalModule(id, options);
     case "sequence":
       return new SequenceModule(id, options);
-    case "slider":
+    case "ui-slider":
       return new SliderModule(id, options);
-    case "display-message":
+    case "msg-display":
       return new DisplayMessageModule(id, options);
     case "filter":
       return new FilterModule(id, options);
-    case "convolution-reverb":
+    case "fx-convolution-reverb":
       return new ConvolutionReverbModule(id, options);
-    case "button-trig":
+    case "ui-button":
       return new ButtonTrigModule(id, options);
     case "noise":
       return new NoiseModule(id, options);
-    case "adsr-envelope":
+    case "env-adsr":
       return new ADSREnvelopeModule(id, options);
     case "midi-input":
       return new MidiInputModule(id, options);
@@ -76,9 +76,9 @@ export function createAudioModule(
       return new PatchNotesModule(id, options);
     case "midi-note-message":
       return new MidiNoteMessageModule(id, options);
-    case "adsr-amplitude":
+    case "env-amp":
       return new ADSRAmplitudeModule(id, options);
-    case "message-trig":
+    case "msg-box":
       return new MessageTrigModule(id, options);
     case "midi-num-to-hz":
       return new MidiNumToHzModule(id, options);

@@ -30,7 +30,7 @@ export default class MessageTrigModule extends AudioModule<MessageTrigModuleOpti
   }
 
   get type(): AudioModuleType {
-    return "message-trig";
+    return "msg-box";
   }
 
   private _trigMessageCallack() {

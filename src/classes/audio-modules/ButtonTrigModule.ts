@@ -23,7 +23,7 @@ export default class ButtonTrigModule extends AudioModule<ButtonTrigModuleOption
   }
 
   get type(): AudioModuleType {
-    return "button-trig";
+    return "ui-button";
   }
 
   updateOptions(options: Partial<ButtonTrigModuleOptions>): void {

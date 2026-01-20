@@ -45,7 +45,7 @@ export default class OscillatorModule extends AudioModule<OscillatorModuleOption
   }
 
   get type(): AudioModuleType {
-    return "oscillator";
+    return "osc";
   }
 
   oscillatorTypeCallback(time: number, data: any) {
