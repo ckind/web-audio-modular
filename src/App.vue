@@ -4,7 +4,6 @@ import { useAppColors } from "./store/appColors";
 import { useTheme } from "vuetify";
 import { useAudioSettings } from "@/store/audioSettings";
 import { init } from "@/toneInit";
-import Patch from "@/views/Patch.vue";
 
 const theme = useTheme();
 const appColors = useAppColors();
@@ -36,8 +35,13 @@ init(() => {
 
 <template>
   <v-app>
-    <v-app-bar density="comfortable" flat title="Web Audio Modular">
+    <v-app-bar density="comfortable" flat>
+      <template v-slot:title>
+        <router-link to="/" class="title-link">Web Audio Modular</router-link>
+      </template>
       <v-spacer></v-spacer>
+      <v-btn variant="text" to="/">Patcher</v-btn>
+      <v-btn variant="text" to="/overview">Overview</v-btn>
       <v-btn
         icon="mdi-cog"
         aria-label="Settings"
@@ -67,3 +71,12 @@ init(() => {
     </v-main>
   </v-app>
 </template>
+
+<style scoped>
+.title-link {
+  color: inherit;
+  text-decoration: none;
+  font-size: inherit;
+  font-weight: inherit;
+}
+</style>
