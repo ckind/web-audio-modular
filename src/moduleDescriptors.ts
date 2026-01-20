@@ -145,5 +145,10 @@ export const availableModules: ModuleDescriptor[] = [
     type: "sampler-plus",
     GUIComponent: "SamplerPlusModule",
     categories: ["source", "signal"],
-  }
+  },
+  {
+    title: "msg-regex",
+    type: "msg-regex",
+    categories: ["message", "message-bus"],
+  },
 ];

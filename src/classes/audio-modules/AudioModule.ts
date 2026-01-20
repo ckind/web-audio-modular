@@ -25,6 +25,7 @@ export type AudioModuleType =
   | "midi-note-message"
   | "env-amp"
   | "msg-box"
+  | "msg-regex"
   | "midi-num-to-hz"
   | "split"
   | "sampler-plus"

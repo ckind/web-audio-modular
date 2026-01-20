@@ -28,6 +28,7 @@ import MessageTrigModule from "@/classes/audio-modules/MessageTrig";
 import MidiNumToHzModule from "@/classes/audio-modules/MidiNumToHzModule";
 import SplitModule from "@/classes/audio-modules/SplitModule";
 import SamplerPlusModule from "@/classes/audio-modules/SamplerPlusModule";
+import MessageRegexModule from "@/classes/audio-modules/MessageRegexModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -87,6 +88,8 @@ export function createAudioModule(
       return new SplitModule(id, options);
     case "sampler-plus":
       return new SamplerPlusModule(id, options);
+    case "msg-regex":
+      return new MessageRegexModule(id, options);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }
