@@ -4,7 +4,7 @@ import MessageOutputNode from "@/classes/MessageOutputNode";
 import MessageInputNode from "@/classes/MessageInputNode";
 import ModuleOutput from "@/classes/ModuleOutput";
 import ModuleInput from "../ModuleInput";
-import * as Tone from "tone";
+import type { MessageBusDataType } from "@/types/connectionTypes";
 
 type SplitModuleOptions = {
   numOutputs: number;
@@ -43,15 +43,15 @@ export default class SplitModule extends AudioModule<SplitModuleOptions> {
     return "split";
   }
 
-  private _messageInputCallback(time: number, message: any) {
-    if (Array.isArray(message)) {
+  private _messageInputCallback(time: number, data?: MessageBusDataType): void {
+    if (Array.isArray(data)) {
       for (let i = 0; i < this._options.numOutputs; i++) {
-        if (i < message.length) {
-          this._messageOutputNodes[i]!.scheduleMessage(time, message[i]);
+        if (i < data.length) {
+          this._messageOutputNodes[i]!.scheduleMessage(time, data[i]);
         }
       }
-    } else if (typeof message === "string") {
-      const parts = message.split(this._delimiter);
+    } else if (typeof data === "string") {
+      const parts = data.split(this._delimiter);
       for (let i = 0; i < this._options.numOutputs; i++) {
         if (i < parts.length) {
           this._messageOutputNodes[i]!.scheduleMessage(time, parts[i]!.trim());

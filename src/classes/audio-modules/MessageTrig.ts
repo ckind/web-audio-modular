@@ -5,10 +5,11 @@ import MessageInputNode from "@/classes/MessageInputNode";
 import ModuleOutput from "@/classes/ModuleOutput";
 import ModuleInput from "../ModuleInput";
 import * as Tone from "tone";
+import type { MessageBusDataType } from "@/types/connectionTypes";
 
 
 type MessageTrigModuleOptions = {
-  trigMessage: any;
+  trigMessage: MessageBusDataType;
 };
 
 const getDefaultOptions = (): MessageTrigModuleOptions => ({

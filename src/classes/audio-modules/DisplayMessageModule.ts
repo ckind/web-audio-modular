@@ -1,10 +1,8 @@
 import AudioModule from "@/classes/audio-modules/AudioModule.ts";
 import ModuleInput from "@/classes//ModuleInput.ts";
-import type {
-  AudioModuleType,
-  UpdateUIStateCallback,
-} from "@/classes/audio-modules/AudioModule.ts";
+import type { AudioModuleType } from "@/classes/audio-modules/AudioModule.ts";
 import MessageInputNode from "@/classes/MessageInputNode";
+import type { MessageBusDataType } from "@/types/connectionTypes";
 
 type DisplayMessageModuleOptions = {
   message: "";
@@ -30,9 +28,9 @@ export default class DisplayMessageModule extends AudioModule<DisplayMessageModu
     return "msg-display";
   }
 
-  messageCallback(time: number, message: any) {
+  messageCallback(time: number, data?: MessageBusDataType): void {
     if (this.updateUIInstanceOptions) {
-      this.updateUIInstanceOptions({ message });
+      this.updateUIInstanceOptions({ message: data });
     }
   }
 

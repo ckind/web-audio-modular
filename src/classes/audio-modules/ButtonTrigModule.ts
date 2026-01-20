@@ -3,9 +3,10 @@ import type { AudioModuleType } from "@/classes/audio-modules/AudioModule";
 import MessageOutputNode from "@/classes/MessageOutputNode";
 import * as Tone from "tone";
 import ModuleOutput from "@/classes/ModuleOutput";
+import type { MessageBusDataType } from "@/types/connectionTypes";
 
 type ButtonTrigModuleOptions = {
-  trigMessage: any;
+  trigMessage: MessageBusDataType;
 };
 
 const getDefaultOptions = (): ButtonTrigModuleOptions => ({

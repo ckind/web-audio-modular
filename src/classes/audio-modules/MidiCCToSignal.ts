@@ -4,6 +4,7 @@ import ModuleInput from "@/classes/ModuleInput.ts";
 import * as Tone from "tone";
 import MessageInputNode from "@/classes/MessageInputNode";
 import ModuleOutput from "@/classes/ModuleOutput";
+import type { MessageBusDataType } from "@/types/connectionTypes";
 
 type MidiCCToSignalModuleOptions = {
   channel: number;
@@ -27,8 +28,8 @@ export default class MidiCCToSignalModule extends AudioModule<MidiCCToSignalModu
     this._inputs = [
       new ModuleInput(
         "midi-input",
-        new MessageInputNode((time, message) =>
-          this._messageCallback(time, message),
+        new MessageInputNode((time, data) =>
+          this._messageCallback(time, data),
         ),
       ),
     ];
@@ -39,11 +40,15 @@ export default class MidiCCToSignalModule extends AudioModule<MidiCCToSignalModu
     return "midi-cc-to-signal";
   }
 
-  private _messageCallback(time: number, message: Uint8Array) {
+  private _messageCallback(time: number, data?: MessageBusDataType): void {
+    if (!data || !(data instanceof Uint8Array) || data.length < 3) {
+      return;
+    }
+
     if (this._options.listenForChannelAndControl) {
-      this.options.channel = message[0]! & 0x0f; // Extract channel from MIDI status byte
-      this.options.control = message[1]!; // Control number is the first parameter
-      this.options.listenForChannelAndControl = false; // Stop listening after capturing the first message
+      this._options.channel = data[0]! & 0x0f; // Extract channel from MIDI status byte
+      this._options.control = data[1]!; // Control number is the first parameter
+      this._options.listenForChannelAndControl = false; // Stop listening after capturing the first message
       if (this.updateUIInstanceOptions) {
         this.updateUIInstanceOptions(this._options);
       }
@@ -51,11 +56,11 @@ export default class MidiCCToSignalModule extends AudioModule<MidiCCToSignalModu
     }
 
     if (
-      (message[0]! & 0xf0) === 0xb0 && // Control Change message
-      (message[0]! & 0x0f) === this._options.channel && // check for the specified channel
-      message[1]! === this._options.control // check for matching control number
+      (data[0]! & 0xf0) === 0xb0 && // Control Change message
+      (data[0]! & 0x0f) === this._options.channel && // check for the specified channel
+      data[1]! === this._options.control // check for matching control number
     ) {
-      const num = message[2]!; // Control value (0-127)
+      const num = data[2]!; // Control value (0-127)
       this._signal.setValueAtTime(num, time);
     }
   }

@@ -5,6 +5,7 @@ import AudioModule, {
 import ModuleOutput from "@/classes/ModuleOutput";
 import ModuleInput from "../ModuleInput";
 import MessageInputNode from "../MessageInputNode";
+import type { MessageBusDataType } from "@/types/connectionTypes";
 
 type SequenceModuleOptions = {
   values: string;
@@ -47,7 +48,7 @@ export default class SequenceModule extends AudioModule<SequenceModuleOptions> {
     }
   }
 
-  trigger(time: number) {
+  trigger(time: number, data?: MessageBusDataType): void {
     const value = this._valuesArray[this._currentIndex];
     this._messageOutput.scheduleMessage(time, value);
     this._currentIndex = (this._currentIndex + 1) % this._valuesArray.length;

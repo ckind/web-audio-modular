@@ -4,6 +4,7 @@ import ModuleInput from "@/classes/ModuleInput";
 import ModuleOutput from "@/classes/ModuleOutput";
 import MessageInputNode from "@/classes/MessageInputNode";
 import * as Tone from "tone";
+import type { MessageBusDataType } from "@/types/connectionTypes";
 
 type OscillatorModuleOptions = {
   frequency: number;
@@ -48,12 +49,15 @@ export default class OscillatorModule extends AudioModule<OscillatorModuleOption
     return "osc";
   }
 
-  oscillatorTypeCallback(time: number, data: any) {
-    // todo: validate type?
+  oscillatorTypeCallback(time: number, data?: MessageBusDataType): void {
+    if (!data || typeof data !== "string") {
+      return;
+    }
+
     // seems like tone/web audio api is not actually able to change osc type
     // at a or k-rate
-    this._oscillatorNode.type = data;
-    this._options.type = data;
+    this._oscillatorNode.type = data as OscillatorType;
+    this._options.type = data as OscillatorType;
   }
 
   updateOptions(options: Partial<OscillatorModuleOptions>): void {

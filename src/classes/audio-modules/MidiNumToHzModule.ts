@@ -4,6 +4,7 @@ import ModuleInput from "@/classes/ModuleInput.ts";
 import ModuleOutput from "@/classes/ModuleOutput";
 import MessageInputNode from "@/classes/MessageInputNode";
 import * as Tone from "tone";
+import type { MessageBusDataType } from "@/types/connectionTypes";
 
 type MidiNumToHzModuleOptions = {};
 
@@ -21,8 +22,8 @@ export default class MidiNumToHzModule extends AudioModule<MidiNumToHzModuleOpti
     this._inputs = [
       new ModuleInput(
         "midi-note-num",
-        new MessageInputNode((time, message) =>
-          this._messageCallback(time, message),
+        new MessageInputNode((time, data) =>
+          this._messageCallback(time, data),
         ),
       ),
     ];
@@ -34,8 +35,12 @@ export default class MidiNumToHzModule extends AudioModule<MidiNumToHzModuleOpti
     return "midi-num-to-hz";
   }
 
-  private _messageCallback(time: number, num: number) {
-    const frequency = this._tuningA4 * Math.pow(2, (num - 69) / 12);
+  private _messageCallback(time: number, data?: MessageBusDataType): void {
+    if (!data || typeof data !== "number") {
+      return;
+    }
+
+    const frequency = this._tuningA4 * Math.pow(2, (data - 69) / 12);
     this._signal.setValueAtTime(frequency, time);
   }
 

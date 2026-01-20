@@ -5,6 +5,7 @@ import MessageOutputNode from "@/classes/MessageOutputNode";
 import * as Tone from "tone";
 import ModuleOutput from "@/classes/ModuleOutput";
 import ModuleInput from "@/classes/ModuleInput";
+import type { MessageBusDataType } from "@/types/connectionTypes";
 
 type ClockModuleOptions = {
   bpm: number;
@@ -18,6 +19,7 @@ export default class ClockModule extends AudioModule<ClockModuleOptions> {
   private _intervalSeconds: number;
   private _running: boolean = false;
   private _eventId: number;
+  private _counter: number = 0;
 
   private _messageOutput: MessageOutputNode;
 
@@ -50,7 +52,8 @@ export default class ClockModule extends AudioModule<ClockModuleOptions> {
 
   private _clockCallback(time: number) {
     if (this._running) {
-      this._messageOutput.scheduleMessage(time, "tick");
+      this._counter++;
+      this._messageOutput.scheduleMessage(time, this._counter);
     }
   }
 
@@ -68,7 +71,7 @@ export default class ClockModule extends AudioModule<ClockModuleOptions> {
     }
   }
 
-  toggleRunning(time: number, _: any): void {
+  toggleRunning(time: number, data?: MessageBusDataType): void {
     this._running = !this._running;
   }
 

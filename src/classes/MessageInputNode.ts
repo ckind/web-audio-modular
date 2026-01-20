@@ -1,6 +1,7 @@
 import type IMessageBusDestinationNode from "@/classes/interfaces/IMessageBusDestinationNode";
+import type { MessageBusDataType } from "@/types/connectionTypes";
 
-type MessageInputNodeCallback = (time: number, message: any) => void;
+type MessageInputNodeCallback = (time: number, data?: MessageBusDataType) => void;
 
 /**
  * MessageInputNode is a MessageBusDestinationNode that allows us to
@@ -14,7 +15,7 @@ export default class MessageInputNode implements IMessageBusDestinationNode {
     this._callback = callback;
   }
 
-  scheduleMessageCallback(time: number, data: any): void {
+  scheduleMessageCallback(time: number, data?: MessageBusDataType): void {
     this._callback(time, data);
   }
 

@@ -5,6 +5,7 @@ import MessageInputNode from "@/classes/MessageInputNode";
 import ModuleOutput from "@/classes/ModuleOutput";
 import ModuleInput from "../ModuleInput";
 import * as Tone from "tone";
+import type { MessageBusDataType } from "@/types/connectionTypes";
 
 type MessageRegexModuleOptions = {
   regex: string;
@@ -35,14 +36,14 @@ export default class MessageRegexModule extends AudioModule<MessageRegexModuleOp
     return "msg-regex";
   }
 
-  private _messageInputCallback(time: number, message: any): void {
-    if (!this._regex.test(message)) {
+  private _messageInputCallback(time: number, data?: MessageBusDataType): void {
+    if (data !== undefined && typeof data === "string" && !this._regex.test(data)) {
       return;
     }
 
     this._messageOutputNode.scheduleMessage(
       Tone.now(),
-      message,
+      data,
     );
   }
 

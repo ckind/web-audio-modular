@@ -4,6 +4,7 @@ import ModuleInput from "@/classes/ModuleInput.ts";
 import * as Tone from "tone";
 import MessageInputNode from "../MessageInputNode";
 import ModuleOutput from "../ModuleOutput";
+import type { MessageBusDataType } from "@/types/connectionTypes";
 
 type MessageToSignalModuleOptions = {};
 
@@ -20,7 +21,7 @@ export default class MessageToSignalModule extends AudioModule<MessageToSignalMo
 
     this._signal = new Tone.Signal(0);
     this._inputs = [new ModuleInput("message-input", new MessageInputNode(
-      (time, message) => this._messageCallback(time, message)
+      (time, data) => this._messageCallback(time, data)
     ))];
     this._outputs = [new ModuleOutput("signal-output", this._signal)];
   }
@@ -29,12 +30,12 @@ export default class MessageToSignalModule extends AudioModule<MessageToSignalMo
     return "msg-to-signal";
   }
 
-  private _messageCallback(time: number, message: any) {
-    const num = Number(message);
+  private _messageCallback(time: number, data?: MessageBusDataType) {
+    const num = Number(data);
     if (!isNaN(num)) {
       this._signal.setValueAtTime(num, time);
     } else {
-      console.warn("Received message with non-numeric value for message to signal module:", message);
+      console.warn("Received message with non-numeric value for message to signal module:", data);
     }
   }
 

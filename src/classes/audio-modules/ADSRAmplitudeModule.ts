@@ -3,6 +3,7 @@ import type { AudioModuleType } from "@/classes/audio-modules/AudioModule";
 import ModuleInput from "@/classes/ModuleInput";
 import ModuleOutput from "@/classes/ModuleOutput";
 import MessageInputNode from "@/classes/MessageInputNode";
+import type { MessageBusDataType } from "@/types/connectionTypes";
 import * as Tone from "tone";
 
 type ADSRAmplitudeModuleOptions = {
@@ -25,7 +26,7 @@ const isNormalRange = (value: any): value is number => {
 
 const isMidiRange = (value: any): value is number => {
   return Number.isInteger(value) && value >= 0 && value <= 127;
-}
+};
 
 export default class ADSRAmplitudeModule extends AudioModule<ADSRAmplitudeModuleOptions> {
   private _ampEnvNode: Tone.AmplitudeEnvelope;
@@ -58,8 +59,9 @@ export default class ADSRAmplitudeModule extends AudioModule<ADSRAmplitudeModule
     return "env-amp";
   }
 
-  triggerAttackCallback(time: number, data: any) {
-    if (data !== undefined) {
+  triggerAttackCallback(time: number, data?: MessageBusDataType) {
+    // todo: convert incoming string to number?
+    if (data !== undefined && typeof data === "number") {
       if (isNormalRange(data)) {
         this._ampEnvNode.triggerAttack(time, data);
         return;
@@ -69,10 +71,11 @@ export default class ADSRAmplitudeModule extends AudioModule<ADSRAmplitudeModule
         return;
       }
     }
-    this._ampEnvNode.triggerAttack(time, data);
+
+    this._ampEnvNode.triggerAttack(time);
   }
 
-  triggerReleaseCallback(time: number, data: any) {
+  triggerReleaseCallback(time: number, data?: MessageBusDataType) {
     this._ampEnvNode.triggerRelease(time);
   }
 

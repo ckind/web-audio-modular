@@ -5,6 +5,7 @@ import ModuleOutput from "@/classes/ModuleOutput";
 import MessageInputNode from "@/classes/MessageInputNode";
 import MessageOutputNode from "@/classes/MessageOutputNode";
 import * as Tone from "tone";
+import type { MessageBusDataType } from "@/types/connectionTypes";
 
 type MidiNoteMessageModuleOptions = {
   channel: number;
@@ -29,8 +30,8 @@ export default class MidiNoteMessageModule extends AudioModule<MidiNoteMessageMo
     this._inputs = [
       new ModuleInput(
         "midi-input",
-        new MessageInputNode((time, message) =>
-          this._messageCallback(time, message),
+        new MessageInputNode((time, data) =>
+          this._messageCallback(time, data),
         ),
       ),
     ];
@@ -48,10 +49,14 @@ export default class MidiNoteMessageModule extends AudioModule<MidiNoteMessageMo
     return "midi-note-message";
   }
 
-  private _messageCallback(time: number, message: Uint8Array) {
+  private _messageCallback(time: number, data?: MessageBusDataType): void {
+    if (!data || !(data instanceof Uint8Array) || data.length < 3) {
+      return;
+    }
+
     if (this._options.listenForChannel) {
-      this.options.channel = message[0]! & 0x0f; // Extract channel from MIDI status byte
-      this.options.listenForChannel = false; // Stop listening after capturing the first message
+      this._options.channel = data[0]! & 0x0f; // Extract channel from MIDI status byte
+      this._options.listenForChannel = false; // Stop listening after capturing the first message
       if (this.updateUIInstanceOptions) {
         this.updateUIInstanceOptions(this._options);
       }
@@ -59,23 +64,23 @@ export default class MidiNoteMessageModule extends AudioModule<MidiNoteMessageMo
     }
 
     if (
-      (message[0]! & 0xf0) === 0x90 && // note on message
-      (message[0]! & 0x0f) === this._options.channel // check for the specified channel
+      (data[0]! & 0xf0) === 0x90 && // note on message
+      (data[0]! & 0x0f) === this._options.channel // check for the specified channel
     ) {
-      const noteNumber = message[1]!; // MIDI note number (0-127)
-      const velocity = message[2]!; // MIDI velocity (0-127)
+      const noteNumber = data[1]!; // MIDI note number (0-127)
+      const velocity = data[2]!; // MIDI velocity (0-127)
       this._notesDown.add(noteNumber);
       this._forwardNoteOn(noteNumber, velocity);
     } else if (
       !this._sustainPedalDown && // if sustain pedal is down, ignore note off messages
-      (message[0]! & 0xf0) === 0x80 && // note off message
-      (message[0]! & 0x0f) === this._options.channel // check for the specified channel
+      (data[0]! & 0xf0) === 0x80 && // note off message
+      (data[0]! & 0x0f) === this._options.channel // check for the specified channel
     ) {
-      const noteNumber = message[1]!; // MIDI note number (0-127)
+      const noteNumber = data[1]!; // MIDI note number (0-127)
       this._notesDown.delete(noteNumber);
       this._forwardNoteOff(noteNumber);
-    } else if ((message[0]! & 0xf0) === 0xb0 && message[1]! === 64) {
-      const sustainOn = message[2]! >= 64;
+    } else if ((data[0]! & 0xf0) === 0xb0 && data[1]! === 64) {
+      const sustainOn = data[2]! >= 64;
       if (sustainOn) {
         this._sustainPedalDown = true;
       } else {

@@ -5,6 +5,7 @@ import ModuleOutput from "@/classes/ModuleOutput";
 import MessageInputNode from "@/classes/MessageInputNode";
 import * as Tone from "tone";
 import SamplerPlusNode from "@/classes/audio-nodes/SamplerPlusNode";
+import type { MessageBusDataType } from "@/types/connectionTypes";
 
 type SamplerPlusModuleOptions = {
   playbackRate: number;
@@ -57,7 +58,7 @@ export default class SamplerPlusModule extends AudioModule<SamplerPlusModuleOpti
     return "sampler-plus";
   }
 
-  private _playInputCallback(data: any): void {
+  private _playInputCallback(time: number, data?: MessageBusDataType): void {
     console.log("SamplerPlusModule play input received data:", data);
     if (this._toggle) {
       console.log("Playing sampler");
