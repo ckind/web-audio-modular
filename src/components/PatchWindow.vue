@@ -124,6 +124,7 @@ const loadPatch = () => {
               .forEach((c) => deleteConnection(c));
           };
           patcher.addModule(module);
+          updateModulePositionStyle(m.moduleId, m.position);
         });
 
         loadedGraph.connections.forEach((c) => {
