@@ -28,7 +28,10 @@ export default class ConvolutionReverbModule extends AudioModule<ConvolutionReve
     this._outputs = [
       new ModuleOutput("reverb-signal-output", this._reverbNode),
     ];
-    this._inputs = [new ModuleInput("reverb-signal-input", this._reverbNode)];
+    this._inputs = [
+      new ModuleInput("reverb-signal-input", this._reverbNode),
+      new ModuleInput("mix-control", this._reverbNode.wet),
+    ];
   }
 
   get type(): AudioModuleType {

@@ -14,7 +14,7 @@ import {
 import useGUIComponents from "@/composables/useGUIComponents";
 import PatchModuleOptionsInput from "./PatchModuleOptionsInput.vue";
 
-const DEFAULT_MIN_WIDTH = 50;
+const DEFAULT_MIN_WIDTH = 30;
 const guiComponents = useGUIComponents();
 
 const BORDER_SIZE = 1;
