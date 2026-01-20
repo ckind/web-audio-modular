@@ -35,6 +35,7 @@ export function init(callback?: () => void) {
     await registerAudioWorklets(ctx, [
       "./classes/audio-worklets/ScaleWorkletProcessor.js",
       "./classes/audio-worklets/PowCurveWorkletProcessor.js",
+      "./classes/audio-worklets/SamplerPlusWorkletProcessor.js",
     ]);
 
     Tone.setContext(ctx);

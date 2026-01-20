@@ -7,6 +7,7 @@ import MidiInputModule from "@/components/gui-module-components/MidiInputModule.
 import MidiCCToSignal from "@/components/gui-module-components/MidiCCToSignal.vue";
 import PatchNotesModule from "@/components/gui-module-components/PatchNotesModule.vue";
 import MidiNoteMessageModule from "@/components/gui-module-components/MidiNoteMessageModule.vue";
+import SamplerPlusModule from "@/components/gui-module-components/SamplerPlusModule.vue";
 
 export default function useGUIComponents() {
   const components: Record<string, Component> = {
@@ -17,7 +18,8 @@ export default function useGUIComponents() {
     MidiInputModule,
     MidiCCToSignal,
     PatchNotesModule,
-    MidiNoteMessageModule
+    MidiNoteMessageModule,
+    SamplerPlusModule,
   };
 
   return components;

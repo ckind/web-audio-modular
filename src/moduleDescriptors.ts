@@ -140,4 +140,10 @@ export const availableModules: ModuleDescriptor[] = [
     type: "split",
     categories: ["utility", "message-bus"],
   },
+  {
+    title: "sampler-plus",
+    type: "sampler-plus",
+    GUIComponent: "SamplerPlusModule",
+    categories: ["source", "signal"],
+  }
 ];

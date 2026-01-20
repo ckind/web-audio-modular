@@ -27,6 +27,7 @@ export type AudioModuleType =
   | "msg-box"
   | "midi-num-to-hz"
   | "split"
+  | "sampler-plus"
   ;
 
 export type ModuleId = string;
