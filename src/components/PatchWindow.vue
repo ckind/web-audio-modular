@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, computed } from "vue";
 import useDragging from "@/composables/useDragging";
 import useMouseTracking from "@/composables/useMouseTracking";
 import PatchModule from "@/components/PatchModule.vue";
@@ -32,7 +32,7 @@ const getElement = (id: string): HTMLElement | null => {
     elementCache.set(id, element);
   }
   return element;
-}
+};
 
 let patchWindowPageX = 0;
 let patchWindowPageY = 0;
@@ -472,7 +472,19 @@ const onModuleDrag = (
   });
 };
 
-const { onDragElementStart } = useDragging(onModuleDrag);
+const onModuleDragEnd = () => {
+  document.documentElement.classList.remove("disable-tooltips");
+};
+
+const onModuleDragStart = (
+  e: MouseEvent | TouchEvent,
+  moduleInstance: ModuleInstance,
+) => {
+  document.documentElement.classList.add("disable-tooltips");
+  onDragElementStart(e, moduleInstance);
+};
+
+const { onDragElementStart } = useDragging(onModuleDrag, onModuleDragEnd);
 const { startMouseTracking, stopMouseTracking } =
   useMouseTracking(onPatchingMouseMove);
 
@@ -524,6 +536,10 @@ const removeKeyListeners = () => {
   }
 };
 
+const patchWindowStyle = computed(() => {
+  return {};
+});
+
 onMounted(() => {
   assignKeyListners();
 });
@@ -564,6 +580,7 @@ onUnmounted(() => {
     class="patch-window"
     @contextmenu.stop="onGraphContextMenu"
     @click="clearSelection"
+    :style="patchWindowStyle"
   >
     <!-- prettier-ignore -->
     <PatchModule
@@ -577,8 +594,8 @@ onUnmounted(() => {
         backgroundColor: appColors.backgroundColor,
       }"
       :ripple="false"
-      @mousedown="(e: MouseEvent) => onDragElementStart(e, module)"
-      @touchstart="(e: TouchEvent) => onDragElementStart(e, module)"
+      @mousedown="(e: MouseEvent) => onModuleDragStart(e, module)"
+      @touchstart="(e: TouchEvent) => onModuleDragStart(e, module)"
       @begin-patching="(output) => onBeginPatching(module, output)"
       @finish-patching="(input) => onFinishPatching(module, input)"
       @inputs-updated="(inputs) => onModuleInputsUpdated(module.moduleId, inputs)"
@@ -634,5 +651,13 @@ onUnmounted(() => {
 }
 .button-container {
   width: 100%;
+}
+</style>
+
+<style>
+/* Disable all Vuetify tooltips */
+.disable-tooltips .v-tooltip {
+  display: none !important;
+  pointer-events: none !important;
 }
 </style>
