@@ -5,16 +5,14 @@ import { useAppColors } from "./store/appColors";
 import { useTheme } from "vuetify";
 import { useAudioSettings } from "@/store/audioSettings";
 import { init } from "@/toneInit";
-import ScaleWorkletNode from "./classes/audio-nodes/ScaleWorkletNode";
-import * as Tone from "tone";
 
 const theme = useTheme();
 const appColors = useAppColors();
 const updateAppColors = () => {
-  appColors.setMessageBusColor(
+  appColors.setSignalColor(
     theme.current.value.colors["secondary"] ?? "#fff",
   );
-  appColors.setSignalColor(theme.current.value.colors["on-surface"] ?? "#fff");
+  appColors.setMessageBusColor(theme.current.value.colors["on-surface"] ?? "#fff");
   appColors.setTextColor(theme.current.value.colors["on-surface"] ?? "#fff");
   appColors.setBackgroundColor(
     theme.current.value.colors["background"] ?? "#fff",

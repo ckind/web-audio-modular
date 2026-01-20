@@ -171,7 +171,11 @@ const addModuleDialogWidth = computed(() =>
               class="cursor-pointer"
             >
               <v-list-item-title>
-                {{ module.categories.includes("signal") ? "~" : ""}}{{ module.title }}
+                <span
+                  v-if="module.categories.includes('signal')"
+                  class="text-secondary"
+                  >~ </span
+                >{{ module.title }}
               </v-list-item-title>
               <template #append>
                 <v-icon
