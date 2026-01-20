@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import { computed, ref, type PropType, watch } from "vue";
+import { computed, ref, type PropType, watch, onMounted } from "vue";
 import {
   type ModuleInstance,
   type ConnectionInputInstance,
   type ConnectionOutputInstance,
+  type ModuleInputInstance,
+  type ModuleOutputInstance,
 } from "@/types/uIInstanceTypes";
 import useDynamicSize from "@/composables/useDynamicSize";
 import PatchModuleInput from "@/components/PatchModuleInput.vue";
-import {
-  computeInputPosition,
-  computeOutputPosition,
-} from "@/helpers/patchHelper.ts";
 import useGUIComponents from "@/composables/useGUIComponents";
 import PatchModuleOptionsInput from "./PatchModuleOptionsInput.vue";
 
@@ -33,6 +31,22 @@ const props = defineProps({
   },
 });
 
+const computeInputPosition = (inputIndex: number, totalInputs: number) => {
+  const widthMult = moduleDisplayWidth.value / totalInputs;
+  return {
+    x: props.moduleInstance.position.x + widthMult * (inputIndex + 0.5),
+    y: props.moduleInstance.position.y,
+  };
+};
+
+const computeOutputPosition = (outputIndex: number, totalOutputs: number) => {
+  const widthMult = moduleDisplayWidth.value / totalOutputs;
+  return {
+    x: props.moduleInstance.position.x + widthMult * (outputIndex + 0.5),
+    y: props.moduleInstance.position.y + moduleDisplayHeight.value,
+  };
+};
+
 const minWidth = computed(() => {
   return Math.max(DEFAULT_MIN_WIDTH, 30 * props.moduleInstance.outputs.length);
 });
@@ -44,18 +58,57 @@ const moduleName = computed(() => {
   return props.moduleInstance.type;
 });
 
+const updateModuleInputPositionStyles = (inputs: ModuleInputInstance[]) => {
+  window.requestAnimationFrame(() => {
+    for (let i = 0; i < inputs.length; i++) {
+      const position = computeInputPosition(i, inputs.length);
+      // todo: cache dom element lookups
+      const inputElement = document.getElementById(
+        `${props.moduleInstance.moduleId}-input-${inputs[i]!.name}`,
+      );
+      if (inputElement) {
+        inputElement.style.left = `${position.x - props.moduleInstance.position.x - BORDER_SIZE}px`;
+        inputElement.style.top = `${position.y - props.moduleInstance.position.y}px`;
+      }
+    }
+  });
+};
+
+const updateModuleOutputPositionStyles = (outputs: ModuleOutputInstance[]) => {
+  window.requestAnimationFrame(() => {
+    for (let i = 0; i < outputs.length; i++) {
+      const position = computeOutputPosition(i, outputs.length);
+      // todo: cache dom element lookups
+      const outputElement = document.getElementById(
+        `${props.moduleInstance.moduleId}-output-${outputs[i]!.name}`,
+      );
+      if (outputElement) {
+        outputElement.style.left = `${position.x - props.moduleInstance.position.x - BORDER_SIZE}px`;
+        outputElement.style.top = `${position.y - props.moduleInstance.position.y - BORDER_SIZE}px`;
+      }
+    }
+  });
+};
+
+watch(
+  () => [
+    props.moduleInstance.position,
+    moduleDisplayWidth.value,
+    moduleDisplayHeight.value,
+  ],
+  () => {
+    updateModuleInputPositionStyles(props.moduleInstance.inputs);
+    updateModuleOutputPositionStyles(props.moduleInstance.outputs);
+  },
+  { immediate: true, deep: true },
+);
+
 const inputs = computed(() => {
   const newInputs = props.moduleInstance.inputs.map((i, index) => {
     return {
       name: i.name,
       type: i.type,
-      position: computeInputPosition(
-        props.moduleInstance,
-        index,
-        props.moduleInstance.inputs.length,
-        moduleDisplayWidth.value,
-        moduleDisplayHeight.value,
-      ),
+      position: computeInputPosition(index, props.moduleInstance.inputs.length),
     } as ConnectionInputInstance;
   });
 
@@ -70,11 +123,8 @@ const outputs = computed(() => {
       name: o.name,
       type: o.type,
       position: computeOutputPosition(
-        props.moduleInstance,
         index,
         props.moduleInstance.outputs.length,
-        moduleDisplayWidth.value,
-        moduleDisplayHeight.value,
       ),
     } as ConnectionOutputInstance;
   });
@@ -121,14 +171,11 @@ const onGuiOptionsUpdated = (options: Record<string, any>) => {
       <template v-slot:activator="{ props }">
         <patch-module-input
           v-bind="props"
+          :id="`${moduleInstance.moduleId}-input-${input.name}`"
           :key="input.name"
           @mousedown.stop
           @touchstart.stop
           @click.stop="finishPatching(input)"
-          :style="{
-            left: `${input.position.x - moduleInstance.position.x - BORDER_SIZE}px`,
-            top: `${input.position.y - moduleInstance.position.y - BORDER_SIZE}px`,
-          }"
           :type="input.type"
           class="module-input-output"
         >
@@ -138,16 +185,6 @@ const onGuiOptionsUpdated = (options: Record<string, any>) => {
 
     <div v-if="!moduleInstance.guiComponent">
       <div class="ma-2 d-inline-block">{{ moduleName }}</div>
-
-      <!-- <input
-        v-for="(value, key) in moduleInstance.options"
-        :key="key"
-        :name="key"
-        type="text"
-        v-model.lazy="moduleInstance.options[key]"
-        @dblclick.stop=""
-        class="module-option-input mr-2 d-inline-block"
-      /> -->
 
       <patch-module-options-input
         v-model="moduleInstance.options"
@@ -173,15 +210,10 @@ const onGuiOptionsUpdated = (options: Record<string, any>) => {
         <patch-module-output
           v-bind="props"
           :key="output.name"
+          :id="`${moduleInstance.moduleId}-output-${output.name}`"
           @mousedown.stop
           @touchstart.stop
           @click.stop="beginPatching(output)"
-          :style="{
-            left: `${
-              output.position.x - moduleInstance.position.x - BORDER_SIZE
-            }px`,
-            top: `${output.position.y - moduleInstance.position.y - BORDER_SIZE}px`,
-          }"
           :type="output.type"
           class="module-input-output"
         >

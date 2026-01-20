@@ -11,6 +11,7 @@ import type {
   ConnectionInstance,
   ConnectionInputInstance,
   ConnectionOutputInstance,
+  Position,
 } from "@/types/uIInstanceTypes";
 import PatchContextMenu from "@/components/PatchContextMenu.vue";
 import type { AudioModuleType } from "@/classes/audio-modules/AudioModule";
@@ -24,7 +25,7 @@ const appColors = useAppColors();
 let patchWindowPageX = 0;
 let patchWindowPageY = 0;
 
-defineProps({
+const props = defineProps({
   height: {
     type: Number,
     required: true,
@@ -192,6 +193,8 @@ const addModule = (moduleType: AudioModuleType, guiComponent?: string) => {
       .filter((c) => c.from.moduleId === moduleInstance.moduleId)
       .forEach((c) => deleteConnection(c));
   };
+
+  updateModulePositionStyle(moduleInstance.moduleId, moduleInstance.position);
 
   showContextMenu.value = false;
 };
@@ -423,6 +426,17 @@ const onModuleOptionsUpdated = (
   module.updateOptions(options);
 };
 
+const updateModulePositionStyle = (moduleId: string, position: Position) => {
+  window.requestAnimationFrame(() => {
+    // todo: optimize by caching element references
+    const moduleEl = document.getElementById(moduleId);
+    if (moduleEl) {
+      moduleEl.style.left = `${position.x}px`;
+      moduleEl.style.top = `${position.y}px`;
+    }
+  });
+};
+
 const onModuleDrag = (
   deltaX: number,
   deltaY: number,
@@ -430,6 +444,8 @@ const onModuleDrag = (
 ) => {
   moduleInstance.position.x += deltaX;
   moduleInstance.position.y += deltaY;
+
+  updateModulePositionStyle(moduleInstance.moduleId, moduleInstance.position);
 
   // Update positions of connections related to this module
   patchGraph.value.connections.forEach((connection) => {
@@ -540,12 +556,11 @@ onUnmounted(() => {
     <!-- prettier-ignore -->
     <PatchModule
       v-for="module in patchGraph.modules"
+      :id="module.moduleId"
       :key="module.moduleId"
       :moduleInstance="(module as ModuleInstance)"
       :class="['patch-module', { selected: module.selected }]"
       :style="{
-        left: module.position.x + 'px',
-        top: module.position.y + 'px',
         borderColor: appColors.textColor,
         backgroundColor: appColors.backgroundColor,
       }"
