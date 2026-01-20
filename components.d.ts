@@ -28,6 +28,8 @@ declare module 'vue' {
     PatchModuleOutput: typeof import('./src/components/PatchModuleOutput.vue')['default']
     PatchNotesModule: typeof import('./src/components/gui-module-components/PatchNotesModule.vue')['default']
     PatchWindow: typeof import('./src/components/PatchWindow.vue')['default']
+    RouterLink: typeof import('vue-router')['RouterLink']
+    RouterView: typeof import('vue-router')['RouterView']
     SamplerPlusModule: typeof import('./src/components/gui-module-components/SamplerPlusModule.vue')['default']
     SliderModule: typeof import('./src/components/gui-module-components/SliderModule.vue')['default']
   }
