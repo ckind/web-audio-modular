@@ -23,6 +23,9 @@ import { useAppColors } from "@/store/appColors";
 const appColors = useAppColors();
 
 const elementCache = new Map<string, HTMLElement>();
+const clearElementCache = () => {
+  elementCache.clear();
+};
 const getElement = (id: string): HTMLElement | null => {
   if (elementCache.has(id)) {
     return elementCache.get(id)!;
@@ -100,6 +103,7 @@ const loadPatch = () => {
 
         // Reconstruct patcher state
         patcher.clear();
+        elementCache.clear();
 
         patchGraph.value.modules.forEach((m) => {
           const module = createAudioModule(
@@ -124,6 +128,7 @@ const loadPatch = () => {
               .forEach((c) => deleteConnection(c));
           };
           patcher.addModule(module);
+          console.log("updating module position style", m.moduleId, m.position);
           updateModulePositionStyle(m.moduleId, m.position);
         });
 
