@@ -14,6 +14,7 @@ export type AudioModuleType =
   | "sample-and-hold"
   | "sequence"
   | "ui-slider"
+  | "ui-slider-msg"
   | "msg-display"
   | "filter"
   | "fx-convolution-reverb"

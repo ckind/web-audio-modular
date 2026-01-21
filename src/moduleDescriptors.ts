@@ -58,6 +58,12 @@ export const availableModules: ModuleDescriptor[] = [
     GUIComponent: "SliderModule",
     categories: ["ui-control", "signal"],
   },
+    {
+    title: "ui-slider-msg",
+    type: "ui-slider-msg",
+    GUIComponent: "SliderModule",
+    categories: ["ui-control", "message-bus"],
+  },
   {
     title: "msg-display",
     type: "msg-display",

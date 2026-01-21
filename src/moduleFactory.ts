@@ -31,6 +31,7 @@ import SamplerPlusModule from "@/classes/audio-modules/SamplerPlusModule";
 import MessageRegexModule from "@/classes/audio-modules/MessageRegexModule";
 import MessageSampleSignalModule from "@/classes/audio-modules/MessageSampleSignalModule";
 import SampleAndHoldModule from "@/classes/audio-modules/SampleAndHoldModule";
+import SliderMessageModule from "./classes/audio-modules/SliderMessageModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -60,6 +61,8 @@ export function createAudioModule(
       return new SequenceModule(id, options);
     case "ui-slider":
       return new SliderModule(id, options);
+    case "ui-slider-msg":
+      return new SliderMessageModule(id, options);
     case "msg-display":
       return new DisplayMessageModule(id, options);
     case "filter":
