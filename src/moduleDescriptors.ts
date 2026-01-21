@@ -464,28 +464,28 @@ export const availableModules: ModuleDescriptor[] = [
       },
     ],
   },
-  {
-    title: "sampler-plus",
-    type: "sampler-plus",
-    GUIComponent: "SamplerPlusModule",
-    categories: ["source", "signal"],
-    description:
-      "A more advanced sampler instrument that operates on one file at a time, but includes features like time-stretching, slicing, and detailed playback controls for granular synthesis.",
-    inputDescriptions: [
-      {
-        name: "trigger",
-        description: "Trigger playback of sample",
-        type: "message-bus",
-      },
-    ],
-    outputDescriptions: [
-      {
-        name: "output",
-        description: "Sample playback audio signal",
-        type: "signal",
-      },
-    ],
-  },
+  // {
+  //   title: "sampler-plus",
+  //   type: "sampler-plus",
+  //   GUIComponent: "SamplerPlusModule",
+  //   categories: ["source", "signal"],
+  //   description:
+  //     "A more advanced sampler instrument that operates on one file at a time, but includes features like time-stretching, slicing, and detailed playback controls for granular synthesis.",
+  //   inputDescriptions: [
+  //     {
+  //       name: "trigger",
+  //       description: "Trigger playback of sample",
+  //       type: "message-bus",
+  //     },
+  //   ],
+  //   outputDescriptions: [
+  //     {
+  //       name: "output",
+  //       description: "Sample playback audio signal",
+  //       type: "signal",
+  //     },
+  //   ],
+  // },
   {
     title: "msg-regex",
     type: "msg-regex",

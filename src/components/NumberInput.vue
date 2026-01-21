@@ -53,6 +53,7 @@ const dragCallback = (deltaX: number, deltaY: number) => {
 };
 
 const { onDragElementStart, dragging } = useDragging(dragCallback);
+
 </script>
 
 <template>

@@ -1,87 +1,59 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import * as Tone from "tone";
-import NumberInput from "../NumberInput.vue";
-
-type SampleSlot = {
-  number: number;
-  name: string;
-  url: string;
-  pitch: number;
-  detune: number;
-  gain: number;
-};
+import { ref, computed, onMounted, useTemplateRef, type PropType } from "vue";
+import type {
+  SamplerModuleOptions,
+  SampleSlot,
+} from "@/classes/audio-modules/SamplerModule";
+import NumberInput from "@/components/NumberInput.vue";
 
 const props = defineProps({
   options: {
-    type: Object,
+    type: Object as PropType<SamplerModuleOptions>,
     required: true,
   },
 });
 
 const emit = defineEmits(["options-updated"]);
 
-const newSlots = ref<SampleSlot[]>([
-  {
-    number: 1,
-    name: "Kick",
-    url: "/samples/kick.wav",
-    pitch: 0,
-    detune: 0,
-    gain: 0,
-  },
-  {
-    number: 2,
-    name: "Snare",
-    url: "/samples/snare.wav",
-    pitch: 0,
-    detune: 0,
-    gain: 0,
-  },
-  {
-    number: 3,
-    name: "HiHat",
-    url: "/samples/hihat.wav",
-    pitch: 0,
-    detune: 0,
-    gain: 0,
-  },
-]);
-
-const sampleSlots = ref<SampleSlot[]>(
-  Array.from({ length: 128 }, (_, i) => ({
-    number: i,
-    name: "empty",
-    url: "",
-    pitch: 0,
-    detune: 0,
-    gain: 0,
-  })),
-);
-
-const selectedSlot = ref<SampleSlot>(sampleSlots.value[0]!);
-
 const sampleSlotItems = computed(() =>
-  sampleSlots.value.map((slot) => ({
+  props.options.sampleSlots.map((slot) => ({
     title: `${slot.number} - ${slot.name}`,
-    value: slot,
+    value: slot.number,
   })),
 );
+
+const fileInput = useTemplateRef<HTMLInputElement>("fileInput");
 
 const uploadSample = () => {
-  const fileInput = document.getElementById("fileInput") as HTMLInputElement;
-  fileInput.click();
+  fileInput.value?.click();
 };
 
 onMounted(() => {
-  selectedSlot.value = props.options.selectedSlot || sampleSlots.value[0];
+  fileInput.value?.addEventListener("change", (event) => {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files[0]) {
+      const file = target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result;
+        if (typeof result === "string") {
+          props.options.sampleSlots[props.options.selectedSlotIndex]!.url =
+            result;
+          props.options.sampleSlots[props.options.selectedSlotIndex]!.name =
+            file.name;
+          emit("options-updated", { sampleSlots: props.options.sampleSlots });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  });
 });
 </script>
 
 <template>
   <div class="sampler-module">
     <v-select
-      v-model="selectedSlot"
+      v-model="props.options.selectedSlotIndex"
       :items="sampleSlotItems"
       label="sample slot"
       density="compact"
@@ -89,34 +61,57 @@ onMounted(() => {
       hide-details
     ></v-select>
 
-    <input type="file" id="fileInput" style="display: none" />
+    <input ref="fileInput" type="file" id="fileInput" style="display: none" />
 
-    <!-- A regular button that the user sees and clicks -->
-    <v-btn class="text-lowercase mr-2" density="compact" @click="uploadSample"
-      >Upload Sample</v-btn
-    >
+    <div class="mb-1">
+      <v-btn
+        class="sampler-button text-lowercase mr-2"
+        density="compact"
+        @click="uploadSample"
+      >
+        upload
+      </v-btn>
 
-    <number-input
-      v-model="selectedSlot.pitch"
-      :min="-24"
-      :max="24"
-      label="pitch"
-      class="mr-1"
-    ></number-input>
-    <number-input
-      v-model="selectedSlot.detune"
-      :min="-50"
-      :max="50"
-      label="detune"
-      class="mr-1"
-    ></number-input>
-    <number-input
-      v-model="selectedSlot.gain"
-      :min="-60"
-      :max="12"
-      label="gain (db)"
-      class="mr-1"
-    ></number-input>
+      <number-input
+        v-model="
+          props.options.sampleSlots[props.options.selectedSlotIndex]!.pitch
+        "
+        :min="-24"
+        :max="24"
+        label="pitch"
+        class="mr-1"
+      />
+      <number-input
+        v-model="
+          props.options.sampleSlots[props.options.selectedSlotIndex]!.detune
+        "
+        :min="-50"
+        :max="50"
+        label="detune"
+        class="mr-1"
+      />
+      <number-input
+        v-model="
+          props.options.sampleSlots[props.options.selectedSlotIndex]!.gain
+        "
+        :min="-60"
+        :max="12"
+        label="gain (db)"
+        class="mr-1"
+      />
+    </div>
+
+    <div>
+      <v-btn
+        class="sampler-button text-lowercase mr-2"
+        density="compact"
+        @click="uploadSample"
+      >
+        clear
+      </v-btn>
+    </div>
+
+    <v-divider class="my-2"></v-divider>
   </div>
 </template>
 
@@ -127,5 +122,8 @@ onMounted(() => {
 .number-input {
   width: 1.5em;
   display: inline-block;
+}
+.sampler-button {
+  width: 6em;
 }
 </style>
