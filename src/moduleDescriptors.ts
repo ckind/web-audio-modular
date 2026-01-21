@@ -81,6 +81,11 @@ export const availableModules: ModuleDescriptor[] = [
     categories: ["effect", "signal"],
   },
   {
+    title: "fx-delay",
+    type: "fx-delay",
+    categories: ["effect", "signal"],
+  },
+  {
     title: "ui-button",
     type: "ui-button",
     GUIComponent: "ButtonTrigModule",
