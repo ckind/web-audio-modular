@@ -551,6 +551,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   removeKeyListeners();
+  patcher.clear();
 });
 </script>
 
