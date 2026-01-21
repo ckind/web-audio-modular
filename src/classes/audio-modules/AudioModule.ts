@@ -19,6 +19,7 @@ export type AudioModuleType =
   | "filter"
   | "fx-convolution-reverb"
   | "fx-delay"
+  | "fx-delay-analog"
   | "ui-button"
   | "noise"
   | "env-adsr"

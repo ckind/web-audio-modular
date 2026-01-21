@@ -32,7 +32,8 @@ import MessageRegexModule from "@/classes/audio-modules/MessageRegexModule";
 import MessageSampleSignalModule from "@/classes/audio-modules/MessageSampleSignalModule";
 import SampleAndHoldModule from "@/classes/audio-modules/SampleAndHoldModule";
 import FxDelayModule from "@/classes/audio-modules/FxDelayModule";
-import SliderMessageModule from "./classes/audio-modules/SliderMessageModule";
+import FxDelayAnalogModule from "@/classes/audio-modules/FxDelayAnalogModule";
+import SliderMessageModule from "@/classes/audio-modules/SliderMessageModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -102,6 +103,8 @@ export function createAudioModule(
       return new SampleAndHoldModule(id, options);
     case "fx-delay":
       return new FxDelayModule(id, options);
+    case "fx-delay-analog":
+      return new FxDelayAnalogModule(id, options);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }

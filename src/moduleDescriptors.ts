@@ -85,6 +85,11 @@ export const availableModules: ModuleDescriptor[] = [
     type: "fx-delay",
     categories: ["effect", "signal"],
   },
+    {
+    title: "fx-delay-analog",
+    type: "fx-delay-analog",
+    categories: ["effect", "signal"],
+  },
   {
     title: "ui-button",
     type: "ui-button",
