@@ -151,4 +151,14 @@ export const availableModules: ModuleDescriptor[] = [
     type: "msg-regex",
     categories: ["message", "message-bus"],
   },
+  {
+    title: "msg-sample",
+    type: "msg-sample",
+    categories: ["message", "message-bus"],
+  },
+  {
+    title: "sample-and-hold",
+    type: "sample-and-hold",
+    categories: ["signal-operator", "signal"],
+  },
 ];

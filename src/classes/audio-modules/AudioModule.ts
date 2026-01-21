@@ -10,6 +10,8 @@ export type AudioModuleType =
   | "scale"
   | "scale-exp"
   | "msg-to-signal"
+  | "msg-sample"
+  | "sample-and-hold"
   | "sequence"
   | "ui-slider"
   | "msg-display"

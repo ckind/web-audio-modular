@@ -29,6 +29,8 @@ import MidiNumToHzModule from "@/classes/audio-modules/MidiNumToHzModule";
 import SplitModule from "@/classes/audio-modules/SplitModule";
 import SamplerPlusModule from "@/classes/audio-modules/SamplerPlusModule";
 import MessageRegexModule from "@/classes/audio-modules/MessageRegexModule";
+import MessageSampleSignalModule from "@/classes/audio-modules/MessageSampleSignalModule";
+import SampleAndHoldModule from "@/classes/audio-modules/SampleAndHoldModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -90,6 +92,10 @@ export function createAudioModule(
       return new SamplerPlusModule(id, options);
     case "msg-regex":
       return new MessageRegexModule(id, options);
+    case "msg-sample":
+      return new MessageSampleSignalModule(id, options);
+    case "sample-and-hold":
+      return new SampleAndHoldModule(id, options);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }
