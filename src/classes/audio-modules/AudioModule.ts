@@ -36,6 +36,7 @@ export type AudioModuleType =
   | "split"
   | "sampler"
   | "sampler-plus"
+  | "player"
   ;
 
 export type ModuleId = string;

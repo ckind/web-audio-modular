@@ -27,6 +27,11 @@ const props = defineProps({
     required: false,
     default: 1,
   },
+  inputWidth: {
+    type: Number,
+    required: false,
+    default: 60,
+  },
 });
 
 const stringValue = computed({
@@ -35,7 +40,6 @@ const stringValue = computed({
     const num = parseFloat(val);
     if (!isNaN(num)) {
       modelValue.value = num;
-      console.log("NumberInput: set value to", num);
     }
   },
 });
@@ -49,25 +53,29 @@ const dragCallback = (deltaX: number, deltaY: number) => {
   if (newValue < props.min) newValue = props.min;
   if (newValue > props.max) newValue = props.max;
 
-  modelValue.value = newValue;
+  modelValue.value = roundToStep(newValue, step);
+};
+
+const roundToStep = (value: number, step: number) => {
+  return Math.round(value / step) * step;
 };
 
 const { onDragElementStart, dragging } = useDragging(dragCallback);
-
 </script>
 
 <template>
   <span>
     <span v-if="label" class="text-medium-emphasis">{{ label }}: </span>
     <input
-      type="number"
-      :class="{ 'no-select': dragging, 'number-input': true }"
       v-model.lazy="stringValue"
+      :style="{ width: `${inputWidth}px`}"
+      :class="{ 'no-select': dragging, 'number-input': true }"
       :min="min"
       :max="max"
       @mousedown.stop="onDragElementStart"
       @touchstart.stop="onDragElementStart"
       @dblclick.stop
+      type="number"
     />
   </span>
 </template>

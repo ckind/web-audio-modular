@@ -31,7 +31,7 @@ export default class ButtonTrigModule extends AudioModule<ButtonTrigModuleOption
     if (options.trigMessage !== undefined) {
       this._options.trigMessage = options.trigMessage;
       this._messageOutput.scheduleMessage(
-        Tone.now(),
+        Tone.immediate(),
         this._options.trigMessage,
       );
     }

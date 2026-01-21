@@ -442,11 +442,32 @@ export const availableModules: ModuleDescriptor[] = [
       },
     ],
   },
+   {
+    title: "player",
+    type: "player",
+    GUIComponent: "PlayerModule",
+    categories: ["source", "signal"],
+    description: "Plays an audio file with some basic parameters like seek, loop, etc. For a more complete sampler instrument see: sampler",
+    inputDescriptions: [
+      {
+        name: "trigger",
+        description: "Trigger playback of sample",
+        type: "message-bus",
+      },
+    ],
+    outputDescriptions: [
+      {
+        name: "output",
+        description: "Sample playback audio signal",
+        type: "signal",
+      },
+    ],
+  },
   {
     title: "sampler",
     type: "sampler",
     GUIComponent: "SamplerModule",
-    categories: ["source", "signal"],
+    categories: ["instrument", "signal"],
     description:
       "A basic sampler instrument that supports triggering and re-pitching batches of samples. Good for drum kits and other one-shots.",
     inputDescriptions: [
