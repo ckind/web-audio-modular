@@ -28,14 +28,15 @@ watch(selectedFile, async (file: File | null) => {
     const fileURL = URL.createObjectURL(file!);
     const response = await fetch(fileURL);
     const arrayBuffer = await response.arrayBuffer();
-    const buffer = await Tone.getContext().rawContext.decodeAudioData(arrayBuffer);
+    const buffer =
+      await Tone.getContext().rawContext.decodeAudioData(arrayBuffer);
     const sharedArrayBuffers = Array.from(
       { length: buffer.numberOfChannels },
       () => {
         return new SharedArrayBuffer(
-          Float32Array.BYTES_PER_ELEMENT * buffer.length
+          Float32Array.BYTES_PER_ELEMENT * buffer.length,
         );
-      }
+      },
     );
     const sharedChannelData = sharedArrayBuffers.map((sab, c) => {
       const channelData = new Float32Array(sab);
@@ -44,7 +45,7 @@ watch(selectedFile, async (file: File | null) => {
     });
 
     emit("options-updated", {
-      sharedChannelData: sharedChannelData
+      sharedChannelData: sharedChannelData,
     });
   }
 });

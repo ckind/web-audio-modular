@@ -17,8 +17,7 @@ declare module 'vue' {
     MidiCCModule: typeof import('./src/components/gui-module-components/MidiCCModule.vue')['default']
     MidiInputModule: typeof import('./src/components/gui-module-components/MidiInputModule.vue')['default']
     MidiNoteMessageModule: typeof import('./src/components/gui-module-components/MidiNoteMessageModule.vue')['default']
-    MidiNoteToTrig: typeof import('./src/components/gui-module-components/MidiNoteToTrig.vue')['default']
-    MidiNoteToTrigModule: typeof import('./src/components/gui-module-components/MidiNoteToTrigModule.vue')['default']
+    NumberInput: typeof import('./src/components/NumberInput.vue')['default']
     PatchCable: typeof import('./src/components/PatchCable.vue')['default']
     PatchConnection: typeof import('./src/components/PatchConnection.vue')['default']
     PatchContextMenu: typeof import('./src/components/PatchContextMenu.vue')['default']
@@ -30,6 +29,7 @@ declare module 'vue' {
     PatchWindow: typeof import('./src/components/PatchWindow.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SamplerModule: typeof import('./src/components/gui-module-components/SamplerModule.vue')['default']
     SamplerPlusModule: typeof import('./src/components/gui-module-components/SamplerPlusModule.vue')['default']
     SliderModule: typeof import('./src/components/gui-module-components/SliderModule.vue')['default']
   }

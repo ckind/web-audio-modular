@@ -27,12 +27,21 @@ export const availableModules: ModuleDescriptor[] = [
     title: "osc",
     type: "osc",
     categories: ["source", "signal"],
-    description: "Generates periodic waveforms (sine, square, triangle, sawtooth) at a specified frequency.",
+    description:
+      "Generates periodic waveforms (sine, square, triangle, sawtooth) at a specified frequency.",
     inputDescriptions: [
-      { name: "frequency", description: "Frequency of the oscillator in Hz", type: "signal" },
+      {
+        name: "frequency",
+        description: "Frequency of the oscillator in Hz",
+        type: "signal",
+      },
     ],
     outputDescriptions: [
-      { name: "output", description: "Generated waveform signal", type: "signal" },
+      {
+        name: "output",
+        description: "Generated waveform signal",
+        type: "signal",
+      },
     ],
   },
   {
@@ -52,7 +61,11 @@ export const availableModules: ModuleDescriptor[] = [
     description: "Amplifies or attenuates an audio signal.",
     inputDescriptions: [
       { name: "input", description: "Audio signal to amplify", type: "signal" },
-      { name: "gain", description: "Gain amount (0 = silent, 1 = unity, >1 = amplified)", type: "signal" },
+      {
+        name: "gain",
+        description: "Gain amount (0 = silent, 1 = unity, >1 = amplified)",
+        type: "signal",
+      },
     ],
     outputDescriptions: [
       { name: "output", description: "Amplified audio signal", type: "signal" },
@@ -65,11 +78,15 @@ export const availableModules: ModuleDescriptor[] = [
     description: "Generates timing pulses at a specified tempo.",
     inputDescriptions: [],
     outputDescriptions: [
-      { name: "pulse", description: "Clock pulse messages at specified intervals", type: "message-bus" },
+      {
+        name: "pulse",
+        description: "Clock pulse messages at specified intervals",
+        type: "message-bus",
+      },
     ],
   },
   {
-    title:"logger",
+    title: "logger",
     type: "logger",
     categories: ["utility"],
     description: "Logs incoming messages to the console for debugging.",
@@ -94,12 +111,17 @@ export const availableModules: ModuleDescriptor[] = [
     title: "scale-exp",
     type: "scale-exp",
     categories: ["signal-operator", "signal"],
-    description: "Maps input signal values exponentially from one range to another.",
+    description:
+      "Maps input signal values exponentially from one range to another.",
     inputDescriptions: [
       { name: "input", description: "Input signal to scale", type: "signal" },
     ],
     outputDescriptions: [
-      { name: "output", description: "Exponentially scaled signal", type: "signal" },
+      {
+        name: "output",
+        description: "Exponentially scaled signal",
+        type: "signal",
+      },
     ],
   },
   {
@@ -108,10 +130,18 @@ export const availableModules: ModuleDescriptor[] = [
     categories: ["message", "signal"],
     description: "Converts discrete messages into continuous control signals.",
     inputDescriptions: [
-      { name: "input", description: "Messages to convert to signal", type: "message-bus" },
+      {
+        name: "input",
+        description: "Messages to convert to signal",
+        type: "message-bus",
+      },
     ],
     outputDescriptions: [
-      { name: "output", description: "Continuous control signal", type: "signal" },
+      {
+        name: "output",
+        description: "Continuous control signal",
+        type: "signal",
+      },
     ],
   },
   {
@@ -135,7 +165,7 @@ export const availableModules: ModuleDescriptor[] = [
       { name: "output", description: "Slider value as signal", type: "signal" },
     ],
   },
-    {
+  {
     title: "ui-slider-msg",
     type: "ui-slider-msg",
     GUIComponent: "SliderModule",
@@ -143,7 +173,11 @@ export const availableModules: ModuleDescriptor[] = [
     description: "Interactive slider control for message bus values.",
     inputDescriptions: [],
     outputDescriptions: [
-      { name: "output", description: "Slider value as message", type: "message-bus" },
+      {
+        name: "output",
+        description: "Slider value as message",
+        type: "message-bus",
+      },
     ],
   },
   {
@@ -153,7 +187,11 @@ export const availableModules: ModuleDescriptor[] = [
     categories: ["message", "message-bus"],
     description: "Displays incoming messages visually.",
     inputDescriptions: [
-      { name: "input", description: "Messages to display", type: "message-bus" },
+      {
+        name: "input",
+        description: "Messages to display",
+        type: "message-bus",
+      },
     ],
     outputDescriptions: [],
   },
@@ -164,7 +202,11 @@ export const availableModules: ModuleDescriptor[] = [
     description: "Filters audio signal by frequency.",
     inputDescriptions: [
       { name: "input", description: "Audio signal to filter", type: "signal" },
-      { name: "frequency", description: "Filter cutoff frequency in Hz", type: "signal" },
+      {
+        name: "frequency",
+        description: "Filter cutoff frequency in Hz",
+        type: "signal",
+      },
     ],
     outputDescriptions: [
       { name: "output", description: "Filtered signal", type: "signal" },
@@ -177,10 +219,18 @@ export const availableModules: ModuleDescriptor[] = [
     description: "Convolution reverb effect using impulse responses.",
     inputDescriptions: [
       { name: "input", description: "Audio signal to process", type: "signal" },
-      { name: "mix", description: "Dry/wet mix (0 = dry, 1 = wet)", type: "signal" },
+      {
+        name: "mix",
+        description: "Dry/wet mix (0 = dry, 1 = wet)",
+        type: "signal",
+      },
     ],
     outputDescriptions: [
-      { name: "output", description: "Reverb-processed signal", type: "signal" },
+      {
+        name: "output",
+        description: "Reverb-processed signal",
+        type: "signal",
+      },
     ],
   },
   {
@@ -190,15 +240,27 @@ export const availableModules: ModuleDescriptor[] = [
     description: "Feedback delay effect with adjustable time and feedback.",
     inputDescriptions: [
       { name: "signal", description: "Audio signal to delay", type: "signal" },
-      { name: "delayTime", description: "Delay time in seconds", type: "signal" },
-      { name: "feedback", description: "Feedback amount (0-1)", type: "signal" },
-      { name: "mix", description: "Dry/wet mix (0 = dry, 1 = wet)", type: "signal" },
+      {
+        name: "delayTime",
+        description: "Delay time in seconds",
+        type: "signal",
+      },
+      {
+        name: "feedback",
+        description: "Feedback amount (0-1)",
+        type: "signal",
+      },
+      {
+        name: "mix",
+        description: "Dry/wet mix (0 = dry, 1 = wet)",
+        type: "signal",
+      },
     ],
     outputDescriptions: [
       { name: "output", description: "Delayed signal", type: "signal" },
     ],
   },
-    {
+  {
     title: "fx-delay-analog",
     type: "fx-delay-analog",
     categories: ["effect", "signal"],
@@ -218,7 +280,11 @@ export const availableModules: ModuleDescriptor[] = [
     description: "Button that sends a message when clicked.",
     inputDescriptions: [],
     outputDescriptions: [
-      { name: "output", description: "Trigger message on click", type: "message-bus" },
+      {
+        name: "output",
+        description: "Trigger message on click",
+        type: "message-bus",
+      },
     ],
   },
   {
@@ -228,7 +294,11 @@ export const availableModules: ModuleDescriptor[] = [
     categories: ["message", "message-bus"],
     description: "Stores and outputs a customizable message on trigger.",
     inputDescriptions: [
-      { name: "trigger", description: "Message to trigger output", type: "message-bus" },
+      {
+        name: "trigger",
+        description: "Message to trigger output",
+        type: "message-bus",
+      },
     ],
     outputDescriptions: [
       { name: "output", description: "Stored message", type: "message-bus" },
@@ -248,9 +318,14 @@ export const availableModules: ModuleDescriptor[] = [
     title: "env-adsr",
     type: "env-adsr",
     categories: ["envelope", "signal"],
-    description: "ADSR (Attack, Decay, Sustain, Release) envelope for shaping signals.",
+    description:
+      "ADSR (Attack, Decay, Sustain, Release) envelope for shaping signals.",
     inputDescriptions: [
-      { name: "trigger", description: "Trigger message to start envelope", type: "message-bus" },
+      {
+        name: "trigger",
+        description: "Trigger message to start envelope",
+        type: "message-bus",
+      },
     ],
     outputDescriptions: [
       { name: "output", description: "Envelope signal", type: "signal" },
@@ -277,7 +352,11 @@ export const availableModules: ModuleDescriptor[] = [
       { name: "input", description: "MIDI messages", type: "message-bus" },
     ],
     outputDescriptions: [
-      { name: "output", description: "CC value as signal (0-1)", type: "signal" },
+      {
+        name: "output",
+        description: "CC value as signal (0-1)",
+        type: "signal",
+      },
     ],
   },
   {
@@ -311,7 +390,11 @@ export const availableModules: ModuleDescriptor[] = [
       { name: "input", description: "MIDI messages", type: "message-bus" },
     ],
     outputDescriptions: [
-      { name: "output", description: "Note number as message", type: "message-bus" },
+      {
+        name: "output",
+        description: "Note number as message",
+        type: "message-bus",
+      },
     ],
   },
   {
@@ -330,9 +413,14 @@ export const availableModules: ModuleDescriptor[] = [
     title: "env-amp",
     type: "env-amp",
     categories: ["envelope", "signal"],
-    description: "Amplitude envelope for controlling volume dynamics over time.",
+    description:
+      "Amplitude envelope for controlling volume dynamics over time.",
     inputDescriptions: [
-      { name: "trigger", description: "Trigger message to start envelope", type: "message-bus" },
+      {
+        name: "trigger",
+        description: "Trigger message to start envelope",
+        type: "message-bus",
+      },
     ],
     outputDescriptions: [
       { name: "output", description: "Envelope signal (0-1)", type: "signal" },
@@ -347,7 +435,33 @@ export const availableModules: ModuleDescriptor[] = [
       { name: "input", description: "Message to split", type: "message-bus" },
     ],
     outputDescriptions: [
-      { name: "output", description: "Split message parts", type: "message-bus" },
+      {
+        name: "output",
+        description: "Split message parts",
+        type: "message-bus",
+      },
+    ],
+  },
+  {
+    title: "sampler",
+    type: "sampler",
+    GUIComponent: "SamplerModule",
+    categories: ["source", "signal"],
+    description:
+      "A basic sampler instrument that supports triggering and re-pitching batches of samples. Good for drum kits and other one-shots.",
+    inputDescriptions: [
+      {
+        name: "trigger",
+        description: "Trigger playback of sample",
+        type: "message-bus",
+      },
+    ],
+    outputDescriptions: [
+      {
+        name: "output",
+        description: "Sample playback audio signal",
+        type: "signal",
+      },
     ],
   },
   {
@@ -355,12 +469,21 @@ export const availableModules: ModuleDescriptor[] = [
     type: "sampler-plus",
     GUIComponent: "SamplerPlusModule",
     categories: ["source", "signal"],
-    description: "Plays back audio samples with playback control and triggering.",
+    description:
+      "A more advanced sampler instrument that operates on one file at a time, but includes features like time-stretching, slicing, and detailed playback controls for granular synthesis.",
     inputDescriptions: [
-      { name: "trigger", description: "Trigger playback of sample", type: "message-bus" },
+      {
+        name: "trigger",
+        description: "Trigger playback of sample",
+        type: "message-bus",
+      },
     ],
     outputDescriptions: [
-      { name: "output", description: "Sample playback audio signal", type: "signal" },
+      {
+        name: "output",
+        description: "Sample playback audio signal",
+        type: "signal",
+      },
     ],
   },
   {
@@ -372,30 +495,48 @@ export const availableModules: ModuleDescriptor[] = [
       { name: "input", description: "Messages to filter", type: "message-bus" },
     ],
     outputDescriptions: [
-      { name: "output", description: "Messages matching the regex pattern", type: "message-bus" },
+      {
+        name: "output",
+        description: "Messages matching the regex pattern",
+        type: "message-bus",
+      },
     ],
   },
   {
     title: "msg-sample",
     type: "msg-sample",
     categories: ["message", "message-bus"],
-    description: "Samples incoming signal value on message trigger and outputs as discrete message.",
+    description:
+      "Samples incoming signal value on message trigger and outputs as discrete message.",
     inputDescriptions: [
       { name: "signal", description: "Signal to sample", type: "signal" },
-      { name: "trigger", description: "Trigger to capture sample", type: "message-bus" },
+      {
+        name: "trigger",
+        description: "Trigger to capture sample",
+        type: "message-bus",
+      },
     ],
     outputDescriptions: [
-      { name: "output", description: "Sampled signal value as message", type: "message-bus" },
+      {
+        name: "output",
+        description: "Sampled signal value as message",
+        type: "message-bus",
+      },
     ],
   },
   {
     title: "sample-and-hold",
     type: "sample-and-hold",
     categories: ["signal-operator", "signal"],
-    description: "Captures and holds a signal value, updating when triggered by a message.",
+    description:
+      "Captures and holds a signal value, updating when triggered by a message.",
     inputDescriptions: [
       { name: "signal", description: "Signal to capture", type: "signal" },
-      { name: "trigger", description: "Trigger to update held value", type: "message-bus" },
+      {
+        name: "trigger",
+        description: "Trigger to update held value",
+        type: "message-bus",
+      },
     ],
     outputDescriptions: [
       { name: "output", description: "Held signal value", type: "signal" },
@@ -408,7 +549,11 @@ export const availableModules: ModuleDescriptor[] = [
     description: "Delays an audio signal by a specified amount of time.",
     inputDescriptions: [
       { name: "input", description: "Signal to delay", type: "signal" },
-      { name: "delayTime", description: "Delay duration in seconds", type: "signal" },
+      {
+        name: "delayTime",
+        description: "Delay duration in seconds",
+        type: "signal",
+      },
     ],
     outputDescriptions: [
       { name: "output", description: "Delayed signal", type: "signal" },

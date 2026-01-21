@@ -8,6 +8,7 @@ import MidiCCModule from "@/components/gui-module-components/MidiCCModule.vue";
 import PatchNotesModule from "@/components/gui-module-components/PatchNotesModule.vue";
 import MidiNoteMessageModule from "@/components/gui-module-components/MidiNoteMessageModule.vue";
 import SamplerPlusModule from "@/components/gui-module-components/SamplerPlusModule.vue";
+import SamplerModule from "@/components/gui-module-components/SamplerModule.vue";
 
 export default function useGUIComponents() {
   const components: Record<string, Component> = {
@@ -20,6 +21,7 @@ export default function useGUIComponents() {
     PatchNotesModule,
     MidiNoteMessageModule,
     SamplerPlusModule,
+    SamplerModule,
   };
 
   return components;

@@ -35,6 +35,7 @@ import FxDelayModule from "@/classes/audio-modules/FxDelayModule";
 import FxDelayAnalogModule from "@/classes/audio-modules/FxDelayAnalogModule";
 import SliderMessageModule from "@/classes/audio-modules/SliderMessageModule";
 import DelayModule from "@/classes/audio-modules/DelayModule";
+import SamplerModule from "@/classes/audio-modules/SamplerModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -94,6 +95,8 @@ export function createAudioModule(
       return new MidiNumToHzModule(id, options);
     case "split":
       return new SplitModule(id, options);
+    case "sampler":
+      return new SamplerModule(id, options);
     case "sampler-plus":
       return new SamplerPlusModule(id, options);
     case "msg-regex":
