@@ -17,17 +17,12 @@ const getDefaultOptions = (): FxDelayOptions => ({
 
 export default class FxDelayModule extends AudioModule<FxDelayOptions> {
   private _delay: Tone.FeedbackDelay;
-  private _output: Tone.Gain;
 
   constructor(id: string, options?: FxDelayOptions) {
     super(id, options ?? getDefaultOptions());
 
     // Initialize nodes
     this._delay = new Tone.FeedbackDelay(this._options.delayTime, this._options.feedback);
-    this._output = new Tone.Gain();
-
-    // Connect input to delay
-    this._delay.connect(this._output);
 
     // Set wet level (mix)
     this._delay.wet.value = this._options.mix;
@@ -38,7 +33,7 @@ export default class FxDelayModule extends AudioModule<FxDelayOptions> {
       new ModuleInput("feedback", this._delay.feedback),
       new ModuleInput("mix", this._delay.wet),
     ];
-    this._outputs = [new ModuleOutput("output", this._output)];
+    this._outputs = [new ModuleOutput("output", this._delay)];
   }
 
   get type(): AudioModuleType {
@@ -62,6 +57,5 @@ export default class FxDelayModule extends AudioModule<FxDelayOptions> {
 
   dispose(): void {
     this._delay.dispose();
-    this._output.dispose();
   }
 }
