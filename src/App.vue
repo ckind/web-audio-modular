@@ -4,15 +4,18 @@ import { useAppColors } from "./store/appColors";
 import { useTheme } from "vuetify";
 import { useAudioSettings } from "@/store/audioSettings";
 import { usePatchConsole } from "@/store/patchConsole";
+import { useUserSettings } from "@/store/userSettings";
 import { init } from "@/toneInit";
 
 const theme = useTheme();
 const appColors = useAppColors();
+const userSettings = useUserSettings();
+
 const updateAppColors = () => {
-  appColors.setSignalColor(
-    theme.current.value.colors["secondary"] ?? "#fff",
+  appColors.setSignalColor(theme.current.value.colors["secondary"] ?? "#fff");
+  appColors.setMessageBusColor(
+    theme.current.value.colors["on-surface"] ?? "#fff",
   );
-  appColors.setMessageBusColor(theme.current.value.colors["on-surface"] ?? "#fff");
   appColors.setTextColor(theme.current.value.colors["on-surface"] ?? "#fff");
   appColors.setBackgroundColor(
     theme.current.value.colors["background"] ?? "#fff",
@@ -32,6 +35,7 @@ const patchConsole = usePatchConsole();
 watch(isDarkMode, (newValue) => {
   theme.change(newValue ? "dark" : "light");
   updateAppColors();
+  userSettings.isDarkMode = newValue;
 });
 
 watch(
@@ -39,8 +43,14 @@ watch(
   (msg) => {
     if (!msg) return;
     snackbarMessage.value = msg.content;
-    snackbarTitle.value = msg.type === "error" ? "Error" : msg.type === "warn" ? "Warning" : "Info";
-    snackbarColor.value = msg.type === "error" ? "error" : msg.type === "warn" ? "warning" : "primary";
+    snackbarTitle.value =
+      msg.type === "error" ? "Error" : msg.type === "warn" ? "Warning" : "Info";
+    snackbarColor.value =
+      msg.type === "error"
+        ? "error"
+        : msg.type === "warn"
+          ? "warning"
+          : "primary";
     snackbar.value = true;
   },
   { deep: true },
@@ -104,7 +114,9 @@ init(() => {
       location="bottom start"
       class="snackbar-offset"
     >
-      <div class="text-subtitle-2 font-weight-medium mb-1">{{ snackbarTitle }}</div>
+      <div class="text-subtitle-2 font-weight-medium mb-1">
+        {{ snackbarTitle }}
+      </div>
       {{ snackbarMessage }}
       <template #actions>
         <v-btn variant="text" @click="snackbar = false">Close</v-btn>
