@@ -177,4 +177,9 @@ export const availableModules: ModuleDescriptor[] = [
     type: "sample-and-hold",
     categories: ["signal-operator", "signal"],
   },
+  {
+    title: "delay",
+    type: "delay",
+    categories: ["signal-operator", "signal"],
+  },
 ];
