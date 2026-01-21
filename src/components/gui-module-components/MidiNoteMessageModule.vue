@@ -28,7 +28,7 @@ watch(
   () => localOptions.value,
   (newValue) => {
     emit("options-updated", newValue);
-  },
+  }, { deep: true }
 );
 
 const listen = () => {
