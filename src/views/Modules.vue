@@ -48,13 +48,13 @@
                   :key="input.name"
                   class="mb-2 d-flex align-start pl-4"
                 >
-                  <div class="text-caption font-weight-bold mr-2">
+                  <div class="font-weight-bold mr-2">
                     <span v-if="input.type === 'signal'" class="text-secondary"
                       >~</span
                     >
                     {{ input.name }}
                   </div>
-                  <div class="text-caption text-medium-emphasis">
+                  <div class=" text-medium-emphasis">
                     {{ input.description }}
                   </div>
                 </div>
@@ -73,13 +73,13 @@
                   :key="output.name"
                   class="mb-2 d-flex align-start pl-4"
                 >
-                  <div class="text-caption font-weight-bold mr-2">
+                  <div class=" font-weight-bold mr-2">
                     <span v-if="output.type === 'signal'" class="text-secondary"
                       >~</span
                     >
                     {{ output.name }}
                   </div>
-                  <div class="text-caption text-medium-emphasis">
+                  <div class=" text-medium-emphasis">
                     {{ output.description }}
                   </div>
                 </div>
@@ -94,12 +94,12 @@
   <!-- Right-side navigation menu -->
   <aside class="toc-sidebar">
     <div class="toc-content">
-      <div class="toc-title text-caption font-weight-bold mb-2">On this page</div>
+      <div class="toc-title  font-weight-bold mb-2">All Modules</div>
       <nav>
         <div v-for="category in groupedByCategory" :key="category.name" class="mb-3">
           <a 
             :href="'#category-' + category.name"
-            class="toc-category-link text-caption text-medium-emphasis"
+            class="toc-category-link  text-medium-emphasis"
             @click.prevent="scrollToElement('category-' + category.name)"
           >
             {{ category.name }}
@@ -109,7 +109,7 @@
               v-for="module in category.modules"
               :key="module.type"
               :href="'#module-' + module.type"
-              class="toc-module-link text-caption text-medium-emphasis"
+              class="toc-module-link  text-medium-emphasis"
               @click.prevent="scrollToElement('module-' + module.type)"
             >
               {{ module.title }}
@@ -146,7 +146,14 @@ const groupedByCategory = computed(() => {
 const scrollToElement = (id: string) => {
   const element = document.getElementById(id);
   if (element) {
-    element.scrollIntoView({ behavior: "smooth", block: "start" });
+    const headerOffset = 80;
+    const elementPosition = element.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+    
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: "smooth"
+    });
   }
 };
 </script>
@@ -159,14 +166,14 @@ const scrollToElement = (id: string) => {
 .modules-list {
   max-width: 1200px;
   margin: 0 auto;
-  padding-right: 280px;
+  padding-right: 18em;
 }
 
 .toc-sidebar {
   position: fixed;
   top: 80px;
   right: 16px;
-  width: 240px;
+  width: 18em;
   max-height: calc(100vh - 96px);
   overflow-y: auto;
   padding: 16px;
@@ -214,7 +221,7 @@ const scrollToElement = (id: string) => {
   margin-bottom: 8px;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 1200px) {
   .toc-sidebar {
     display: none;
   }
