@@ -60,7 +60,15 @@ init(() => {
       </template>
       <v-spacer></v-spacer>
       <v-btn variant="text" to="/">Patcher</v-btn>
-      <v-btn variant="text" to="/overview">Overview</v-btn>
+      <v-menu open-on-hover>
+        <template #activator="{ props }">
+          <v-btn variant="text" v-bind="props">Documentation</v-btn>
+        </template>
+        <v-list density="compact">
+          <v-list-item to="/overview" title="Overview" />
+          <v-list-item to="/modules" title="Modules" />
+        </v-list>
+      </v-menu>
       <v-btn
         icon="mdi-cog"
         aria-label="Settings"
