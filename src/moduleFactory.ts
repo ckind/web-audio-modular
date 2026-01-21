@@ -19,7 +19,7 @@ import ButtonTrigModule from "@/classes/audio-modules/ButtonTrigModule";
 import NoiseModule from "@/classes/audio-modules/NoiseModule";
 import ADSREnvelopeModule from "@/classes/audio-modules/ADSREnvelopeModule";
 import MidiInputModule from "@/classes/audio-modules/MidiInputModule";
-import MidiCCToSignalModule from "@/classes/audio-modules/MidiCCToSignal";
+import MidiCCModule from "@/classes/audio-modules/MidiCCModule";
 import PowCurveModule from "@/classes/audio-modules/PowCurveModule";
 import PatchNotesModule from "@/classes/audio-modules/PatchNotesModule";
 import MidiNoteMessageModule from "@/classes/audio-modules/MidiNoteMessageModule";
@@ -77,8 +77,8 @@ export function createAudioModule(
       return new ADSREnvelopeModule(id, options);
     case "midi-input":
       return new MidiInputModule(id, options);
-    case "midi-cc-to-signal":
-      return new MidiCCToSignalModule(id, options);
+    case "midi-cc":
+      return new MidiCCModule(id, options);
     case "patch-notes":
       return new PatchNotesModule(id, options);
     case "midi-note-message":

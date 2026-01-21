@@ -22,7 +22,7 @@ export type AudioModuleType =
   | "noise"
   | "env-adsr"
   | "midi-input"
-  | "midi-cc-to-signal"
+  | "midi-cc"
   | "pow-curve"
   | "patch-notes"
   | "midi-note-message"

@@ -109,9 +109,9 @@ export const availableModules: ModuleDescriptor[] = [
     categories: ["midi", "message-bus"],
   },
   {
-    title: "midi-cc-to-signal",
-    type: "midi-cc-to-signal",
-    GUIComponent: "MidiCCToSignal",
+    title: "midi-cc",
+    type: "midi-cc",
+    GUIComponent: "MidiCCModule",
     categories: ["midi", "signal"],
   },
   {

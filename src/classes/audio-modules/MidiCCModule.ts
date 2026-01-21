@@ -5,6 +5,7 @@ import * as Tone from "tone";
 import MessageInputNode from "@/classes/MessageInputNode";
 import ModuleOutput from "@/classes/ModuleOutput";
 import type { MessageBusDataType } from "@/types/connectionTypes";
+import MessageOutputNode from "@/classes/MessageOutputNode";
 
 type MidiCCToSignalModuleOptions = {
   channel: number;
@@ -20,24 +21,28 @@ const getDefaultOptions = (): MidiCCToSignalModuleOptions => ({
 
 export default class MidiCCToSignalModule extends AudioModule<MidiCCToSignalModuleOptions> {
   private _signal: Tone.Signal;
+  private _outputMessageNode: MessageOutputNode;
 
   constructor(id: string, options?: MidiCCToSignalModuleOptions) {
     super(id, options ?? getDefaultOptions());
 
     this._signal = new Tone.Signal(0);
+    this._outputMessageNode = new MessageOutputNode();
+
     this._inputs = [
       new ModuleInput(
         "midi-input",
-        new MessageInputNode((time, data) =>
-          this._messageCallback(time, data),
-        ),
+        new MessageInputNode((time, data) => this._messageCallback(time, data)),
       ),
     ];
-    this._outputs = [new ModuleOutput("signal-output", this._signal)];
+    this._outputs = [
+      new ModuleOutput("signal-output", this._signal),
+      new ModuleOutput("message-output", this._outputMessageNode),
+    ];
   }
 
   get type(): AudioModuleType {
-    return "midi-cc-to-signal";
+    return "midi-cc";
   }
 
   private _messageCallback(time: number, data?: MessageBusDataType): void {
@@ -62,6 +67,7 @@ export default class MidiCCToSignalModule extends AudioModule<MidiCCToSignalModu
     ) {
       const num = data[2]!; // Control value (0-127)
       this._signal.setValueAtTime(num, time);
+      this._outputMessageNode.scheduleMessage(time, num);
     }
   }
 

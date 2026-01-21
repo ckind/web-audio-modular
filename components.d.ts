@@ -14,7 +14,7 @@ declare module 'vue' {
     ButtonTrigModule: typeof import('./src/components/gui-module-components/ButtonTrigModule.vue')['default']
     DisplayMessageModule: typeof import('./src/components/gui-module-components/DisplayMessageModule.vue')['default']
     MessageTrigModule: typeof import('./src/components/gui-module-components/MessageTrigModule.vue')['default']
-    MidiCCToSignal: typeof import('./src/components/gui-module-components/MidiCCToSignal.vue')['default']
+    MidiCCModule: typeof import('./src/components/gui-module-components/MidiCCModule.vue')['default']
     MidiInputModule: typeof import('./src/components/gui-module-components/MidiInputModule.vue')['default']
     MidiNoteMessageModule: typeof import('./src/components/gui-module-components/MidiNoteMessageModule.vue')['default']
     MidiNoteToTrig: typeof import('./src/components/gui-module-components/MidiNoteToTrig.vue')['default']

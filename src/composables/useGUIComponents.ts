@@ -4,7 +4,7 @@ import DisplayMessageModule from "@/components/gui-module-components/DisplayMess
 import ButtonTrigModule from "@/components/gui-module-components/ButtonTrigModule.vue";
 import MessageTrigModule from "@/components/gui-module-components/MessageTrigModule.vue";
 import MidiInputModule from "@/components/gui-module-components/MidiInputModule.vue";
-import MidiCCToSignal from "@/components/gui-module-components/MidiCCToSignal.vue";
+import MidiCCModule from "@/components/gui-module-components/MidiCCModule.vue";
 import PatchNotesModule from "@/components/gui-module-components/PatchNotesModule.vue";
 import MidiNoteMessageModule from "@/components/gui-module-components/MidiNoteMessageModule.vue";
 import SamplerPlusModule from "@/components/gui-module-components/SamplerPlusModule.vue";
@@ -16,7 +16,7 @@ export default function useGUIComponents() {
     ButtonTrigModule,
     MessageTrigModule,
     MidiInputModule,
-    MidiCCToSignal,
+    MidiCCModule,
     PatchNotesModule,
     MidiNoteMessageModule,
     SamplerPlusModule,
