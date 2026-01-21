@@ -82,7 +82,7 @@
             <div class="type-row">
               <span class="font-weight-medium">String:</span>
               <span class="text-body-2 text-medium-emphasis">
-                A sequence of Unicode characters – implemented by the JavaScript
+                A sequence of Unicode characters, often human readable text – implemented by the JavaScript
                 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" target="_blank">string</a> type.
               </span>
             </div>
