@@ -124,7 +124,10 @@
 
 <script setup lang="ts">
 import { availableModules } from "@/moduleDescriptors";
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const groupedByCategory = computed(() => {
   const groups: { [key: string]: typeof availableModules } = {};
@@ -144,6 +147,9 @@ const groupedByCategory = computed(() => {
 });
 
 const scrollToElement = (id: string) => {
+  // Update the URL hash
+  router.replace({ hash: `#${id}` });
+  
   const element = document.getElementById(id);
   if (element) {
     const headerOffset = 80;
@@ -156,6 +162,18 @@ const scrollToElement = (id: string) => {
     });
   }
 };
+
+onMounted(() => {
+  const hash = window.location.hash;
+  if (hash) {
+    // Remove the '#' and scroll to the element
+    const id = hash.substring(1);
+    // Add a small delay to ensure the DOM is fully rendered
+    setTimeout(() => {
+      scrollToElement(id);
+    }, 100);
+  }
+});
 </script>
 
 <style scoped>
