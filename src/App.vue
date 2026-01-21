@@ -3,6 +3,7 @@ import { ref, watch } from "vue";
 import { useAppColors } from "./store/appColors";
 import { useTheme } from "vuetify";
 import { useAudioSettings } from "@/store/audioSettings";
+import { usePatchConsole } from "@/store/patchConsole";
 import { init } from "@/toneInit";
 
 const theme = useTheme();
@@ -22,10 +23,28 @@ updateAppColors();
 
 const isDarkMode = ref(theme.global.name.value === "dark");
 const settingsDialog = ref(false);
+const snackbar = ref(false);
+const snackbarMessage = ref("");
+const snackbarColor = ref<string>("primary");
+const snackbarTitle = ref("");
+const patchConsole = usePatchConsole();
+
 watch(isDarkMode, (newValue) => {
   theme.change(newValue ? "dark" : "light");
   updateAppColors();
 });
+
+watch(
+  () => patchConsole.latestMessage,
+  (msg) => {
+    if (!msg) return;
+    snackbarMessage.value = msg.content;
+    snackbarTitle.value = msg.type === "error" ? "Error" : msg.type === "warn" ? "Warning" : "Info";
+    snackbarColor.value = msg.type === "error" ? "error" : msg.type === "warn" ? "warning" : "primary";
+    snackbar.value = true;
+  },
+  { deep: true },
+);
 
 init(() => {
   const audioSettings = useAudioSettings();
@@ -69,6 +88,20 @@ init(() => {
         <RouterView />
       </v-container>
     </v-main>
+
+    <v-snackbar
+      v-model="snackbar"
+      :color="snackbarColor"
+      timeout="5000"
+      location="bottom start"
+      class="snackbar-offset"
+    >
+      <div class="text-subtitle-2 font-weight-medium mb-1">{{ snackbarTitle }}</div>
+      {{ snackbarMessage }}
+      <template #actions>
+        <v-btn variant="text" @click="snackbar = false">Close</v-btn>
+      </template>
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -78,5 +111,9 @@ init(() => {
   text-decoration: none;
   font-size: inherit;
   font-weight: inherit;
+}
+
+.snackbar-offset {
+  margin: 1.5em;
 }
 </style>

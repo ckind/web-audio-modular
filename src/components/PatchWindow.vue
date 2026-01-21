@@ -19,8 +19,10 @@ import { createAudioModule } from "@/moduleFactory";
 import useResizeObserver from "@/composables/useResizeObserver.ts";
 import Patcher from "@/classes/Patcher";
 import { useAppColors } from "@/store/appColors";
+import { usePatchConsole } from "@/store/patchConsole";
 
 const appColors = useAppColors();
+const patchConsole = usePatchConsole();
 
 const elementCache = new Map<string, HTMLElement>();
 const clearElementCache = () => {
