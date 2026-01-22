@@ -627,7 +627,7 @@ export const availableModules: ModuleDescriptor[] = [
   {
     title: "msg-counter",
     type: "msg-counter",
-    categories: ["message"],
+    categories: ["message", "message-bus"],
     description: "Counts messages and outputs the current count.",
     inputDescriptions: [
       {
@@ -652,7 +652,7 @@ export const availableModules: ModuleDescriptor[] = [
   {
     title: "msg-mod",
     type: "msg-mod",
-    categories: ["message"],
+    categories: ["message", "message-bus"],
     description: "Performs modulo operation on message values.",
     inputDescriptions: [
       {
@@ -672,7 +672,7 @@ export const availableModules: ModuleDescriptor[] = [
   {
     title: "msg-add",
     type: "msg-add",
-    categories: ["message"],
+    categories: ["message", "message-bus"],
     description: "Performs addition on message values.",
     inputDescriptions: [
       {
