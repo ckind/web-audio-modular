@@ -82,12 +82,14 @@ export const availableModules: ModuleDescriptor[] = [
       },
       {
         name: "modulation-index",
-        description: "Modulation index (affects the amount of frequency modulation)",
+        description:
+          "Modulation index (affects the amount of frequency modulation)",
         type: "signal",
       },
       {
         name: "modulation-rate",
-        description: "Modulation rate (frequency of the modulating oscillator in Hz)",
+        description:
+          "Modulation rate (frequency of the modulating oscillator in Hz)",
         type: "signal",
       },
     ],
@@ -607,6 +609,31 @@ export const availableModules: ModuleDescriptor[] = [
   //     },
   //   ],
   // },
+  {
+    title: "msg-counter",
+    type: "msg-counter",
+    categories: ["message"],
+    description: "Counts messages and outputs the current count.",
+    inputDescriptions: [
+      {
+        name: "increment",
+        description: "Input message to increment the counter",
+        type: "message-bus",
+      },
+      {
+        name: "set",
+        description: "Input message to set the counter to a specific value",
+        type: "message-bus",
+      },
+    ],
+    outputDescriptions: [
+      {
+        name: "counter-output",
+        description: "Output message with the current counter value",
+        type: "message-bus",
+      },
+    ],
+  },
   {
     title: "msg-regex",
     type: "msg-regex",

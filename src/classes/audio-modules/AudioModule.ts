@@ -36,6 +36,7 @@ export type AudioModuleType =
   | "env-amp"
   | "msg-box"
   | "msg-regex"
+  | "msg-counter"
   | "midi-num-to-hz"
   | "split"
   | "sampler"
