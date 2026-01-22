@@ -34,7 +34,6 @@ export function init(callback?: () => void) {
     const ctx = await createAudioContext();
     await registerAudioWorklets(ctx, [
       "./classes/audio-worklets/ScaleWorkletProcessor.js",
-      "./classes/audio-worklets/PowCurveWorkletProcessor.js",
       "./classes/audio-worklets/SamplerPlusWorkletProcessor.js",
     ]);
 

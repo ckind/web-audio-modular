@@ -13,6 +13,7 @@ type ScaleModuleOptions = {
   inputMax: number;
   outputMin: number;
   outputMax: number;
+  curve: number;
 };
 
 const getDefaultOptions = (): ScaleModuleOptions => ({
@@ -20,6 +21,7 @@ const getDefaultOptions = (): ScaleModuleOptions => ({
   inputMax: 1,
   outputMin: 0,
   outputMax: 1,
+  curve: 1
 });
 
 function scaleValue(
@@ -48,13 +50,22 @@ export default class ScaleModule extends AudioModule<ScaleModuleOptions> {
       inputMax: this._options.inputMax,
       outputMin: this._options.outputMin,
       outputMax: this._options.outputMax,
+      curveAmount: this._options.curve,
     });
 
-    this._messageInputNode = new MessageInputNode(this.messageInputCallback.bind(this));
+    this._messageInputNode = new MessageInputNode(
+      this.messageInputCallback.bind(this),
+    );
     this._messageOutputNode = new MessageOutputNode();
 
-    this._inputs = [new ModuleInput("signal-input", this._scaleNode), new ModuleInput("message-input", this._messageInputNode)];
-    this._outputs = [new ModuleOutput("signal-output", this._scaleNode), new ModuleOutput("message-output", this._messageOutputNode)];
+    this._inputs = [
+      new ModuleInput("signal-input", this._scaleNode),
+      new ModuleInput("message-input", this._messageInputNode),
+    ];
+    this._outputs = [
+      new ModuleOutput("signal-output", this._scaleNode),
+      new ModuleOutput("message-output", this._messageOutputNode),
+    ];
   }
 
   get type(): AudioModuleType {
@@ -78,6 +89,12 @@ export default class ScaleModule extends AudioModule<ScaleModuleOptions> {
       this._scaleNode.outputMax.value = options.outputMax;
       this._options.outputMax = options.outputMax;
     }
+    if (options.curve !== undefined) {
+      // todo: user feedback for validation?
+      const validCurve = options.curve <= 0 ? 1 : options.curve;
+      this._scaleNode.curve.value = validCurve;
+      this._options.curve = validCurve;
+    }
   }
 
   messageInputCallback(time: number, data?: MessageBusDataType): void {
@@ -88,7 +105,7 @@ export default class ScaleModule extends AudioModule<ScaleModuleOptions> {
         this._options.inputMin,
         this._options.inputMax,
         this._options.outputMin,
-        this._options.outputMax
+        this._options.outputMax,
       );
       this._messageOutputNode.scheduleMessage(time, scaledValue);
     }

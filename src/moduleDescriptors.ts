@@ -177,23 +177,6 @@ export const availableModules: ModuleDescriptor[] = [
     ],
   },
   {
-    title: "scale-exp",
-    type: "scale-exp",
-    categories: ["signal-operator", "signal"],
-    description:
-      "Maps input signal values exponentially from one range to another.",
-    inputDescriptions: [
-      { name: "input", description: "Input signal to scale", type: "signal" },
-    ],
-    outputDescriptions: [
-      {
-        name: "output",
-        description: "Exponentially scaled signal",
-        type: "signal",
-      },
-    ],
-  },
-  {
     title: "msg-to-signal",
     type: "msg-to-signal",
     categories: ["message", "signal"],
@@ -437,18 +420,6 @@ export const availableModules: ModuleDescriptor[] = [
         description: "CC value as signal (0-1)",
         type: "signal",
       },
-    ],
-  },
-  {
-    title: "pow-curve",
-    type: "pow-curve",
-    categories: ["signal-operator", "signal"],
-    description: "Applies exponential curve mapping to signal values.",
-    inputDescriptions: [
-      { name: "input", description: "Input signal", type: "signal" },
-    ],
-    outputDescriptions: [
-      { name: "output", description: "Curved signal", type: "signal" },
     ],
   },
   {

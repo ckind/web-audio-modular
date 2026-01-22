@@ -13,14 +13,12 @@ import SequenceModule from "@/classes/audio-modules/SequenceModule";
 import SliderModule from "@/classes/audio-modules/SliderModule";
 import DisplayMessageModule from "@/classes/audio-modules/DisplayMessageModule";
 import FilterModule from "@/classes/audio-modules/FilterModule";
-import ScaleExpModule from "@/classes/audio-modules/ScaleExpModule";
 import ConvolutionReverbModule from "@/classes/audio-modules/ConvolutionReverbModule";
 import ButtonTrigModule from "@/classes/audio-modules/ButtonTrigModule";
 import NoiseModule from "@/classes/audio-modules/NoiseModule";
 import ADSREnvelopeModule from "@/classes/audio-modules/ADSREnvelopeModule";
 import MidiInputModule from "@/classes/audio-modules/MidiInputModule";
 import MidiCCModule from "@/classes/audio-modules/MidiCCModule";
-import PowCurveModule from "@/classes/audio-modules/PowCurveModule";
 import PatchNotesModule from "@/classes/audio-modules/PatchNotesModule";
 import MidiNoteMessageModule from "@/classes/audio-modules/MidiNoteMessageModule";
 import ADSRAmplitudeModule from "@/classes/audio-modules/ADSRAmplitudeModule";
@@ -67,10 +65,6 @@ export function createAudioModule(
       return new LoggerModule(id, options);
     case "scale":
       return new ScaleModule(id, options);
-    case "scale-exp":
-      return new ScaleExpModule(id, options);
-    case "pow-curve":
-      return new PowCurveModule(id, options);
     case "msg-to-signal":
       return new MessageToSignalModule(id, options);
     case "sequence":

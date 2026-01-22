@@ -8,13 +8,19 @@ export default class ScaleWorkletNode extends Tone.ToneAudioNode {
     inputMax: number;
     outputMin: number;
     outputMax: number;
+    curveAmount?: number;
   }) {
     super(Tone.getContext());
+
     this._workletNode = new AudioWorkletNode(
       Tone.getContext().rawContext,
       "scale-worklet-processor",
       {
-        parameterData: options,
+        parameterData: {
+          ...options,
+          curveAmount:
+            options.curveAmount !== undefined ? options.curveAmount : 0,
+        },
       },
     );
   }
@@ -45,6 +51,10 @@ export default class ScaleWorkletNode extends Tone.ToneAudioNode {
 
   get outputMax() {
     return this._workletNode.parameters.get("outputMax")!;
+  }
+
+  get curve() {
+    return this._workletNode.parameters.get("curveAmount")!;
   }
 
   dispose(): this {
