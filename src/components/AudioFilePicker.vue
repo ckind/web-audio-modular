@@ -2,7 +2,7 @@
 import { type PropType, ref, watch } from "vue";
 import * as Tone from "tone";
 
-const emit = defineEmits(["file-url-updated", "buffer-data-updated"])
+const emit = defineEmits(["file-updated", "buffer-data-updated"]);
 
 const selectedFile = ref<File | null>(null);
 const fileValidationRules = ref([
@@ -17,15 +17,7 @@ watch(selectedFile, async (file: File | null) => {
     console.warn("Selected file is not an audio file.");
   } else {
     const fileURL = URL.createObjectURL(file!);
-    emit("file-url-updated", fileURL);
-
-    const response = await fetch(fileURL);
-    const arrayBuffer = await response.arrayBuffer();
-    const buffer =
-      await Tone.getContext().rawContext.decodeAudioData(arrayBuffer);
-
-    // just get first channel for now - could sum for stereo signals
-    emit("buffer-data-updated", buffer.getChannelData(0));
+    emit("file-updated", file);
   }
 });
 </script>

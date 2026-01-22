@@ -5,9 +5,10 @@ import ModuleOutput from "@/classes/ModuleOutput";
 import MessageInputNode from "@/classes/MessageInputNode";
 import * as Tone from "tone";
 import type { MessageBusDataType } from "@/types/connectionTypes";
+import ResourceFile from "@/classes/ResourceFile";
 
 export type PlayerModuleOptions = {
-  audioUrl: string;
+  resourcefile: ResourceFile;
   startPosition: number;
   fadeInTime: number;
   fadeOutTime: number;
@@ -15,10 +16,10 @@ export type PlayerModuleOptions = {
 };
 
 const getDefaultOptions = (): PlayerModuleOptions => ({
-  audioUrl: "",
+  resourcefile: new ResourceFile(),
   startPosition: 0,
-  fadeInTime: 0,
-  fadeOutTime: 0,
+  fadeInTime: 0.01,
+  fadeOutTime: 0.01,
   reverse: false,
 });
 
@@ -33,10 +34,14 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
   constructor(id: string, options?: PlayerModuleOptions) {
     super(id, options ?? getDefaultOptions());
 
-    this._player = new Tone.Player(this._options.audioUrl);
+    this._player = new Tone.Player();
     this._player.fadeIn = this._options.fadeInTime;
     this._player.fadeOut = this._options.fadeOutTime;
     this._player.reverse = this._options.reverse;
+
+    if (this._options.resourcefile.blobUrl) {
+      this.loadResourceFile(this._options.resourcefile);
+    }
 
     this._startInputNode = new MessageInputNode(
       this.startInputCallback.bind(this),
@@ -60,8 +65,15 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
     return "player";
   }
 
+  loadResourceFile(resourcefile: ResourceFile) {
+    console.log("loading resource url", resourcefile.blobUrl);
+    this._player.load(resourcefile.blobUrl!);
+  }
+
   startInputCallback(time: number, data?: MessageBusDataType): void {
+    console.log("received play command");
     if (this._player.loaded) {
+      console.log("playing");
       this._player.start(time, this._startPositionSeconds);
     }
   }
@@ -82,9 +94,9 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
   }
 
   updateOptions(options: Partial<PlayerModuleOptions>): void {
-    if (options.audioUrl !== undefined && options.audioUrl != "") {
-      this._options.audioUrl = options.audioUrl;
-      this._player.load(options.audioUrl);
+    if (options.resourcefile !== undefined) {
+      this._options.resourcefile = options.resourcefile;
+      this.loadResourceFile(options.resourcefile);
     }
     if (options.fadeInTime !== undefined) {
       this._options.fadeInTime = options.fadeInTime;

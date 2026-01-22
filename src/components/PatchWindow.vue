@@ -21,6 +21,8 @@ import Patcher from "@/classes/Patcher";
 import { useAppColors } from "@/store/appColors";
 import { usePatchConsole } from "@/store/patchConsole";
 import JSZip from "jszip";
+import ResourceFile from "@/classes/ResourceFile";
+import path from "node:path";
 
 const appColors = useAppColors();
 const patchConsole = usePatchConsole();
@@ -77,15 +79,15 @@ const contextMenuX = ref(0);
 const contextMenuY = ref(0);
 const showClearConfirm = ref(false);
 
-const savePatch = () => {
+const savePatch = async () => {
   const zip = new JSZip();
 
   patchGraph.value.version = import.meta.env.PACKAGE_VERSION;
   const patchData = JSON.stringify(patchGraph.value);
   const blob = new Blob([patchData], { type: "application/json" });
 
+  await saveResourceFiles(zip);
   zip.file("patch.json", blob); // save the patch graph
-  zip.folder("resources"); // todo: save any external dependencies, audio files, etc.
   zip.generateAsync({ type: "blob" }).then((content) => {
     const url = URL.createObjectURL(content);
     const a = document.createElement("a");
@@ -95,6 +97,32 @@ const savePatch = () => {
 
     URL.revokeObjectURL(url);
   });
+};
+
+const saveResourceFiles = async (zip: JSZip) => {
+  const resources = zip.folder("resources");
+
+  for (let i = 0; i < patchGraph.value.modules.length; i++) {
+    const keys = Object.keys(patchGraph.value.modules[i]!.options);
+
+    for (let j = 0; j < keys.length; j++) {
+      const option = patchGraph.value.modules[i]!.options[keys[j]!];
+
+      if (option instanceof ResourceFile) {
+        const resourceFile = option as ResourceFile;
+
+        // todo: do these in parallel
+        const response = await fetch(resourceFile.blobUrl!);
+        const blob = await response.blob();
+
+        resources!.file(resourceFile.name!, blob);
+      }
+    }
+  }
+};
+
+const loadResourceFiles = async () => {
+
 };
 
 const loadPatch = () => {
@@ -112,10 +140,9 @@ const loadPatch = () => {
             if (relativePath === "patch.json") {
               const content = await blob.text();
               reconstructPatch(content);
-            }
-            else if (relativePath.startsWith("resources")) {
-              // todo: deal with resource files
-              console.log("loaded resource file: ", relativePath);
+            } else if (relativePath.startsWith("resources")) {
+              // // todo: deal with resource files
+              // console.log("loaded resource file: ", relativePath);
             }
           });
         });
