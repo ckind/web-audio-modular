@@ -156,6 +156,8 @@ const loadPatch = () => {
         patch.graphJson = await b.blob.text();
       } else if (resourceFileRegex.test(b.relativePath)) {
         const blobUrl = URL.createObjectURL(b.blob);
+        // todo: memory leaks?
+        // can we revoke this url after buffer has loaded?
         const fileName = b.relativePath.replace(/.*\//, "");
         patch.resourceFiles.push(new ResourceFile(blobUrl, fileName));
       }
