@@ -635,6 +635,26 @@ export const availableModules: ModuleDescriptor[] = [
     ],
   },
   {
+    title: "msg-mod",
+    type: "msg-mod",
+    categories: ["message"],
+    description: "Performs modulo operation on message values.",
+    inputDescriptions: [
+      {
+        name: "input",
+        description: "Input message value",
+        type: "message-bus",
+      },
+    ],
+    outputDescriptions: [
+      {
+        name: "output",
+        description: "Output message with modulo result",
+        type: "message-bus",
+      },
+    ],
+  },
+  {
     title: "msg-regex",
     type: "msg-regex",
     categories: ["message", "message-bus"],
