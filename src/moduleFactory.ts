@@ -22,7 +22,7 @@ import MidiCCModule from "@/classes/audio-modules/MidiCCModule";
 import PatchNotesModule from "@/classes/audio-modules/PatchNotesModule";
 import MidiNoteMessageModule from "@/classes/audio-modules/MidiNoteMessageModule";
 import ADSRAmplitudeModule from "@/classes/audio-modules/ADSRAmplitudeModule";
-import MessageTrigModule from "@/classes/audio-modules/MessageTrig";
+import MessageBoxModule from "@/classes/audio-modules/MessageBoxModule";
 import MidiNumToHzModule from "@/classes/audio-modules/MidiNumToHzModule";
 import SplitModule from "@/classes/audio-modules/SplitModule";
 import SamplerPlusModule from "@/classes/audio-modules/SamplerPlusModule";
@@ -101,7 +101,7 @@ export function createAudioModule(
     case "env-amp":
       return new ADSRAmplitudeModule(id, options);
     case "msg-box":
-      return new MessageTrigModule(id, options);
+      return new MessageBoxModule(id, options);
     case "midi-num-to-hz":
       return new MidiNumToHzModule(id, options);
     case "split":

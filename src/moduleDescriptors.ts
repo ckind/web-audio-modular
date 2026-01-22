@@ -379,7 +379,7 @@ export const availableModules: ModuleDescriptor[] = [
   {
     title: "msg-box",
     type: "msg-box",
-    GUIComponent: "MessageTrigModule",
+    GUIComponent: "MessageBoxModule",
     categories: ["message", "message-bus"],
     description: "Stores and outputs a customizable message on trigger.",
     inputDescriptions: [

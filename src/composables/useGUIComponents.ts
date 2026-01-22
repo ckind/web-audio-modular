@@ -2,7 +2,7 @@ import { type Component } from "vue";
 import SliderModule from "@/components/gui-module-components/SliderModule.vue";
 import DisplayMessageModule from "@/components/gui-module-components/DisplayMessageModule.vue";
 import ButtonTrigModule from "@/components/gui-module-components/ButtonTrigModule.vue";
-import MessageTrigModule from "@/components/gui-module-components/MessageTrigModule.vue";
+import MessageBoxModule from "@/components/gui-module-components/MessageBoxModule.vue";
 import MidiInputModule from "@/components/gui-module-components/MidiInputModule.vue";
 import MidiCCModule from "@/components/gui-module-components/MidiCCModule.vue";
 import PatchNotesModule from "@/components/gui-module-components/PatchNotesModule.vue";
@@ -19,7 +19,7 @@ export default function useGUIComponents() {
     SliderModule,
     DisplayMessageModule,
     ButtonTrigModule,
-    MessageTrigModule,
+    MessageBoxModule,
     MidiInputModule,
     MidiCCModule,
     PatchNotesModule,
