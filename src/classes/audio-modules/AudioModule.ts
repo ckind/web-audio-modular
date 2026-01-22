@@ -37,6 +37,7 @@ export type AudioModuleType =
   | "sampler"
   | "sampler-plus"
   | "player"
+  | "grain-player"
   ;
 
 export type ModuleId = string;

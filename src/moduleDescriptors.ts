@@ -442,12 +442,35 @@ export const availableModules: ModuleDescriptor[] = [
       },
     ],
   },
-   {
+  {
     title: "player",
     type: "player",
     GUIComponent: "PlayerModule",
     categories: ["source", "signal"],
-    description: "Plays an audio file with some basic parameters like seek, loop, etc. For a more complete sampler instrument see: sampler",
+    description:
+      "Plays an audio file with some basic parameters like seek, loop, etc. For a more complete sampler instrument see: sampler",
+    inputDescriptions: [
+      {
+        name: "trigger",
+        description: "Trigger playback of sample",
+        type: "message-bus",
+      },
+    ],
+    outputDescriptions: [
+      {
+        name: "output",
+        description: "Sample playback audio signal",
+        type: "signal",
+      },
+    ],
+  },
+  {
+    title: "grain-player",
+    type: "grain-player",
+    GUIComponent: "GrainPlayerModule",
+    categories: ["source", "signal"],
+    description:
+      "Player device designed for granular synthesis and other advanced audio manipulation",
     inputDescriptions: [
       {
         name: "trigger",

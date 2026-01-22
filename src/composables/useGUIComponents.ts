@@ -10,6 +10,7 @@ import MidiNoteMessageModule from "@/components/gui-module-components/MidiNoteMe
 import SamplerPlusModule from "@/components/gui-module-components/SamplerPlusModule.vue";
 import SamplerModule from "@/components/gui-module-components/SamplerModule.vue";
 import PlayerModule from "@/components/gui-module-components/PlayerModule.vue";
+import GrainPlayerModule from "@/components/gui-module-components/GrainPlayerModule.vue";
 
 export default function useGUIComponents() {
   const components: Record<string, Component> = {
@@ -23,7 +24,8 @@ export default function useGUIComponents() {
     MidiNoteMessageModule,
     SamplerPlusModule,
     SamplerModule,
-    PlayerModule
+    PlayerModule,
+    GrainPlayerModule
   };
 
   return components;
