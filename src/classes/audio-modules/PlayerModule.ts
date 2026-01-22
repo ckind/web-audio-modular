@@ -17,7 +17,7 @@ const getDefaultOptions = (): PlayerModuleOptions => ({
   audioUrl: "",
   startPosition: 0,
   fadeInTime: 0,
-  fadeOutTime: 0
+  fadeOutTime: 0,
 });
 
 export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
@@ -31,6 +31,8 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
     super(id, options ?? getDefaultOptions());
 
     this._player = new Tone.Player(this._options.audioUrl);
+    this._player.fadeIn = this._options.fadeInTime;
+    this._player.fadeOut = this._options.fadeOutTime;
 
     this._triggerInputNode = new MessageInputNode(
       this.triggerInputCallback.bind(this),
@@ -51,11 +53,9 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
   }
 
   triggerInputCallback(time: number, data?: MessageBusDataType): void {
-    Tone.getTransport().schedule(() => {
-      if (this._player.loaded) {
-        this._player.start(time, this._startPositionSeconds);
-      }
-    }, time);
+    if (this._player.loaded) {
+      this._player.start(time, this._startPositionSeconds);
+    }
   }
 
   startPositionInputCallback(time: number, data?: MessageBusDataType): void {
@@ -68,11 +68,21 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
   }
 
   updateOptions(options: Partial<PlayerModuleOptions>): void {
-    if (options.audioUrl !== undefined) {
+    if (options.audioUrl !== undefined && options.audioUrl != "") {
       this._options.audioUrl = options.audioUrl;
       this._player.load(options.audioUrl);
     }
+    if (options.fadeInTime !== undefined) {
+      this._options.fadeInTime = options.fadeInTime;
+      this._player.fadeIn = options.fadeInTime;
+    }
+    if (options.fadeOutTime !== undefined) {
+      this._options.fadeOutTime = options.fadeOutTime;
+      this._player.fadeOut = options.fadeOutTime;
+    }
   }
 
-  dispose(): void {}
+  dispose(): void {
+    this._player.dispose();
+  }
 }

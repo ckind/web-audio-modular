@@ -178,6 +178,8 @@ const addModule = (moduleType: AudioModuleType, guiComponent?: string) => {
     moduleId: module.id,
     type: module.type,
     guiComponent: guiComponent,
+    // todo: should we pass in an options deep copy here to the UI instance?
+    // this would enforce one-way data flow from UI to the audio module
     options: module.options,
     outputs: module.outputs.map((o) => {
       return { name: o.name, type: o.type };

@@ -11,10 +11,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["options-updated"]);
-
 const amplitudeData = ref<Float32Array<ArrayBuffer>>(new Float32Array());
-
 const selectedFile = ref<File | null>(null);
 const fileValidationRules = ref([
   (v: any) =>
@@ -28,13 +25,12 @@ watch(selectedFile, async (file: File | null) => {
     console.warn("Selected file is not an audio file.");
   } else {
     const fileURL = URL.createObjectURL(file!);
-
-    emit("options-updated", { audioUrl: fileURL });
-
     const response = await fetch(fileURL);
     const arrayBuffer = await response.arrayBuffer();
     const buffer =
       await Tone.getContext().rawContext.decodeAudioData(arrayBuffer);
+
+    props.options.audioUrl = fileURL;
 
     // just get first channel for now - could sum for stereo signals
     amplitudeData.value = buffer.getChannelData(0);
