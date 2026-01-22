@@ -12,6 +12,7 @@ import SamplerModule from "@/components/gui-module-components/SamplerModule.vue"
 import PlayerModule from "@/components/gui-module-components/PlayerModule.vue";
 import GrainPlayerModule from "@/components/gui-module-components/GrainPlayerModule.vue";
 import RotaryKnobModule from "@/components/gui-module-components/RotaryKnobModule.vue";
+import UISwitchModule from "@/components/gui-module-components/UISwitchModule.vue";
 
 export default function useGUIComponents() {
   const components: Record<string, Component> = {
@@ -27,7 +28,8 @@ export default function useGUIComponents() {
     SamplerModule,
     PlayerModule,
     GrainPlayerModule,
-    RotaryKnobModule
+    RotaryKnobModule,
+    UISwitchModule
   };
 
   return components;

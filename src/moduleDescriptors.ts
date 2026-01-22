@@ -336,6 +336,32 @@ export const availableModules: ModuleDescriptor[] = [
     ],
   },
   {
+    title: "ui-switch",
+    type: "ui-switch",
+    GUIComponent: "UISwitchModule",
+    categories: ["ui-control", "signal"],
+    description: "Switches between two audio signal inputs.",
+    inputDescriptions: [
+      {
+        name: "channel-1",
+        description: "Audio signal input for channel 1",
+        type: "signal",
+      },
+      {
+        name: "channel-2",
+        description: "Audio signal input for channel 2",
+        type: "signal",
+      },
+    ],
+    outputDescriptions: [
+      {
+        name: "output",
+        description: "Selected channel signal output",
+        type: "signal",
+      },
+    ],
+  },
+  {
     title: "ui-button",
     type: "ui-button",
     GUIComponent: "ButtonTrigModule",

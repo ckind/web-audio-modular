@@ -40,6 +40,7 @@ import PulseOscillatorModule from "@/classes/audio-modules/PulseOscillatorModule
 import FMOscillatorModule from "@/classes/audio-modules/FMOscillatorModule";
 import ConstantSignalModule from "@/classes/audio-modules/ConstantSignalModule";
 import RotaryKnobModule from "@/classes/audio-modules/RotaryKnobModule";
+import UISwitchModule from "@/classes/audio-modules/UISwitchModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -81,6 +82,8 @@ export function createAudioModule(
       return new FilterModule(id, options);
     case "fx-convolution-reverb":
       return new ConvolutionReverbModule(id, options);
+    case "ui-switch":
+      return new UISwitchModule(id, options);
     case "ui-button":
       return new ButtonTrigModule(id, options);
     case "noise":

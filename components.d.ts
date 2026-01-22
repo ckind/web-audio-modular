@@ -36,6 +36,7 @@ declare module 'vue' {
     SamplerModule: typeof import('./src/components/gui-module-components/SamplerModule.vue')['default']
     SamplerPlusModule: typeof import('./src/components/gui-module-components/SamplerPlusModule.vue')['default']
     SliderModule: typeof import('./src/components/gui-module-components/SliderModule.vue')['default']
+    UISwitchModule: typeof import('./src/components/gui-module-components/UISwitchModule.vue')['default']
     WaveformDisplay: typeof import('./src/components/WaveformDisplay.vue')['default']
   }
 }
