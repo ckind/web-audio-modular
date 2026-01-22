@@ -70,6 +70,36 @@ export const availableModules: ModuleDescriptor[] = [
     ],
   },
   {
+    title: "osc-fm",
+    type: "osc-fm",
+    categories: ["source", "signal"],
+    description: "Generates waveform using frequency modulation synthesis.",
+    inputDescriptions: [
+      {
+        name: "frequency",
+        description: "Carrier frequency of the oscillator in Hz",
+        type: "signal",
+      },
+      {
+        name: "modulation-index",
+        description: "Modulation index (affects the amount of frequency modulation)",
+        type: "signal",
+      },
+      {
+        name: "modulation-rate",
+        description: "Modulation rate (frequency of the modulating oscillator in Hz)",
+        type: "signal",
+      },
+    ],
+    outputDescriptions: [
+      {
+        name: "output",
+        description: "Generated waveform signal",
+        type: "signal",
+      },
+    ],
+  },
+  {
     title: "speaker-output",
     type: "speaker-output",
     categories: ["output", "signal"],

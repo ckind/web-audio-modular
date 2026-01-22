@@ -5,6 +5,7 @@ export type AudioModuleType =
   | "speaker-output"
   | "osc"
   | "osc-pulse"
+  | "osc-fm"
   | "gain"
   | "clock"
   | "logger"

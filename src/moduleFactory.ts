@@ -39,6 +39,7 @@ import SamplerModule from "@/classes/audio-modules/SamplerModule";
 import PlayerModule from "@/classes/audio-modules/PlayerModule";
 import GrainPlayerModule from "@/classes/audio-modules/GrainPlayerModule";
 import PulseOscillatorModule from "@/classes/audio-modules/PulseOscillatorModule";
+import FMOscillatorModule from "@/classes/audio-modules/FMOscillatorModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -52,6 +53,8 @@ export function createAudioModule(
       return new OscillatorModule(id, options);
     case "osc-pulse":
       return new PulseOscillatorModule(id, options);
+    case "osc-fm":
+      return new FMOscillatorModule(id, options);
     case "gain":
       return new GainModule(id, options);
     case "clock":
