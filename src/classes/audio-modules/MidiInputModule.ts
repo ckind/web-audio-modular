@@ -58,7 +58,7 @@ export default class MidiInputModule extends AudioModule<MidiInputModuleOptions>
   }
 
   onMidiMessage(event: MIDIMessageEvent) {
-    this._messageOutput.scheduleMessage(Tone.now(), event.data);
+    this._messageOutput.scheduleMessage(Tone.immediate(), event.data);
   }
 
   dispose(): void {}
