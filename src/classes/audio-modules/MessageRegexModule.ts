@@ -25,11 +25,15 @@ export default class MessageRegexModule extends AudioModule<MessageRegexModuleOp
 
     this._regex = new RegExp(this._options.regex);
 
-    this._messageInputNode = new MessageInputNode(this._messageInputCallback.bind(this));
+    this._messageInputNode = new MessageInputNode(
+      this._messageInputCallback.bind(this),
+    );
     this._messageOutputNode = new MessageOutputNode();
 
     this._inputs = [new ModuleInput("message-input", this._messageInputNode)];
-    this._outputs = [new ModuleOutput("message-output", this._messageOutputNode)];
+    this._outputs = [
+      new ModuleOutput("message-output", this._messageOutputNode),
+    ];
   }
 
   get type(): AudioModuleType {
@@ -37,14 +41,15 @@ export default class MessageRegexModule extends AudioModule<MessageRegexModuleOp
   }
 
   private _messageInputCallback(time: number, data?: MessageBusDataType): void {
-    if (data !== undefined && typeof data === "string" && !this._regex.test(data)) {
+    if (
+      data !== undefined &&
+      typeof data === "string" &&
+      !this._regex.test(data)
+    ) {
       return;
     }
 
-    this._messageOutputNode.scheduleMessage(
-      Tone.now(),
-      data,
-    );
+    this._messageOutputNode.scheduleMessage(time, data);
   }
 
   updateOptions(options: Partial<MessageRegexModuleOptions>): void {
