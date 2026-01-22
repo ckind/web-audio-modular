@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type PropType, ref } from "vue";
+import { type PropType, ref, watch} from "vue";
 import type { PlayerModuleOptions } from "@/classes/audio-modules/PlayerModule";
 import WaveformDisplay from "../WaveformDisplay.vue";
 import * as Tone from "tone";
@@ -22,7 +22,7 @@ const onFileUpdated = async (file: File) => {
   const fileUrl = URL.createObjectURL(file!);
   const response = await fetch(fileUrl);
 
-  props.options.resourcefile = new ResourceFile(response.url, file.name);
+  props.options.resourceFile = new ResourceFile(response.url, file.name);
 
   const arrayBuffer = await response.arrayBuffer();
   const buffer =
@@ -30,6 +30,25 @@ const onFileUpdated = async (file: File) => {
 
   amplitudeData.value = buffer.getChannelData(0);
 };
+
+// todo: how to handle when resourceFile is removed?
+// todo: how update the file-picker to show new resourceFile name?
+watch(
+  () => props.options.resourceFile,
+  async (newResourceFile) => {
+    if (newResourceFile && newResourceFile.blobUrl) {
+      const response = await fetch(newResourceFile.blobUrl);
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer =
+        await Tone.getContext().rawContext.decodeAudioData(arrayBuffer);
+
+      amplitudeData.value = buffer.getChannelData(0);
+    } else {
+      amplitudeData.value = new Float32Array();
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <template>

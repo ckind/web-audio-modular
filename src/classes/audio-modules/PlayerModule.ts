@@ -8,7 +8,7 @@ import type { MessageBusDataType } from "@/types/connectionTypes";
 import ResourceFile from "@/classes/ResourceFile";
 
 export type PlayerModuleOptions = {
-  resourcefile: ResourceFile;
+  resourceFile: ResourceFile;
   startPosition: number;
   fadeInTime: number;
   fadeOutTime: number;
@@ -16,7 +16,7 @@ export type PlayerModuleOptions = {
 };
 
 const getDefaultOptions = (): PlayerModuleOptions => ({
-  resourcefile: new ResourceFile(),
+  resourceFile: new ResourceFile(),
   startPosition: 0,
   fadeInTime: 0.01,
   fadeOutTime: 0.01,
@@ -39,8 +39,11 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
     this._player.fadeOut = this._options.fadeOutTime;
     this._player.reverse = this._options.reverse;
 
-    if (this._options.resourcefile.blobUrl) {
-      this.loadResourceFile(this._options.resourcefile);
+    console.log("PlayerModule created with options: ", this._options);
+
+    if (this._options.resourceFile.blobUrl) {
+      console.log("Loading resource file from options: ", this._options.resourceFile);
+      this.loadResourceFile(this._options.resourceFile);
     }
 
     this._startInputNode = new MessageInputNode(
@@ -65,15 +68,12 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
     return "player";
   }
 
-  loadResourceFile(resourcefile: ResourceFile) {
-    console.log("loading resource url", resourcefile.blobUrl);
-    this._player.load(resourcefile.blobUrl!);
+  loadResourceFile(resourceFile: ResourceFile) {
+    this._player.load(resourceFile.blobUrl!);
   }
 
   startInputCallback(time: number, data?: MessageBusDataType): void {
-    console.log("received play command");
     if (this._player.loaded) {
-      console.log("playing");
       this._player.start(time, this._startPositionSeconds);
     }
   }
@@ -94,9 +94,9 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
   }
 
   updateOptions(options: Partial<PlayerModuleOptions>): void {
-    if (options.resourcefile !== undefined) {
-      this._options.resourcefile = options.resourcefile;
-      this.loadResourceFile(options.resourcefile);
+    if (options.resourceFile !== undefined) {
+      this._options.resourceFile = options.resourceFile;
+      this.loadResourceFile(options.resourceFile);
     }
     if (options.fadeInTime !== undefined) {
       this._options.fadeInTime = options.fadeInTime;

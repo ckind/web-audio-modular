@@ -22,15 +22,11 @@ import { useAppColors } from "@/store/appColors";
 import { usePatchConsole } from "@/store/patchConsole";
 import JSZip from "jszip";
 import ResourceFile from "@/classes/ResourceFile";
-import path from "node:path";
 
 const appColors = useAppColors();
 const patchConsole = usePatchConsole();
 
 const elementCache = new Map<string, HTMLElement>();
-const clearElementCache = () => {
-  elementCache.clear();
-};
 const getElement = (id: string): HTMLElement | null => {
   if (elementCache.has(id)) {
     return elementCache.get(id)!;
@@ -79,6 +75,9 @@ const contextMenuX = ref(0);
 const contextMenuY = ref(0);
 const showClearConfirm = ref(false);
 
+// todo: should think about breaking up this component into smaller pieces
+// maybe move load/save patch logic to a separate composable
+
 const savePatch = async () => {
   const zip = new JSZip();
 
@@ -121,42 +120,55 @@ const saveResourceFiles = async (zip: JSZip) => {
   }
 };
 
-const loadResourceFiles = async () => {
-
-};
-
 const loadPatch = () => {
+  const resourceFileRegex = /^resources\/.+$/;
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "*.wam.zip";
-  input.onchange = (e: Event) => {
+  input.onchange = async (e: Event) => {
     const file = (e.target as HTMLInputElement).files?.[0];
     if (!file) return;
 
-    JSZip.loadAsync(file)
-      .then((zip) => {
-        zip.forEach((relativePath, zipEntry) => {
-          zipEntry.async("blob").then(async (blob) => {
-            if (relativePath === "patch.json") {
-              const content = await blob.text();
-              reconstructPatch(content);
-            } else if (relativePath.startsWith("resources")) {
-              // // todo: deal with resource files
-              // console.log("loaded resource file: ", relativePath);
-            }
-          });
-        });
-      })
-      .catch(function (error) {
-        console.error("Error extracting zip file:", error);
-      });
+    const zip = await JSZip.loadAsync(file);
+
+    const patch = {
+      resourceFiles: new Array<ResourceFile>(),
+      graphJson: "",
+    };
+
+    const blobPromises = new Array<
+      Promise<{ relativePath: string; blob: Blob }>
+    >();
+
+    zip.forEach((relativePath, zipEntry) => {
+      blobPromises.push(
+        zipEntry.async("blob").then((blob) => {
+          return { relativePath, blob };
+        }),
+      );
+    });
+
+    const blobs = await Promise.all(blobPromises);
+
+    for (let i = 0; i < blobs.length; i++) {
+      const b = blobs[i]!;
+      if (b.relativePath === "patch.json") {
+        patch.graphJson = await b.blob.text();
+      } else if (resourceFileRegex.test(b.relativePath)) {
+        const blobUrl = URL.createObjectURL(b.blob);
+        const fileName = b.relativePath.replace(/.*\//, "");
+        patch.resourceFiles.push(new ResourceFile(blobUrl, fileName));
+      }
+    }
+
+    reconstructPatch(patch.graphJson, patch.resourceFiles);
   };
   input.click();
 };
 
-const reconstructPatch = (patchJson: string) => {
+const reconstructPatch = (graphJson: string, resourceFiles: ResourceFile[]) => {
   try {
-    const loadedGraph = JSON.parse(patchJson) as PatchGraph;
+    const loadedGraph = JSON.parse(graphJson) as PatchGraph;
     patchGraph.value = loadedGraph;
 
     // Reconstruct patcher state
@@ -164,14 +176,18 @@ const reconstructPatch = (patchJson: string) => {
     elementCache.clear();
 
     patchGraph.value.modules.forEach((m) => {
+      locateResourceFiles(m.options, resourceFiles);
+
       const module = createAudioModule(
         m.type as AudioModuleType,
         m.moduleId,
         m.options,
       );
+
       module.updateUIInstanceOptions = (data: any) => {
         m.options = { ...m.options, ...data };
       };
+
       module.updateUIInstanceOutputs = (
         outputs: ConnectionOutputInstance[],
       ) => {
@@ -185,6 +201,7 @@ const reconstructPatch = (patchJson: string) => {
           .filter((c) => c.from.moduleId === m.moduleId)
           .forEach((c) => deleteConnection(c));
       };
+
       patcher.addModule(module);
       updateModulePositionStyle(m.moduleId, m.position);
     });
@@ -204,6 +221,23 @@ const reconstructPatch = (patchJson: string) => {
   } catch (error) {
     console.error("Error loading patch:", error);
   }
+};
+
+const locateResourceFiles = (
+  moduleOptions: Record<string, any>,
+  resourceFiles: ResourceFile[],
+) => {
+  Object.keys(moduleOptions).forEach((key) => {
+    if (moduleOptions[key].isResourceFile === true) {
+      // todo: this assumes names are unique
+      // also lookup could be slow with many files
+      const file = resourceFiles.find(
+        (r) => r.name === moduleOptions[key]!.name,
+      );
+
+      moduleOptions[key]!.blobUrl = file?.blobUrl;
+    }
+  });
 };
 
 const clearPatch = () => {
