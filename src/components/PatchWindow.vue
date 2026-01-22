@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref, computed } from "vue";
+import { onMounted, onUnmounted, ref, computed, isProxy, toRaw } from "vue";
 import useDragging from "@/composables/useDragging";
 import useMouseTracking from "@/composables/useMouseTracking";
 import PatchModule from "@/components/PatchModule.vue";
@@ -257,6 +257,32 @@ const deleteModule = (moduleId: string) => {
   patcher.deleteModule(moduleId);
 };
 
+const duplicateModule = (moduleInstance: ModuleInstance) => {
+  const oldEl = document.getElementById(moduleInstance.moduleId);
+  const width = oldEl!.getBoundingClientRect().width;
+
+  const newId = crypto.randomUUID();
+  const newInstance = structuredClone(toRaw(moduleInstance));
+
+  newInstance.moduleId = newId;
+  newInstance.position.x = moduleInstance.position.x + width + 10;
+  newInstance.position.y = moduleInstance.position.y;
+
+  const newModule = createAudioModule(
+    newInstance.type as AudioModuleType,
+    newInstance.moduleId,
+    newInstance.options,
+  );
+
+  patcher.addModule(newModule);
+  patchGraph.value.modules.push(newInstance);
+
+  updateModulePositionStyle(newId, newInstance.position);
+
+  moduleInstance.selected = false;
+  selectedModule.value = newInstance;
+};
+
 const onConnectionSelected = (connection: ConnectionInstance) => {
   clearSelection();
 
@@ -506,6 +532,7 @@ useResizeObserver("patch-window", (entries) => {
 
 let abortKeyListenersController: AbortController | null = null;
 let abortKeyListenersSignal: AbortSignal | null = null;
+let ctrlKeyDown = false;
 
 const assignKeyListners = () => {
   abortKeyListenersController = new AbortController();
@@ -530,6 +557,32 @@ const assignKeyListners = () => {
             deleteModule(selectedModule.value.moduleId);
             clearSelection();
           }
+          break;
+        case "Meta":
+        case "Control":
+          ctrlKeyDown = true;
+          break;
+        case "d":
+        case "D":
+          if (ctrlKeyDown) {
+            e.preventDefault();
+            if (selectedModule.value) {
+              duplicateModule(selectedModule.value);
+            }
+          }
+          break;
+      }
+    },
+    { signal: abortKeyListenersSignal },
+  );
+
+  document.addEventListener(
+    "keyup",
+    (e) => {
+      switch (e.key) {
+        case "Meta":
+        case "Control":
+          ctrlKeyDown = false;
           break;
       }
     },
