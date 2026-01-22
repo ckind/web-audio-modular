@@ -670,6 +670,26 @@ export const availableModules: ModuleDescriptor[] = [
     ],
   },
   {
+    title: "msg-add",
+    type: "msg-add",
+    categories: ["message"],
+    description: "Performs addition on message values.",
+    inputDescriptions: [
+      {
+        name: "input",
+        description: "Input message value",
+        type: "message-bus",
+      },
+    ],
+    outputDescriptions: [
+      {
+        name: "output",
+        description: "Output message with addition result",
+        type: "message-bus",
+      },
+    ],
+  },
+  {
     title: "msg-regex",
     type: "msg-regex",
     categories: ["message", "message-bus"],
