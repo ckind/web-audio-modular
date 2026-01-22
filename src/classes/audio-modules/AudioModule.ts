@@ -4,6 +4,7 @@ import { type IModuleOutput }  from "@/classes/ModuleOutput";
 export type AudioModuleType =
   | "speaker-output"
   | "osc"
+  | "osc-pulse"
   | "gain"
   | "clock"
   | "logger"

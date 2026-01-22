@@ -45,6 +45,31 @@ export const availableModules: ModuleDescriptor[] = [
     ],
   },
   {
+    title: "osc-pulse",
+    type: "osc-pulse",
+    categories: ["source", "signal"],
+    description: "Generates pulse waveform with a modulatable pulse width.",
+    inputDescriptions: [
+      {
+        name: "frequency",
+        description: "Frequency of the oscillator in Hz",
+        type: "signal",
+      },
+      {
+        name: "pulse-width",
+        description: "the width of the pulse waveform",
+        type: "signal",
+      },
+    ],
+    outputDescriptions: [
+      {
+        name: "output",
+        description: "Generated waveform signal",
+        type: "signal",
+      },
+    ],
+  },
+  {
     title: "speaker-output",
     type: "speaker-output",
     categories: ["output", "signal"],

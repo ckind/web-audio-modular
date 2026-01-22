@@ -38,6 +38,7 @@ import DelayModule from "@/classes/audio-modules/DelayModule";
 import SamplerModule from "@/classes/audio-modules/SamplerModule";
 import PlayerModule from "@/classes/audio-modules/PlayerModule";
 import GrainPlayerModule from "@/classes/audio-modules/GrainPlayerModule";
+import PulseOscillatorModule from "@/classes/audio-modules/PulseOscillatorModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -49,6 +50,8 @@ export function createAudioModule(
       return new SpeakerOutputModule(id, options);
     case "osc":
       return new OscillatorModule(id, options);
+    case "osc-pulse":
+      return new PulseOscillatorModule(id, options);
     case "gain":
       return new GainModule(id, options);
     case "clock":
