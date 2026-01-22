@@ -20,6 +20,10 @@ const fileValidationRules = ref([
     "Must be an audio file",
 ]);
 
+const toggleReverse = () => {
+  props.options.reverse = !props.options.reverse;
+}
+
 watch(selectedFile, async (file: File | null) => {
   if (file && !file.type.startsWith("audio/")) {
     console.warn("Selected file is not an audio file.");
@@ -71,6 +75,12 @@ watch(selectedFile, async (file: File | null) => {
         label="fade-out"
         class="mr-1"
       />
+      <v-btn
+        :variant="props.options.reverse ? 'tonal' : 'text'"
+        class="text-lowercase elevation-0"
+        @click="toggleReverse"
+        >reverse</v-btn
+      >
     </div>
   </div>
 </template>

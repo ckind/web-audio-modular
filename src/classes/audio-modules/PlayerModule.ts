@@ -11,6 +11,7 @@ export type PlayerModuleOptions = {
   startPosition: number;
   fadeInTime: number;
   fadeOutTime: number;
+  reverse: boolean;
 };
 
 const getDefaultOptions = (): PlayerModuleOptions => ({
@@ -18,6 +19,7 @@ const getDefaultOptions = (): PlayerModuleOptions => ({
   startPosition: 0,
   fadeInTime: 0,
   fadeOutTime: 0,
+  reverse: false,
 });
 
 export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
@@ -34,6 +36,7 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
     this._player = new Tone.Player(this._options.audioUrl);
     this._player.fadeIn = this._options.fadeInTime;
     this._player.fadeOut = this._options.fadeOutTime;
+    this._player.reverse = this._options.reverse;
 
     this._startInputNode = new MessageInputNode(
       this.startInputCallback.bind(this),
@@ -49,7 +52,6 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
       new ModuleInput("start", this._startInputNode),
       new ModuleInput("stop", this._stopInputNode),
       new ModuleInput("start-position", this._startPositionInputNode),
-
     ];
     this._outputs = [new ModuleOutput("output", this._player)];
   }
@@ -91,6 +93,10 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
     if (options.fadeOutTime !== undefined) {
       this._options.fadeOutTime = options.fadeOutTime;
       this._player.fadeOut = options.fadeOutTime;
+    }
+    if (options.reverse !== undefined) {
+      this._options.reverse = options.reverse;
+      this._player.reverse = options.reverse;
     }
   }
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, } from "vue";
+import { ref, watch } from "vue";
 
 const options = defineModel({
   type: Object,
@@ -32,7 +32,12 @@ watch(
       if (typeof options.value[key] === "number") {
         const num = parseFloat(newStringOptions[key]!);
         if (isNaN(num)) {
-          console.warn("invalid number input for option", key, ":", newStringOptions[key]);
+          console.warn(
+            "invalid number input for option",
+            key,
+            ":",
+            newStringOptions[key],
+          );
           continue; // Skip invalid number inputs
         }
         options.value[key] = num;
