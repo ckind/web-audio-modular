@@ -34,6 +34,8 @@ const props = defineProps({
   },
 });
 
+const DRAG_RANGE = 100; // pixels for full range drag
+
 const stringValue = computed({
   get: () => modelValue.value.toString(),
   set: (val: string) => {
@@ -44,21 +46,24 @@ const stringValue = computed({
   },
 });
 
-const dragCallback = (deltaX: number, deltaY: number) => {
-  const step = props.step;
-  const mult = 2;
-  const deltaValue = -Math.round(deltaY / 10) * step * mult;
-
-  let newValue = modelValue.value + deltaValue;
-  if (newValue < props.min) newValue = props.min;
-  if (newValue > props.max) newValue = props.max;
-
-  modelValue.value = roundToStep(newValue, step);
-};
-
 const roundToStep = (value: number, step: number) => {
   return Math.round(value / step) * step;
 };
+
+const clamp = (value: number, min: number, max: number) => {
+  return Math.min(Math.max(value, min), max);
+};  
+
+const dragCallback = (deltaX: number, deltaY: number) => {
+  modelValue.value = roundToStep(
+    clamp(
+      modelValue.value + (-deltaY / DRAG_RANGE) * ((props.max - props.min)/ 2),
+      props.min,
+      props.max
+    ),
+    props.step
+  );
+}
 
 const { onDragElementStart, dragging } = useDragging(dragCallback);
 </script>
