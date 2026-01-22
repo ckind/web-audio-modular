@@ -20,6 +20,7 @@ import useResizeObserver from "@/composables/useResizeObserver.ts";
 import Patcher from "@/classes/Patcher";
 import { useAppColors } from "@/store/appColors";
 import { usePatchConsole } from "@/store/patchConsole";
+import JSZip from "jszip";
 
 const appColors = useAppColors();
 const patchConsole = usePatchConsole();
@@ -57,6 +58,7 @@ const props = defineProps({
 const patcher = new Patcher();
 // patchGraph is used to manage the state of the UI representation of the patch
 const patchGraph = ref<PatchGraph>({
+  version: import.meta.env.PACKAGE_VERSION,
   modules: [],
   connections: [],
 });
@@ -76,88 +78,114 @@ const contextMenuY = ref(0);
 const showClearConfirm = ref(false);
 
 const savePatch = () => {
+  const zip = new JSZip();
+
+  patchGraph.value.version = import.meta.env.PACKAGE_VERSION;
   const patchData = JSON.stringify(patchGraph.value);
   const blob = new Blob([patchData], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "patch.json";
-  a.click();
+  zip.file("patch.json", blob); // save the patch graph
+  zip.folder("resources"); // todo: save any external dependencies, audio files, etc.
+  zip.generateAsync({ type: "blob" }).then((content) => {
+    const url = URL.createObjectURL(content);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "patch.wam.zip";
+    a.click();
 
-  URL.revokeObjectURL(url);
+    URL.revokeObjectURL(url);
+  });
 };
 
 const loadPatch = () => {
   const input = document.createElement("input");
   input.type = "file";
-  input.accept = "application/json";
+  input.accept = "*.wam.zip";
   input.onchange = (e: Event) => {
     const file = (e.target as HTMLInputElement).files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const content = event.target?.result as string;
-      try {
-        const loadedGraph = JSON.parse(content) as PatchGraph;
-        patchGraph.value = loadedGraph;
-
-        // Reconstruct patcher state
-        patcher.clear();
-        elementCache.clear();
-
-        patchGraph.value.modules.forEach((m) => {
-          const module = createAudioModule(
-            m.type as AudioModuleType,
-            m.moduleId,
-            m.options,
-          );
-          module.updateUIInstanceOptions = (data: any) => {
-            m.options = { ...m.options, ...data };
-          };
-          module.updateUIInstanceOutputs = (
-            outputs: ConnectionOutputInstance[],
-          ) => {
-            m.outputs = outputs.map((o) => {
-              return { name: o.name, type: o.type };
-            });
-
-            // nuke all outgoing connections
-            // todo: only update changed ones?
-            patchGraph.value.connections
-              .filter((c) => c.from.moduleId === m.moduleId)
-              .forEach((c) => deleteConnection(c));
-          };
-          patcher.addModule(module);
-          console.log("updating module position style", m.moduleId, m.position);
-          updateModulePositionStyle(m.moduleId, m.position);
+    JSZip.loadAsync(file)
+      .then((zip) => {
+        zip.forEach((relativePath, zipEntry) => {
+          zipEntry.async("blob").then(async (blob) => {
+            if (relativePath === "patch.json") {
+              const content = await blob.text();
+              reconstructPatch(content);
+            }
+            else if (relativePath.startsWith("resources")) {
+              // todo: deal with resource files
+              console.log("loaded resource file: ", relativePath);
+            }
+          });
         });
-
-        loadedGraph.connections.forEach((c) => {
-          patcher.connect(
-            {
-              moduleId: c.from.moduleId,
-              outputName: c.from.output.name,
-            },
-            {
-              moduleId: c.to.moduleId,
-              inputName: c.to.input.name,
-            },
-          );
-        });
-      } catch (error) {
-        console.error("Error loading patch:", error);
-      }
-    };
-    reader.readAsText(file);
+      })
+      .catch(function (error) {
+        console.error("Error extracting zip file:", error);
+      });
   };
   input.click();
 };
 
+const reconstructPatch = (patchJson: string) => {
+  try {
+    const loadedGraph = JSON.parse(patchJson) as PatchGraph;
+    patchGraph.value = loadedGraph;
+
+    // Reconstruct patcher state
+    patcher.clear();
+    elementCache.clear();
+
+    patchGraph.value.modules.forEach((m) => {
+      const module = createAudioModule(
+        m.type as AudioModuleType,
+        m.moduleId,
+        m.options,
+      );
+      module.updateUIInstanceOptions = (data: any) => {
+        m.options = { ...m.options, ...data };
+      };
+      module.updateUIInstanceOutputs = (
+        outputs: ConnectionOutputInstance[],
+      ) => {
+        m.outputs = outputs.map((o) => {
+          return { name: o.name, type: o.type };
+        });
+
+        // nuke all outgoing connections
+        // todo: only update changed ones?
+        patchGraph.value.connections
+          .filter((c) => c.from.moduleId === m.moduleId)
+          .forEach((c) => deleteConnection(c));
+      };
+      patcher.addModule(module);
+      updateModulePositionStyle(m.moduleId, m.position);
+    });
+
+    loadedGraph.connections.forEach((c) => {
+      patcher.connect(
+        {
+          moduleId: c.from.moduleId,
+          outputName: c.from.output.name,
+        },
+        {
+          moduleId: c.to.moduleId,
+          inputName: c.to.input.name,
+        },
+      );
+    });
+  } catch (error) {
+    console.error("Error loading patch:", error);
+  }
+};
+
 const clearPatch = () => {
   patcher.clear();
-  patchGraph.value = { modules: [], connections: [] };
+  patchGraph.value = {
+    version: import.meta.env.PACKAGE_VERSION,
+    modules: [],
+    connections: [],
+  };
 };
 
 const confirmClearPatch = () => {
