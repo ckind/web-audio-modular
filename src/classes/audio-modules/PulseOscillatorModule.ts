@@ -18,7 +18,6 @@ const getDefaultOptions = (): PulseOscillatorModuleOptions => ({
 
 export default class PulseOscillatorModule extends AudioModule<PulseOscillatorModuleOptions> {
   private _oscillatorNode: Tone.PulseOscillator;
-  private _frequencyInput: Tone.Gain;
 
   constructor(id: string, options?: PulseOscillatorModuleOptions) {
     super(id, options ?? getDefaultOptions());
@@ -26,13 +25,9 @@ export default class PulseOscillatorModule extends AudioModule<PulseOscillatorMo
     this._oscillatorNode = new Tone.PulseOscillator(this._options.frequency);
     this._oscillatorNode.start();
 
-    // inputs are summed
-    this._frequencyInput = new Tone.Gain(1);
-    this._frequencyInput.connect(this._oscillatorNode.frequency);
-
     this._outputs = [new ModuleOutput("output", this._oscillatorNode)];
     this._inputs = [
-      new ModuleInput("frequency-param", this._frequencyInput),
+      new ModuleInput("frequency-param", this._oscillatorNode.frequency),
       new ModuleInput("pulse-width-param", this._oscillatorNode.width),
     ];
   }
@@ -54,10 +49,6 @@ export default class PulseOscillatorModule extends AudioModule<PulseOscillatorMo
 
   dispose(): void {
     this._oscillatorNode.stop();
-
-    this._frequencyInput.disconnect();
-    this._frequencyInput.dispose();
-
     this._oscillatorNode.disconnect();
     this._oscillatorNode.dispose();
   }

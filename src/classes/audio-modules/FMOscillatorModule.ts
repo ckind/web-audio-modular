@@ -25,7 +25,6 @@ const getDefaultOptions = (): FMOscillatorModuleOptions => ({
 
 export default class FMOscillatorModule extends AudioModule<FMOscillatorModuleOptions> {
   private _oscillatorNode: Tone.FMOscillator;
-  private _frequencyInput: Tone.Gain;
 
   constructor(id: string, options?: FMOscillatorModuleOptions) {
     super(id, options ?? getDefaultOptions());
@@ -39,15 +38,11 @@ export default class FMOscillatorModule extends AudioModule<FMOscillatorModuleOp
     this._oscillatorNode.modulationIndex.value = this._options.modulationAmount;
     this._oscillatorNode.start();
 
-    // inputs are summed
-    this._frequencyInput = new Tone.Gain(1);
-    this._frequencyInput.connect(this._oscillatorNode.frequency);
-
     this._outputs = [
       new ModuleOutput("osc-signal-output", this._oscillatorNode),
     ];
     this._inputs = [
-      new ModuleInput("carrier-frequency", this._frequencyInput),
+      new ModuleInput("carrier-frequency", this._oscillatorNode.frequency),
       // new ModuleInput("carrier-type", this._oo),
       new ModuleInput("ratio", this._oscillatorNode.harmonicity),
       // new ModuleInput("modulator-type", this._frequencyInput),
@@ -87,9 +82,6 @@ export default class FMOscillatorModule extends AudioModule<FMOscillatorModuleOp
 
   dispose(): void {
     this._oscillatorNode.stop();
-
-    this._frequencyInput.disconnect();
-    this._frequencyInput.dispose();
 
     this._oscillatorNode.disconnect();
     this._oscillatorNode.dispose();

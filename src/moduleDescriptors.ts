@@ -100,6 +100,20 @@ export const availableModules: ModuleDescriptor[] = [
     ],
   },
   {
+    title: "constant-signal",
+    type: "constant-signal",
+    categories: ["source", "signal"],
+    description: "Outputs a constant signal value.",
+    inputDescriptions: [],
+    outputDescriptions: [
+      {
+        name: "output",
+        description: "Constant signal value",
+        type: "signal",
+      },
+    ],
+  },
+  {
     title: "speaker-output",
     type: "speaker-output",
     categories: ["output", "signal"],

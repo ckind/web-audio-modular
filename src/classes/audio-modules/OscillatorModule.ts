@@ -18,7 +18,6 @@ const getDefaultOptions = (): OscillatorModuleOptions => ({
 
 export default class OscillatorModule extends AudioModule<OscillatorModuleOptions> {
   private _oscillatorNode: Tone.Oscillator;
-  private _frequencyInput: Tone.Gain;
 
   constructor(id: string, options?: OscillatorModuleOptions) {
     super(id, options ?? getDefaultOptions());
@@ -29,15 +28,12 @@ export default class OscillatorModule extends AudioModule<OscillatorModuleOption
     );
     this._oscillatorNode.start();
 
-    // inputs are summed
-    this._frequencyInput = new Tone.Gain(1);
-    this._frequencyInput.connect(this._oscillatorNode.frequency);
 
     this._outputs = [
       new ModuleOutput("osc-signal-output", this._oscillatorNode),
     ];
     this._inputs = [
-      new ModuleInput("frequency-param", this._frequencyInput),
+      new ModuleInput("frequency-param", this._oscillatorNode.frequency),
       new ModuleInput(
         "osc-type",
         new MessageInputNode(this.oscillatorTypeCallback.bind(this)),
@@ -73,9 +69,6 @@ export default class OscillatorModule extends AudioModule<OscillatorModuleOption
 
   dispose(): void {
     this._oscillatorNode.stop();
-
-    this._frequencyInput.disconnect();
-    this._frequencyInput.dispose();
 
     this._oscillatorNode.disconnect();
     this._oscillatorNode.dispose();
