@@ -30,9 +30,7 @@ export default class MidiNoteMessageModule extends AudioModule<MidiNoteMessageMo
     this._inputs = [
       new ModuleInput(
         "midi-input",
-        new MessageInputNode((time, data) =>
-          this._messageCallback(time, data),
-        ),
+        new MessageInputNode((time, data) => this._messageCallback(time, data)),
       ),
     ];
     this._noteOnNoteMessageNode = new MessageOutputNode();
@@ -70,7 +68,7 @@ export default class MidiNoteMessageModule extends AudioModule<MidiNoteMessageMo
       const noteNumber = data[1]!; // MIDI note number (0-127)
       const velocity = data[2]!; // MIDI velocity (0-127)
       this._notesDown.add(noteNumber);
-      this._forwardNoteOn(noteNumber, velocity);
+      this._forwardNoteOn(time, noteNumber, velocity);
     } else if (
       !this._sustainPedalDown && // if sustain pedal is down, ignore note off messages
       (data[0]! & 0xf0) === 0x80 && // note off message
@@ -78,7 +76,7 @@ export default class MidiNoteMessageModule extends AudioModule<MidiNoteMessageMo
     ) {
       const noteNumber = data[1]!; // MIDI note number (0-127)
       this._notesDown.delete(noteNumber);
-      this._forwardNoteOff(noteNumber);
+      this._forwardNoteOff(time, noteNumber);
     } else if ((data[0]! & 0xf0) === 0xb0 && data[1]! === 64) {
       const sustainOn = data[2]! >= 64;
       if (sustainOn) {
@@ -87,22 +85,20 @@ export default class MidiNoteMessageModule extends AudioModule<MidiNoteMessageMo
         this._sustainPedalDown = false;
         // When the sustain pedal is released, send note off messages for any notes that are still marked as down
         this._notesDown.forEach((noteNumber) => {
-          this._forwardNoteOff(noteNumber);
+          this._forwardNoteOff(time, noteNumber);
         });
         this._notesDown.clear();
       }
     }
   }
 
-  private _forwardNoteOn(noteNumber: number, velocity: number) {
-    const now = Tone.now();
-    this._noteOnNoteMessageNode.scheduleMessage(now, noteNumber);
-    this._noteOnVelocityMessageNode.scheduleMessage(now, velocity);
+  private _forwardNoteOn(time: number, noteNumber: number, velocity: number) {
+    this._noteOnNoteMessageNode.scheduleMessage(time, noteNumber);
+    this._noteOnVelocityMessageNode.scheduleMessage(time, velocity);
   }
 
-  private _forwardNoteOff(noteNumber: number) {
-    const now = Tone.now();
-    this._noteOffMessageNode.scheduleMessage(now, noteNumber);
+  private _forwardNoteOff(time: number, noteNumber: number) {
+    this._noteOffMessageNode.scheduleMessage(time, noteNumber);
   }
 
   updateOptions(options: Partial<MidiNoteMessageModuleOptions>): void {
