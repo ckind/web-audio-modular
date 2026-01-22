@@ -22,7 +22,8 @@ const getDefaultOptions = (): PlayerModuleOptions => ({
 
 export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
   private _player: Tone.Player;
-  private _triggerInputNode: MessageInputNode;
+  private _startInputNode: MessageInputNode;
+  private _stopInputNode: MessageInputNode;
   private _startPositionInputNode: MessageInputNode;
 
   private _startPositionSeconds: number = 0;
@@ -34,16 +35,21 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
     this._player.fadeIn = this._options.fadeInTime;
     this._player.fadeOut = this._options.fadeOutTime;
 
-    this._triggerInputNode = new MessageInputNode(
-      this.triggerInputCallback.bind(this),
+    this._startInputNode = new MessageInputNode(
+      this.startInputCallback.bind(this),
+    );
+    this._stopInputNode = new MessageInputNode(
+      this.stopInputCallback.bind(this),
     );
     this._startPositionInputNode = new MessageInputNode(
       this.startPositionInputCallback.bind(this),
     );
 
     this._inputs = [
-      new ModuleInput("trigger-sample", this._triggerInputNode),
+      new ModuleInput("start", this._startInputNode),
+      new ModuleInput("stop", this._stopInputNode),
       new ModuleInput("start-position", this._startPositionInputNode),
+
     ];
     this._outputs = [new ModuleOutput("output", this._player)];
   }
@@ -52,9 +58,15 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
     return "player";
   }
 
-  triggerInputCallback(time: number, data?: MessageBusDataType): void {
+  startInputCallback(time: number, data?: MessageBusDataType): void {
     if (this._player.loaded) {
       this._player.start(time, this._startPositionSeconds);
+    }
+  }
+
+  stopInputCallback(time: number, data?: MessageBusDataType): void {
+    if (this._player.loaded) {
+      this._player.stop(time);
     }
   }
 
