@@ -7,6 +7,7 @@ export type AudioModuleType =
   | "osc-pulse"
   | "osc-fm"
   | "ui-knob"
+  | "ui-knob-msg"
   | "constant-signal"
   | "gain"
   | "clock"

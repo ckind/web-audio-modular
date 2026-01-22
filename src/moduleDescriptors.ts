@@ -231,6 +231,21 @@ export const availableModules: ModuleDescriptor[] = [
     ],
   },
   {
+    title: "ui-knob-msg",
+    type: "ui-knob-msg",
+    GUIComponent: "RotaryKnobModule",
+    categories: ["ui-control", "message-bus"],
+    description: "Rotary knob control for message bus values.",
+    inputDescriptions: [],
+    outputDescriptions: [
+      {
+        name: "output",
+        description: "Knob value as message",
+        type: "message-bus",
+      },
+    ],
+  },
+  {
     title: "ui-slider-msg",
     type: "ui-slider-msg",
     GUIComponent: "SliderModule",
