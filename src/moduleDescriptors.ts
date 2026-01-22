@@ -688,8 +688,26 @@ export const availableModules: ModuleDescriptor[] = [
         type: "message-bus",
       },
     ],
-  },
-  {
+  },  {
+    title: "msg-multiply",
+    type: "msg-multiply",
+    categories: ["message"],
+    description: "Performs multiplication on message values.",
+    inputDescriptions: [
+      {
+        name: "input",
+        description: "Input message value",
+        type: "message-bus",
+      },
+    ],
+    outputDescriptions: [
+      {
+        name: "output",
+        description: "Output message with multiplication result",
+        type: "message-bus",
+      },
+    ],
+  },  {
     title: "msg-regex",
     type: "msg-regex",
     categories: ["message", "message-bus"],
