@@ -19,7 +19,7 @@ let bins: Bin[] = [];
 
 const MAX_ZOOM_AMOUNT = 512; // max multipler for the zoom window
 const ZOOM_INDEX = 0; // the start index (in samples) of the zoom window
-const BIN_WIDTH = 2; // how wide to draw each bin on the graph
+const BIN_WIDTH = 3; // how wide to draw each bin on the graph
 
 // Props
 const props = defineProps({

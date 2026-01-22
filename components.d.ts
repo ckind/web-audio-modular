@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AudioFilePicker: typeof import('./src/components/AudioFilePicker.vue')['default']
     ButtonTrigModule: typeof import('./src/components/gui-module-components/ButtonTrigModule.vue')['default']
     DisplayMessageModule: typeof import('./src/components/gui-module-components/DisplayMessageModule.vue')['default']
     GrainPlayerModule: typeof import('./src/components/gui-module-components/GrainPlayerModule.vue')['default']
