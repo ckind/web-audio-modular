@@ -23,7 +23,9 @@ export default class ConvolutionReverbModule extends AudioModule<ConvolutionReve
     super(id, options ?? getDefaultOptions());
 
     this._reverbNode = new Tone.Reverb();
-    this._reverbNode.wet.value = 1;
+    this._reverbNode.wet.value = this._options.wet;
+    this._reverbNode.preDelay = this._options.preDelay;
+    this._reverbNode.decay = this._options.decay;
 
     this._outputs = [
       new ModuleOutput("reverb-signal-output", this._reverbNode),
