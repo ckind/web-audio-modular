@@ -28,7 +28,7 @@ watch(value, (newValue) => {
       :min="options.min"
       :max="options.max"
       :step="0.0001"
-      :style="{ accentColor: appColors.messageBusColor }"
+      :style="{ accentColor: appColors.signalColor }"
       @mousedown.stop
       @touchstart.stop
     />

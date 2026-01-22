@@ -30,6 +30,7 @@ declare module 'vue' {
     PatchNotesModule: typeof import('./src/components/gui-module-components/PatchNotesModule.vue')['default']
     PatchWindow: typeof import('./src/components/PatchWindow.vue')['default']
     PlayerModule: typeof import('./src/components/gui-module-components/PlayerModule.vue')['default']
+    RotaryKnobModule: typeof import('./src/components/gui-module-components/RotaryKnobModule.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SamplerModule: typeof import('./src/components/gui-module-components/SamplerModule.vue')['default']

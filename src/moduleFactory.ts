@@ -41,6 +41,7 @@ import GrainPlayerModule from "@/classes/audio-modules/GrainPlayerModule";
 import PulseOscillatorModule from "@/classes/audio-modules/PulseOscillatorModule";
 import FMOscillatorModule from "@/classes/audio-modules/FMOscillatorModule";
 import ConstantSignalModule from "@/classes/audio-modules/ConstantSignalModule";
+import RotaryKnobModule from "@/classes/audio-modules/RotaryKnobModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -76,6 +77,8 @@ export function createAudioModule(
       return new SequenceModule(id, options);
     case "ui-slider":
       return new SliderModule(id, options);
+    case "ui-knob":
+      return new RotaryKnobModule(id, options);
     case "ui-slider-msg":
       return new SliderMessageModule(id, options);
     case "msg-display":
