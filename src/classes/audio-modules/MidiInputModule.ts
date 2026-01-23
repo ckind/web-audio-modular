@@ -58,6 +58,9 @@ export default class MidiInputModule extends AudioModule<MidiInputModuleOptions>
   }
 
   onMidiMessage(event: MIDIMessageEvent) {
+    // Tone.js applies a lookahead to scheduled events that introduces latency,
+    // but ensures accurate timing. For user input events like MIDI, we can schedule
+    // them immediately to minimize latency (at the cost of perfect timing).
     this._messageOutput.scheduleMessage(Tone.immediate(), event.data);
   }
 
