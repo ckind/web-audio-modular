@@ -42,7 +42,10 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
     console.log("PlayerModule created with options: ", this._options);
 
     if (this._options.resourceFile.blobUrl) {
-      console.log("Loading resource file from options: ", this._options.resourceFile);
+      console.log(
+        "Loading resource file from options: ",
+        this._options.resourceFile,
+      );
       this.loadResourceFile(this._options.resourceFile);
     }
 
@@ -95,6 +98,10 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
 
   updateOptions(options: Partial<PlayerModuleOptions>): void {
     if (options.resourceFile !== undefined) {
+      // Dispose old resource before replacing
+      if (this._options.resourceFile?.blobUrl) {
+        this._options.resourceFile.dispose();
+      }
       this._options.resourceFile = options.resourceFile;
       this.loadResourceFile(options.resourceFile);
     }
@@ -113,6 +120,7 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
   }
 
   dispose(): void {
+    this._options.resourceFile.dispose();
     this._player.dispose();
   }
 }

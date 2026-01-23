@@ -187,6 +187,8 @@ const reconstructPatch = (graphJson: string, resourceFiles: ResourceFile[]) => {
 
       // create deep copy of options so UI model and audio graph model
       // are decoupled. state is shared between the two via dedicated methods
+      // todo: how should we handle resource files here?
+      // who should own the memory the that the blobUrls use?
       const module = createAudioModule(
         m.type as AudioModuleType,
         m.moduleId,
@@ -236,6 +238,17 @@ const locateResourceFiles = (
       );
 
       moduleOptions[key]!.blobUrl = file?.blobUrl;
+    }
+  });
+};
+
+// todo: call this when deleting a module, clearing patch, or loading a new patch, etc.
+// to clean up memory held by resource files
+const disposeModuleResources = (moduleInstance: ModuleInstance) => {
+  Object.keys(moduleInstance.options).forEach((key) => {
+    const option = toRaw(moduleInstance.options[key]);
+    if (option instanceof ResourceFile) {
+      option.dispose();
     }
   });
 };
