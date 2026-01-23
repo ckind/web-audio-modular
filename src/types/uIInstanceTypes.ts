@@ -44,6 +44,7 @@ export type ModuleInstance = {
   position: Position;
   selected?: boolean;
   guiComponent?: string;
+  guiState?: any;
 };
 
 export type ConnectionInstance = {

@@ -52,9 +52,14 @@ const props = defineProps({
   },
 });
 
-// pather is used to manage internal audio modules and connections
+// INFO: The patcher class is used to manage internal audio modules and connections while
+// the patchGraph is a serializable model representing the state of the UI instances.
+// Data-flow is typically one-way from patchGraph (UI) to patcher (audio graph).
+// This is implemented by calling the updateOptions method on the IAudioModule.
+// Their are exceptions for some GUI modules which need to be updated based on audio node
+// changes. The optional updateGUIState is provided for this purpose.
+
 const patcher = new Patcher();
-// patchGraph is used to manage the state of the UI representation of the patch
 const patchGraph = ref<PatchGraph>({
   version: import.meta.env.PACKAGE_VERSION,
   modules: [],
@@ -180,28 +185,21 @@ const reconstructPatch = (graphJson: string, resourceFiles: ResourceFile[]) => {
     patchGraph.value.modules.forEach((m) => {
       locateResourceFiles(m.options, resourceFiles);
 
+      // create deep copy of options so UI model and audio graph model
+      // are decoupled. state is shared between the two via dedicated methods
       const module = createAudioModule(
         m.type as AudioModuleType,
         m.moduleId,
-        m.options,
+        structuredClone(toRaw(m.options)),
       );
 
+      // DEPRECATED: refactor to use updateGUIState
       module.updateUIInstanceOptions = (data: any) => {
         m.options = { ...m.options, ...data };
       };
 
-      module.updateUIInstanceOutputs = (
-        outputs: ConnectionOutputInstance[],
-      ) => {
-        m.outputs = outputs.map((o) => {
-          return { name: o.name, type: o.type };
-        });
-
-        // nuke all outgoing connections
-        // todo: only update changed ones?
-        patchGraph.value.connections
-          .filter((c) => c.from.moduleId === m.moduleId)
-          .forEach((c) => deleteConnection(c));
+      module.updateGUIState = (data: any) => {
+        m.guiState = { ...m.guiState, ...data };
       };
 
       patcher.addModule(module);
@@ -269,9 +267,8 @@ const addModule = (moduleType: AudioModuleType, guiComponent?: string) => {
     moduleId: module.id,
     type: module.type,
     guiComponent: guiComponent,
-    // todo: should we pass in an options deep copy here to the UI instance?
-    // this would enforce one-way data flow from UI to the audio module
-    options: module.options,
+    guiState: {},
+    options: structuredClone(toRaw(module.options)),
     outputs: module.outputs.map((o) => {
       return { name: o.name, type: o.type };
     }),
@@ -287,24 +284,18 @@ const addModule = (moduleType: AudioModuleType, guiComponent?: string) => {
   patcher.addModule(module);
   patchGraph.value.modules.push(moduleInstance);
 
+  // DEPRECATED: refactor to use updateGUIState
   module.updateUIInstanceOptions = (data: any) => {
     // need to query the graph to reference to exact ui instance
     patchGraph.value.modules.find(
       (m) => m.moduleId === moduleInstance.moduleId,
     )!.options = { ...moduleInstance.options, ...data };
   };
-  module.updateUIInstanceOutputs = (outputs: ConnectionOutputInstance[]) => {
-    // need to query the graph to reference to exact ui instance
+
+  module.updateGUIState = (data: any) => {
     patchGraph.value.modules.find(
       (m) => m.moduleId === moduleInstance.moduleId,
-    )!.outputs = outputs.map((o) => {
-      return { name: o.name, type: o.type };
-    });
-
-    // nuke all outgoing connections
-    patchGraph.value.connections
-      .filter((c) => c.from.moduleId === moduleInstance.moduleId)
-      .forEach((c) => deleteConnection(c));
+    )!.guiState = { ...moduleInstance.guiState, ...data };
   };
 
   updateModulePositionStyle(moduleInstance.moduleId, moduleInstance.position);
