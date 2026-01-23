@@ -42,7 +42,7 @@ export type AudioModuleType =
   | "msg-add"
   | "msg-multiply"
   | "midi-num-to-hz"
-  | "split"
+  | "msg-list-element"
   | "sampler"
   | "sampler-plus"
   | "player"
@@ -63,6 +63,7 @@ export interface IAudioModule {
   dispose(): void;
   updateUIInstanceOptions?: UpdateUIStateCallback;
   updateUIInstanceOutputs?: UpdateUIStateCallback;
+  updateGUIState?: UpdateUIStateCallback;
 }
 
 export type UpdateUIStateCallback = (data: any) => void;
@@ -78,6 +79,8 @@ export default abstract class AudioModule<TModuleOptions> implements IAudioModul
   public updateUIInstanceOptions?: UpdateUIStateCallback;
   // optional callback used to send outputs data back to the view model
   public updateUIInstanceOutputs?: UpdateUIStateCallback;
+  // optional callback used to send GUI state data back to the view model
+  public updateGUIState?: UpdateUIStateCallback;
 
   constructor(id: ModuleId, options: TModuleOptions)  {
     this.id = id;

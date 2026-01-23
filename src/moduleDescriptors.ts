@@ -521,22 +521,6 @@ export const availableModules: ModuleDescriptor[] = [
     ],
   },
   {
-    title: "split",
-    type: "split",
-    categories: ["utility", "message-bus"],
-    description: "Splits incoming messages into separate output routes.",
-    inputDescriptions: [
-      { name: "input", description: "Message to split", type: "message-bus" },
-    ],
-    outputDescriptions: [
-      {
-        name: "output",
-        description: "Split message parts",
-        type: "message-bus",
-      },
-    ],
-  },
-  {
     title: "player",
     type: "player",
     GUIComponent: "PlayerModule",
@@ -707,7 +691,24 @@ export const availableModules: ModuleDescriptor[] = [
         type: "message-bus",
       },
     ],
-  },  {
+  },
+  {
+    title: "msg-list-element",
+    type: "msg-list-element",
+    categories: ["message", "message-bus"],
+    description: "Extracts a specific element from a message array by index.",
+    inputDescriptions: [
+      { name: "input", description: "Array message to extract from", type: "message-bus" },
+    ],
+    outputDescriptions: [
+      {
+        name: "output",
+        description: "Extracted element at specified index",
+        type: "message-bus",
+      },
+    ],
+  },
+  {
     title: "msg-regex",
     type: "msg-regex",
     categories: ["message", "message-bus"],

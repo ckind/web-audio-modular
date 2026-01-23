@@ -24,7 +24,6 @@ import MidiNoteMessageModule from "@/classes/audio-modules/MidiNoteMessageModule
 import ADSRAmplitudeModule from "@/classes/audio-modules/ADSRAmplitudeModule";
 import MessageBoxModule from "@/classes/audio-modules/MessageBoxModule";
 import MidiNumToHzModule from "@/classes/audio-modules/MidiNumToHzModule";
-import SplitModule from "@/classes/audio-modules/SplitModule";
 import SamplerPlusModule from "@/classes/audio-modules/SamplerPlusModule";
 import MessageRegexModule from "@/classes/audio-modules/MessageRegexModule";
 import MessageCounterModule from "@/classes/audio-modules/MessageCounterModule";
@@ -46,6 +45,7 @@ import ConstantSignalModule from "@/classes/audio-modules/ConstantSignalModule";
 import RotaryKnobModule from "@/classes/audio-modules/RotaryKnobModule";
 import RotaryKnobMessageModule from "@/classes/audio-modules/RotaryKnobMessageModule";
 import UISwitchModule from "@/classes/audio-modules/UISwitchModule";
+import MessageListElementModule from "@/classes/audio-modules/MessageListElementModule";
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -111,8 +111,6 @@ export function createAudioModule(
       return new MessageBoxModule(id, options);
     case "midi-num-to-hz":
       return new MidiNumToHzModule(id, options);
-    case "split":
-      return new SplitModule(id, options);
     case "sampler":
       return new SamplerModule(id, options);
     case "sampler-plus":
@@ -131,6 +129,8 @@ export function createAudioModule(
       return new MessageAddModule(id, options);
     case "msg-multiply":
       return new MessageMultiplyModule(id, options);
+    case "msg-list-element":
+      return new MessageListElementModule(id, options);
     case "msg-sample":
       return new MessageSampleSignalModule(id, options);
     case "sample-and-hold":
