@@ -169,7 +169,17 @@ const loadPatch = () => {
     }
 
     reconstructPatch(patch.graphJson, patch.resourceFiles);
+
+    // Clean up after handling the file
+    input.remove();
+    input.onchange = null;
   };
+
+  input.oncancel = () => {
+    input.remove();
+    input.onchange = null;
+  };
+  
   input.click();
 };
 
