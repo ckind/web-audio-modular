@@ -22,6 +22,8 @@ import { useAppColors } from "@/store/appColors";
 import { usePatchConsole } from "@/store/patchConsole";
 import JSZip from "jszip";
 import ResourceFile from "@/classes/ResourceFile";
+import ResourceFileManager from "@/classes/ResourceFileManager";
+//
 
 const appColors = useAppColors();
 const patchConsole = usePatchConsole();
@@ -111,22 +113,69 @@ const saveResourceFiles = async (zip: JSZip) => {
 
     for (let j = 0; j < keys.length; j++) {
       const option = patchGraph.value.modules[i]!.options[keys[j]!];
+      // Support both class instance and plain object deserialized from JSON
+      const isRes =
+        option instanceof ResourceFile || option?.isResourceFile === true;
 
-      if (option instanceof ResourceFile) {
-        const resourceFile = option as ResourceFile;
-
+      if (isRes && option?.name) {
         // todo: do these in parallel
-        const response = await fetch(resourceFile.blobUrl!);
-        const blob = await response.blob();
+        const url = ResourceFileManager.requestResource(option.name);
+        if (!url) {
+          console.warn(
+            `saveResourceFiles: resource "${option.name}" not found in manager.`,
+          );
+          continue;
+        }
+        try {
+          const response = await fetch(url);
+          const blob = await response.blob();
 
-        resources!.file(resourceFile.name!, blob);
+          resources!.file(option.name, blob);
+        } finally {
+          ResourceFileManager.releaseResource(option.name);
+        }
       }
     }
   }
 };
 
-const loadPatch = () => {
+const unzipPatchFile = async (file: File) => {
   const resourceFileRegex = /^resources\/.+$/;
+  const zip = await JSZip.loadAsync(file);
+
+  let registeredResourceNames: string[] = [];
+  let graphJson = "";
+
+  const blobPromises = new Array<
+    Promise<{ relativePath: string; blob: Blob }>
+  >();
+
+  zip.forEach((relativePath, zipEntry) => {
+    blobPromises.push(
+      zipEntry.async("blob").then((blob) => {
+        return { relativePath, blob };
+      }),
+    );
+  });
+
+  const blobs = await Promise.all(blobPromises);
+
+  for (let i = 0; i < blobs.length; i++) {
+    const b = blobs[i]!;
+    if (b.relativePath === "patch.json") {
+      graphJson = await b.blob.text();
+    } else if (resourceFileRegex.test(b.relativePath)) {
+      const fileName = b.relativePath.replace(/.*\//, "");
+      ResourceFileManager.registerResource(fileName, b.blob)
+      registeredResourceNames.push(fileName);
+    }
+  }
+
+  return { graphJson, registeredResourceNames };
+};
+
+const loadPatch = () => {
+  clearPatch();
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "*.wam.zip";
@@ -134,41 +183,17 @@ const loadPatch = () => {
     const file = (e.target as HTMLInputElement).files?.[0];
     if (!file) return;
 
-    const zip = await JSZip.loadAsync(file);
+    // deserialize patch graph and register resource files
+    const { graphJson, registeredResourceNames } = await unzipPatchFile(file);
 
-    const patch = {
-      resourceFiles: new Array<ResourceFile>(),
-      graphJson: "",
-    };
-
-    const blobPromises = new Array<
-      Promise<{ relativePath: string; blob: Blob }>
-    >();
-
-    zip.forEach((relativePath, zipEntry) => {
-      blobPromises.push(
-        zipEntry.async("blob").then((blob) => {
-          return { relativePath, blob };
-        }),
-      );
-    });
-
-    const blobs = await Promise.all(blobPromises);
-
-    for (let i = 0; i < blobs.length; i++) {
-      const b = blobs[i]!;
-      if (b.relativePath === "patch.json") {
-        patch.graphJson = await b.blob.text();
-      } else if (resourceFileRegex.test(b.relativePath)) {
-        const blobUrl = URL.createObjectURL(b.blob);
-        // todo: memory leaks?
-        // can we revoke this url after buffer has loaded?
-        const fileName = b.relativePath.replace(/.*\//, "");
-        patch.resourceFiles.push(new ResourceFile(blobUrl, fileName));
-      }
+    try {
+      reconstructPatch(graphJson);
+    } finally {
+      // Clean up registered resource files
+      registeredResourceNames.forEach((name) => {
+        ResourceFileManager.releaseResource(name);
+      });
     }
-
-    reconstructPatch(patch.graphJson, patch.resourceFiles);
 
     // Clean up after handling the file
     input.remove();
@@ -179,11 +204,18 @@ const loadPatch = () => {
     input.remove();
     input.onchange = null;
   };
-  
+
   input.click();
 };
 
-const reconstructPatch = (graphJson: string, resourceFiles: ResourceFile[]) => {
+const deepCloneModuleOptions = (options: Record<string, any>) => {
+  const rawOptions = isProxy(options) ? toRaw(options) : options;
+  const clonedOptions = structuredClone(rawOptions);
+
+  return clonedOptions;
+};
+
+const reconstructPatch = (graphJson: string) => {
   try {
     const loadedGraph = JSON.parse(graphJson) as PatchGraph;
     patchGraph.value = loadedGraph;
@@ -193,16 +225,14 @@ const reconstructPatch = (graphJson: string, resourceFiles: ResourceFile[]) => {
     elementCache.clear();
 
     patchGraph.value.modules.forEach((m) => {
-      locateResourceFiles(m.options, resourceFiles);
+      locateResourceFiles(m.options);
 
       // create deep copy of options so UI model and audio graph model
       // are decoupled. state is shared between the two via dedicated methods
-      // todo: how should we handle resource files here?
-      // who should own the memory the that the blobUrls use?
       const module = createAudioModule(
         m.type as AudioModuleType,
         m.moduleId,
-        structuredClone(toRaw(m.options)),
+        deepCloneModuleOptions(m.options),
       );
 
       // DEPRECATED: refactor to use updateGUIState
@@ -235,41 +265,53 @@ const reconstructPatch = (graphJson: string, resourceFiles: ResourceFile[]) => {
   }
 };
 
-const locateResourceFiles = (
-  moduleOptions: Record<string, any>,
-  resourceFiles: ResourceFile[],
-) => {
+const locateResourceFiles = (moduleOptions: Record<string, any>) => {
   Object.keys(moduleOptions).forEach((key) => {
-    if (moduleOptions[key].isResourceFile === true) {
-      // todo: this assumes names are unique
-      // also lookup could be slow with many files
-      const file = resourceFiles.find(
-        (r) => r.name === moduleOptions[key]!.name,
-      );
-
-      moduleOptions[key]!.blobUrl = file?.blobUrl;
+    const opt = moduleOptions[key];
+    if (opt?.isResourceFile === true && opt?.name) {
+      // Acquire a managed reference to ensure RAII validity
+      const url = ResourceFileManager.requestResource(opt.name);
+      if (!url) {
+        console.warn(
+          `Resource "${opt.name}" not found in manager during reconstruction`,
+        );
+      }
     }
   });
 };
 
+// Release all ResourceFile manager refs held by a graph's module options
+const releaseGraphResources = (graph: PatchGraph) => {
+  try {
+    graph.modules.forEach((m) => {
+      releaseModuleInstanceResources(m as ModuleInstance);
+    });
+  } catch (err) {
+    console.warn("releaseGraphResources encountered an error:", err);
+  }
+};
+
 // todo: call this when deleting a module, clearing patch, or loading a new patch, etc.
 // to clean up memory held by resource files
-const disposeModuleResources = (moduleInstance: ModuleInstance) => {
-  Object.keys(moduleInstance.options).forEach((key) => {
-    const option = toRaw(moduleInstance.options[key]);
-    if (option instanceof ResourceFile) {
-      option.dispose();
+const releaseModuleInstanceResources = (moduleInstance: ModuleInstance) => {
+  const opts = moduleInstance.options as Record<string, any>;
+  Object.keys(opts).forEach((k) => {
+    const o = toRaw(opts[k]);
+    if (o?.isResourceFile === true && o?.name) {
+      ResourceFileManager.releaseResource(o.name);
     }
   });
 };
 
 const clearPatch = () => {
-  patcher.clear();
+  // Release resources owned by current graph before clearing
+  releaseGraphResources(patchGraph.value);
   patchGraph.value = {
     version: import.meta.env.PACKAGE_VERSION,
     modules: [],
     connections: [],
   };
+  patcher.clear();
 };
 
 const confirmClearPatch = () => {
@@ -285,13 +327,14 @@ const onGraphContextMenu = (e: MouseEvent) => {
 };
 
 const addModule = (moduleType: AudioModuleType, guiComponent?: string) => {
+  // create module with default options
   const module = createAudioModule(moduleType, crypto.randomUUID());
   const moduleInstance = {
     moduleId: module.id,
     type: module.type,
     guiComponent: guiComponent,
     guiState: {},
-    options: structuredClone(toRaw(module.options)),
+    options: deepCloneModuleOptions(module.options),
     outputs: module.outputs.map((o) => {
       return { name: o.name, type: o.type };
     }),
@@ -349,6 +392,12 @@ const deleteConnection = (connection: ConnectionInstance) => {
 };
 
 const deleteModule = (moduleId: string) => {
+  // release any resources held by module instance
+  const mi = patchGraph.value.modules.find((m) => m.moduleId === moduleId);
+  if (mi) {
+    releaseModuleInstanceResources(mi as ModuleInstance);
+  }
+
   // remove related connections from graph
   patchGraph.value.connections = patchGraph.value.connections.filter(
     (c) => c.from.moduleId !== moduleId && c.to.moduleId !== moduleId,
@@ -367,11 +416,15 @@ const duplicateModule = (moduleInstance: ModuleInstance) => {
   const width = oldEl!.getBoundingClientRect().width;
 
   const newId = crypto.randomUUID();
+  // todo: deep clone options properly
   const newInstance = structuredClone(toRaw(moduleInstance));
 
   newInstance.moduleId = newId;
   newInstance.position.x = moduleInstance.position.x + width + 10;
   newInstance.position.y = moduleInstance.position.y;
+
+  // Ensure duplicate acquires its own resource references via manager (RAII)
+  locateResourceFiles(newInstance.options as Record<string, any>);
 
   const newModule = createAudioModule(
     newInstance.type as AudioModuleType,
@@ -713,6 +766,8 @@ onMounted(() => {
 
 onUnmounted(() => {
   removeKeyListeners();
+  // Release any outstanding resources on unmount to avoid leaks
+  releaseGraphResources(patchGraph.value);
   patcher.clear();
 });
 </script>

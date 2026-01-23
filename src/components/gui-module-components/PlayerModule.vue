@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { type PropType, ref, watch} from "vue";
+import { type PropType, ref, watch } from "vue";
 import type { PlayerModuleOptions } from "@/classes/audio-modules/PlayerModule";
 import WaveformDisplay from "../WaveformDisplay.vue";
 import * as Tone from "tone";
 import ResourceFile from "@/classes/ResourceFile";
+import ResourceFileManager from "@/classes/ResourceFileManager";
 
 const props = defineProps({
   options: {
@@ -19,35 +20,44 @@ const toggleReverse = () => {
 };
 
 const onFileUpdated = async (file: File) => {
-  const fileUrl = URL.createObjectURL(file!);
-  const response = await fetch(fileUrl);
-
-  props.options.resourceFile = new ResourceFile(response.url, file.name);
-
-  const arrayBuffer = await response.arrayBuffer();
-  const buffer =
-    await Tone.getContext().rawContext.decodeAudioData(arrayBuffer);
-
-  amplitudeData.value = buffer.getChannelData(0);
+  // register the uploaded file
+  ResourceFileManager.registerResource(file.name, file);
+  props.options.resourceFile = new ResourceFile(file.name);
 };
 
-// todo: how to handle when resourceFile is removed?
 // todo: how update the file-picker to show new resourceFile name?
 watch(
   () => props.options.resourceFile,
-  async (newResourceFile) => {
-    if (newResourceFile && newResourceFile.blobUrl) {
-      const response = await fetch(newResourceFile.blobUrl);
-      const arrayBuffer = await response.arrayBuffer();
-      const buffer =
-        await Tone.getContext().rawContext.decodeAudioData(arrayBuffer);
+  async (newResourceFile, oldResourceFile) => {
+    const nextName = newResourceFile?.name ?? null;
+    const prevName = oldResourceFile?.name ?? null;
 
-      amplitudeData.value = buffer.getChannelData(0);
+    if (prevName && prevName !== nextName) {
+      // release the previously registered resource
+      ResourceFileManager.releaseResource(prevName);
+    }
+
+    if (newResourceFile?.name) {
+      const url = ResourceFileManager.requestResource(newResourceFile.name);
+      if (!url) {
+        amplitudeData.value = new Float32Array();
+        return;
+      }
+      try {
+        const response = await fetch(url);
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer =
+          await Tone.getContext().rawContext.decodeAudioData(arrayBuffer);
+
+        amplitudeData.value = buffer.getChannelData(0);
+      } finally {
+        ResourceFileManager.releaseResource(newResourceFile.name);
+      }
     } else {
       amplitudeData.value = new Float32Array();
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 

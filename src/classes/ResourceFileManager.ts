@@ -8,7 +8,7 @@ type RegisteredResource = {
  * reference counting, and revocation of Blob URLs.
  */
 const ResourceFileManager = {
-  blobUrls: new Map<string, RegisteredResource>(),
+  registerResources: new Map<string, RegisteredResource>(),
 
   // todo: assumes names are unique, should we allow duplicates?
   /**
@@ -17,22 +17,22 @@ const ResourceFileManager = {
    */
   registerResource(name: string, resource: Blob | File): string {
     if (!resource) {
-      throw new Error("Invalid resource provided for registration.");
+      throw new Error("ResourceFileManager: invalid resource provided for registration.");
     }
 
-    const registered = this.blobUrls.get(name);
+    const registered = this.registerResources.get(name);
 
     if (registered) {
       console.warn(
-        `Resource ${name} already registered. Returning existing url.`,
+        `ResourceFileManager: "${name}" already registered. Returning existing resource.`,
       );
       registered.refCount++;
       return registered.blobUrl;
     }
 
     const blobUrl = URL.createObjectURL(resource);
-    this.blobUrls.set(name, { blobUrl, refCount: 1 });
-    console.log(`Registered resource: ${blobUrl}`);
+    this.registerResources.set(name, { blobUrl, refCount: 1 });
+    console.log(`ResourceFileManager: "${name}" registered with url: ${blobUrl}`);
 
     return blobUrl;
   },
@@ -42,15 +42,15 @@ const ResourceFileManager = {
    * Returns undefined if the resource is not found.
    */
   requestResource(name: string): string | undefined {
-    const registered = this.blobUrls.get(name);
+    const registered = this.registerResources.get(name);
     if (registered) {
       registered.refCount++;
       console.log(
-        `Resource "${name}" requested. New refCount: ${registered.refCount}`,
+        `ResourceFileManager: "${name}" requested. refs: ${registered.refCount}`,
       );
       return registered.blobUrl;
     }
-    console.warn(`Resource "${name}" not found.`);
+    console.warn(`ResourceFileManager: requested unregistered resource "${name}".`);
     return undefined;
   },
 
@@ -59,19 +59,19 @@ const ResourceFileManager = {
    * Revokes and removes the resource if the reference count reaches zero.
    */
   releaseResource(name: string): void {
-    const registered = this.blobUrls.get(name);
+    const registered = this.registerResources.get(name);
     if (registered) {
       registered.refCount--;
       console.log(
-        `Resource "${name}" released. New refCount: ${registered.refCount}`,
+        `ResourceFileManager: "${name}" released. refs: ${registered.refCount}`,
       );
       if (registered.refCount <= 0) {
         URL.revokeObjectURL(registered.blobUrl);
-        this.blobUrls.delete(name);
-        console.log(`Resource "${name}" revoked and removed from manager.`);
+        this.registerResources.delete(name);
+        console.log(`ResourceFileManager: "${name}" revoked and removed from manager.`);
       }
     } else {
-      console.warn(`Resource "${name}" not found for release.`);
+      console.warn(`ResourceFileManager: attempted to release unregistered resource "${name}".`);
     }
   },
 };

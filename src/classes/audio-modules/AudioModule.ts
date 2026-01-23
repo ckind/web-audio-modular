@@ -1,5 +1,7 @@
 import { type IModuleInput } from "@/classes/ModuleInput";
-import { type IModuleOutput }  from "@/classes/ModuleOutput";
+import { type IModuleOutput } from "@/classes/ModuleOutput";
+import ResourceFileManager from "@/classes/ResourceFileManager";
+import ResourceFile from "@/classes/ResourceFile";
 
 export type AudioModuleType =
   | "speaker-output"
@@ -47,8 +49,7 @@ export type AudioModuleType =
   | "sampler-plus"
   | "player"
   | "grain-player"
-  | "ui-switch"
-  ;
+  | "ui-switch";
 
 export type ModuleId = string;
 
@@ -69,7 +70,9 @@ export interface IAudioModule {
 
 export type UpdateUIStateCallback = (data: any) => void;
 
-export default abstract class AudioModule<TModuleOptions> implements IAudioModule {
+export default abstract class AudioModule<
+  TModuleOptions,
+> implements IAudioModule {
   protected _inputs: IModuleInput[] = [];
   protected _outputs: IModuleOutput[] = [];
   protected _options: TModuleOptions;
@@ -82,7 +85,7 @@ export default abstract class AudioModule<TModuleOptions> implements IAudioModul
   // DEPRECATED: refactor to use updateGUIState
   public updateUIInstanceOptions?: UpdateUIStateCallback;
 
-  constructor(id: ModuleId, options: TModuleOptions)  {
+  constructor(id: ModuleId, options: TModuleOptions) {
     this.id = id;
     this._options = options;
   }
@@ -101,5 +104,29 @@ export default abstract class AudioModule<TModuleOptions> implements IAudioModul
 
   get options(): TModuleOptions {
     return this._options;
+  }
+
+  protected updateResourceFile(
+    oldResourceFile?: ResourceFile,
+    newResourceFile?: ResourceFile,
+  ): void {
+    const oldIsRes = oldResourceFile?.isResourceFile === true;
+    const newIsRes = newResourceFile?.isResourceFile === true;
+
+    if (oldIsRes && !newIsRes) {
+      if (oldResourceFile?.name) {
+        ResourceFileManager.releaseResource(oldResourceFile.name);
+      }
+    } else if (newIsRes && newResourceFile?.name) {
+      if (!oldIsRes) {
+        ResourceFileManager.requestResource(newResourceFile.name);
+      } else if (oldResourceFile?.name !== newResourceFile.name) {
+        if (oldResourceFile?.name) {
+          ResourceFileManager.releaseResource(oldResourceFile.name);
+        }
+
+        ResourceFileManager.requestResource(newResourceFile.name);
+      }
+    }
   }
 }

@@ -6,9 +6,10 @@ import MessageInputNode from "@/classes/MessageInputNode";
 import * as Tone from "tone";
 import type { MessageBusDataType } from "@/types/connectionTypes";
 import ResourceFile from "@/classes/ResourceFile";
+import ResourceFileManager from "@/classes/ResourceFileManager";
 
 export type PlayerModuleOptions = {
-  resourceFile: ResourceFile;
+  resourceFile: ResourceFile | null;
   startPosition: number;
   fadeInTime: number;
   fadeOutTime: number;
@@ -16,7 +17,7 @@ export type PlayerModuleOptions = {
 };
 
 const getDefaultOptions = (): PlayerModuleOptions => ({
-  resourceFile: new ResourceFile(),
+  resourceFile: null,
   startPosition: 0,
   fadeInTime: 0.01,
   fadeOutTime: 0.01,
@@ -28,8 +29,8 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
   private _startInputNode: MessageInputNode;
   private _stopInputNode: MessageInputNode;
   private _startPositionInputNode: MessageInputNode;
-
   private _startPositionSeconds: number = 0;
+  private _resourceUrl?: string;
 
   constructor(id: string, options?: PlayerModuleOptions) {
     super(id, options ?? getDefaultOptions());
@@ -39,14 +40,15 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
     this._player.fadeOut = this._options.fadeOutTime;
     this._player.reverse = this._options.reverse;
 
-    console.log("PlayerModule created with options: ", this._options);
-
-    if (this._options.resourceFile.blobUrl) {
+    if (this._options.resourceFile !== null) {
       console.log(
         "Loading resource file from options: ",
         this._options.resourceFile,
       );
-      this.loadResourceFile(this._options.resourceFile);
+      this._resourceUrl = ResourceFileManager.requestResource(
+        this._options.resourceFile.name,
+      );
+      this._player.load(this._resourceUrl!);
     }
 
     this._startInputNode = new MessageInputNode(
@@ -71,10 +73,6 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
     return "player";
   }
 
-  loadResourceFile(resourceFile: ResourceFile) {
-    this._player.load(resourceFile.blobUrl!);
-  }
-
   startInputCallback(time: number, data?: MessageBusDataType): void {
     if (this._player.loaded) {
       this._player.start(time, this._startPositionSeconds);
@@ -96,31 +94,52 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
     }, time);
   }
 
-  updateOptions(options: Partial<PlayerModuleOptions>): void {
-    if (options.resourceFile !== undefined) {
-      // Dispose old resource before replacing
-      if (this._options.resourceFile?.blobUrl) {
-        this._options.resourceFile.dispose();
+  updateOptions(newOptions: Partial<PlayerModuleOptions>): void {
+    if (newOptions.resourceFile !== undefined) {
+      const nextName = newOptions.resourceFile?.name ?? null;
+      const currentName = this.options.resourceFile?.name ?? null;
+      // Avoid release/re-request if name is unchanged; prevents transient refCount=0.
+      if (nextName && currentName && nextName === currentName) {
+        // no-op
+      } else {
+        if (this.options.resourceFile !== null && this._resourceUrl) {
+          // release the old resource url
+          ResourceFileManager.releaseResource(this.options.resourceFile.name);
+          this._resourceUrl = undefined;
+        }
+
+        if (newOptions.resourceFile === null) {
+          this.options.resourceFile = null;
+        } else {
+          this.options.resourceFile = new ResourceFile(
+            newOptions.resourceFile.name,
+          );
+          this._resourceUrl = ResourceFileManager.requestResource(
+            newOptions.resourceFile.name,
+          );
+          this._player.load(this._resourceUrl!);
+        }
       }
-      this._options.resourceFile = options.resourceFile;
-      this.loadResourceFile(options.resourceFile);
     }
-    if (options.fadeInTime !== undefined) {
-      this._options.fadeInTime = options.fadeInTime;
-      this._player.fadeIn = options.fadeInTime;
+    if (newOptions.fadeInTime !== undefined) {
+      this.options.fadeInTime = newOptions.fadeInTime;
+      this._player.fadeIn = newOptions.fadeInTime;
     }
-    if (options.fadeOutTime !== undefined) {
-      this._options.fadeOutTime = options.fadeOutTime;
-      this._player.fadeOut = options.fadeOutTime;
+    if (newOptions.fadeOutTime !== undefined) {
+      this.options.fadeOutTime = newOptions.fadeOutTime;
+      this._player.fadeOut = newOptions.fadeOutTime;
     }
-    if (options.reverse !== undefined) {
-      this._options.reverse = options.reverse;
-      this._player.reverse = options.reverse;
+    if (newOptions.reverse !== undefined) {
+      this.options.reverse = newOptions.reverse;
+      this._player.reverse = newOptions.reverse;
     }
   }
 
   dispose(): void {
-    this._options.resourceFile.dispose();
+    if (this.options.resourceFile !== null && this._resourceUrl) {
+      ResourceFileManager.releaseResource(this.options.resourceFile.name);
+      this._resourceUrl = undefined;
+    }
     this._player.dispose();
   }
 }
