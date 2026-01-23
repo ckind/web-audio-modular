@@ -39,10 +39,8 @@ export default class MessageListElementModule extends AudioModule<MessageListEle
   }
 
   private _messageInputCallback(time: number, data?: MessageBusDataType): void {
-    console.log("MessageListElementModule received data:", data);
     if (isAnyArray(data)) {
       const array = data as ArrayLike<any>;
-      console.log("MessageListElementModule processing array:", array, "with index:", this._options.index);
       if (array[this._options.index] !== undefined) {
         this._messageOutputNode.scheduleMessage(
           time,
