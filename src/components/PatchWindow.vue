@@ -1,12 +1,10 @@
 <script lang="ts" setup>
 import { onMounted, onUnmounted, ref, computed, toRaw } from "vue";
 import useDragging from "@/composables/useDragging";
-import useMouseTracking from "@/composables/useMouseTracking";
 import PatchModule from "@/components/PatchModule.vue";
 import PatchConnection from "@/components/PatchConnection.vue";
 import type {
   PatchGraph,
-  PatchCableInstance,
   ModuleInstance,
   ConnectionInstance,
   ConnectionInputInstance,
@@ -20,6 +18,7 @@ import { createAudioModule } from "@/moduleFactory";
 import useResizeObserver from "@/composables/useResizeObserver.ts";
 import usePatchShortcuts from "@/composables/usePatchShortcuts";
 import usePatchPersistence from "@/composables/usePatchPersistence";
+import usePatching from "@/composables/usePatching";
 import Patcher from "@/classes/Patcher";
 import { useAppColors } from "@/store/appColors";
 import { usePatchConsole } from "@/store/patchConsole";
@@ -71,14 +70,9 @@ const patchGraph = ref<PatchGraph>({
   connections: [],
 });
 
-let currentPatchingModule: ModuleInstance | null = null;
-let currentPatchingOutput: ConnectionOutputInstance | null = null;
-let abortPatchingController: AbortController | null = null;
-let abortPatchingSignal: AbortSignal | null = null;
 // todo: multiple selected modules and connections
 const selectedModule = ref<ModuleInstance | null>(null);
 const selectedConnection = ref<ConnectionInstance | null>(null);
-const inProgressConnection = ref<PatchCableInstance | null>(null);
 
 const showContextMenu = ref(false);
 const contextMenuX = ref(0);
@@ -242,129 +236,6 @@ const clearSelection = () => {
   }
 };
 
-const isConnected = (
-  outputModule: ModuleInstance | null,
-  output: ConnectionOutputInstance | null,
-  inputModule: ModuleInstance | null,
-  input: ConnectionInputInstance | null,
-): boolean => {
-  if (!outputModule || !output || !inputModule || !input) return false;
-
-  return (
-    patchGraph.value.connections.find((c) => {
-      return (
-        c.from.output.name === output.name &&
-        c.from.moduleId === outputModule.moduleId &&
-        c.to.input.name === input.name &&
-        c.to.moduleId === inputModule.moduleId
-      );
-    }) != undefined
-  );
-};
-
-const onBeginPatching = (
-  moduleInstance: ModuleInstance,
-  outputInstance: ConnectionOutputInstance,
-) => {
-  console.log("Begin patching from output:", outputInstance);
-
-  inProgressConnection.value = {
-    from: {
-      x: outputInstance.position.x,
-      y: outputInstance.position.y,
-    },
-    to: {
-      x: outputInstance.position.x,
-      y: outputInstance.position.y,
-    },
-    connectionType: outputInstance.type,
-  };
-
-  currentPatchingOutput = outputInstance;
-  currentPatchingModule = moduleInstance;
-
-  abortPatchingController = new AbortController();
-  abortPatchingSignal = abortPatchingController.signal;
-
-  document.addEventListener("click", cancelPatching, {
-    once: true,
-    signal: abortPatchingSignal,
-  });
-
-  startMouseTracking();
-};
-
-const cancelPatching = () => {
-  console.log("Cancel patching");
-
-  stopMouseTracking();
-
-  currentPatchingOutput = null;
-  inProgressConnection.value = null;
-};
-
-const onFinishPatching = (
-  moduleInstance: ModuleInstance,
-  inputInstance: ConnectionInputInstance,
-) => {
-  console.log("Finish patching to input:", inputInstance);
-
-  if (
-    isConnected(
-      currentPatchingModule,
-      currentPatchingOutput,
-      moduleInstance,
-      inputInstance,
-    )
-  ) {
-    console.warn(
-      `${currentPatchingOutput?.name} is already connected to ${inputInstance.name}`,
-    );
-    return;
-  }
-
-  stopMouseTracking();
-
-  if (currentPatchingOutput && currentPatchingModule) {
-    patchGraph.value.connections.push({
-      from: {
-        moduleId: currentPatchingModule.moduleId,
-        output: currentPatchingOutput,
-      },
-      to: {
-        moduleId: moduleInstance.moduleId,
-        input: inputInstance,
-      },
-    });
-
-    patcher.connect(
-      {
-        moduleId: currentPatchingModule.moduleId,
-        outputName: currentPatchingOutput.name,
-      },
-      {
-        moduleId: moduleInstance.moduleId,
-        inputName: inputInstance.name,
-      },
-    );
-
-    currentPatchingOutput = null;
-    inProgressConnection.value = null;
-  }
-
-  if (abortPatchingController) {
-    abortPatchingController.abort();
-    abortPatchingController = null;
-    abortPatchingSignal = null;
-  }
-};
-
-const onPatchingMouseMove = (deltaX: number, deltaY: number) => {
-  if (inProgressConnection.value) {
-    inProgressConnection.value.to.x += deltaX;
-    inProgressConnection.value.to.y += deltaY;
-  }
-};
 
 const onModuleInputsUpdated = (
   moduleId: string,
@@ -454,8 +325,6 @@ const onModuleDragStart = (
 };
 
 const { onDragElementStart } = useDragging(onModuleDrag, onModuleDragEnd);
-const { startMouseTracking, stopMouseTracking } =
-  useMouseTracking(onPatchingMouseMove);
 
 useResizeObserver("patch-window", (entries) => {
   patchWindowPageX =
@@ -464,16 +333,6 @@ useResizeObserver("patch-window", (entries) => {
     entries[0]!.target.getBoundingClientRect().y + window.scrollY;
 });
 
-const { assignKeyListeners, removeKeyListeners } = usePatchShortcuts({
-  selectedModule,
-  selectedConnection,
-  inProgressConnection,
-  cancelPatching,
-  deleteConnection,
-  deleteModule,
-  duplicateModule,
-  clearSelection,
-});
 
 const {
   savePatch,
@@ -492,6 +351,23 @@ const {
   onBeforeLoad: () => {
     clearPatch();
   },
+});
+
+const { inProgressConnection, onBeginPatching, onFinishPatching, cancelPatching } =
+  usePatching({
+    patchGraph,
+    patcher,
+  });
+
+const { assignKeyListeners, removeKeyListeners } = usePatchShortcuts({
+  selectedModule,
+  selectedConnection,
+  inProgressConnection,
+  cancelPatching,
+  deleteConnection,
+  deleteModule,
+  duplicateModule,
+  clearSelection,
 });
 
 onMounted(() => {
