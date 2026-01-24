@@ -14,6 +14,7 @@ import type {
   Position,
 } from "@/types/uIInstanceTypes";
 import PatchContextMenu from "@/components/PatchContextMenu.vue";
+import PatchToolbar from "@/components/PatchToolbar.vue";
 import type { AudioModuleType } from "@/classes/audio-modules/AudioModule";
 import { createAudioModule } from "@/moduleFactory";
 import useResizeObserver from "@/composables/useResizeObserver.ts";
@@ -80,7 +81,6 @@ const inProgressConnection = ref<PatchCableInstance | null>(null);
 const showContextMenu = ref(false);
 const contextMenuX = ref(0);
 const contextMenuY = ref(0);
-const showClearConfirm = ref(false);
 
 // todo: should think about breaking up this component into smaller pieces
 // maybe move load/save patch logic to a separate composable
@@ -314,10 +314,6 @@ const clearPatch = () => {
   patcher.clear();
 };
 
-const confirmClearPatch = () => {
-  clearPatch();
-  showClearConfirm.value = false;
-};
 
 const onGraphContextMenu = (e: MouseEvent) => {
   e.preventDefault();
@@ -773,30 +769,13 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div
-    class="d-flex justify-center mb-4"
-    :style="{ width: width + 'px', borderColor: appColors.textColor }"
-  >
-    <v-btn class="mx-2" @click="savePatch">Save Patch</v-btn>
-    <v-btn class="mx-2" @click="loadPatch">Load Patch</v-btn>
-    <v-btn class="mx-2" @click="showClearConfirm = true"> Clear Patch </v-btn>
-  </div>
-
-  <v-dialog v-model="showClearConfirm" max-width="360">
-    <v-card>
-      <v-card-title>Clear Patch</v-card-title>
-      <v-card-text>
-        Any unsaved work will be lost. Are you sure you want to continue?
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn variant="text" @click="showClearConfirm = false">Cancel</v-btn>
-        <v-btn color="error" variant="text" @click="confirmClearPatch"
-          >Continue</v-btn
-        >
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+  <PatchToolbar
+    :width="width"
+    :border-color="appColors.textColor"
+    @save="savePatch"
+    @load="loadPatch"
+    @clear="clearPatch"
+  />
 
   <div
     ref="patch-window"
