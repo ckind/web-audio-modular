@@ -18,6 +18,7 @@ import PatchToolbar from "@/components/PatchToolbar.vue";
 import type { AudioModuleType } from "@/classes/audio-modules/AudioModule";
 import { createAudioModule } from "@/moduleFactory";
 import useResizeObserver from "@/composables/useResizeObserver.ts";
+import usePatchShortcuts from "@/composables/usePatchShortcuts";
 import Patcher from "@/classes/Patcher";
 import { useAppColors } from "@/store/appColors";
 import { usePatchConsole } from "@/store/patchConsole";
@@ -684,80 +685,23 @@ useResizeObserver("patch-window", (entries) => {
     entries[0]!.target.getBoundingClientRect().y + window.scrollY;
 });
 
-let abortKeyListenersController: AbortController | null = null;
-let abortKeyListenersSignal: AbortSignal | null = null;
-let ctrlKeyDown = false;
-
-const assignKeyListners = () => {
-  abortKeyListenersController = new AbortController();
-  abortKeyListenersSignal = abortKeyListenersController.signal;
-
-  document.addEventListener(
-    "keydown",
-    (e) => {
-      switch (e.key) {
-        case "Escape":
-          if (inProgressConnection.value) {
-            cancelPatching();
-          }
-          break;
-        case "Backspace":
-        case "Delete":
-          if (selectedConnection.value) {
-            deleteConnection(selectedConnection.value as ConnectionInstance);
-            clearSelection();
-          }
-          if (selectedModule.value) {
-            deleteModule(selectedModule.value.moduleId);
-            clearSelection();
-          }
-          break;
-        case "Meta":
-        case "Control":
-          ctrlKeyDown = true;
-          break;
-        case "d":
-        case "D":
-          if (ctrlKeyDown) {
-            e.preventDefault();
-            if (selectedModule.value) {
-              duplicateModule(selectedModule.value);
-            }
-          }
-          break;
-      }
-    },
-    { signal: abortKeyListenersSignal },
-  );
-
-  document.addEventListener(
-    "keyup",
-    (e) => {
-      switch (e.key) {
-        case "Meta":
-        case "Control":
-          ctrlKeyDown = false;
-          break;
-      }
-    },
-    { signal: abortKeyListenersSignal },
-  );
-};
-
-const removeKeyListeners = () => {
-  if (abortKeyListenersController) {
-    abortKeyListenersController.abort();
-    abortKeyListenersController = null;
-    abortKeyListenersSignal = null;
-  }
-};
+const { assignKeyListeners, removeKeyListeners } = usePatchShortcuts({
+  selectedModule,
+  selectedConnection,
+  inProgressConnection,
+  cancelPatching,
+  deleteConnection,
+  deleteModule,
+  duplicateModule,
+  clearSelection,
+});
 
 const patchWindowStyle = computed(() => {
   return {};
 });
 
 onMounted(() => {
-  assignKeyListners();
+  assignKeyListeners();
 });
 
 onUnmounted(() => {
