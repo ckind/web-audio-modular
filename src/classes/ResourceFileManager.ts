@@ -6,8 +6,15 @@ type RegisteredResource = {
 /**
  * Singleton manager for ResourceFiles to handle registration,
  * reference counting, and revocation of Blob URLs.
+ * 
+ * Blob resources must be registered using registerResource and a
+ * url to a resource must acquired using requestResource. The caller that
+ * requests or registers a resource is responsible for releasing that
+ * resource following the RAII pattern.
  */
 const ResourceFileManager = {
+  debug: false,
+
   registerResources: new Map<string, RegisteredResource>(),
 
   // todo: assumes names are unique, should we allow duplicates?
@@ -32,7 +39,7 @@ const ResourceFileManager = {
 
     const blobUrl = URL.createObjectURL(resource);
     this.registerResources.set(name, { blobUrl, refCount: 1 });
-    console.log(`ResourceFileManager: "${name}" registered with url: ${blobUrl}`);
+    if (this.debug) console.log(`ResourceFileManager: "${name}" registered with url: ${blobUrl}`);
 
     return blobUrl;
   },
@@ -45,7 +52,7 @@ const ResourceFileManager = {
     const registered = this.registerResources.get(name);
     if (registered) {
       registered.refCount++;
-      console.log(
+      if (this.debug) console.log(
         `ResourceFileManager: "${name}" requested. refs: ${registered.refCount}`,
       );
       return registered.blobUrl;
@@ -62,13 +69,13 @@ const ResourceFileManager = {
     const registered = this.registerResources.get(name);
     if (registered) {
       registered.refCount--;
-      console.log(
+      if (this.debug) console.log(
         `ResourceFileManager: "${name}" released. refs: ${registered.refCount}`,
       );
       if (registered.refCount <= 0) {
         URL.revokeObjectURL(registered.blobUrl);
         this.registerResources.delete(name);
-        console.log(`ResourceFileManager: "${name}" revoked and removed from manager.`);
+        if (this.debug) console.log(`ResourceFileManager: "${name}" revoked and removed from manager.`);
       }
     } else {
       console.warn(`ResourceFileManager: attempted to release unregistered resource "${name}".`);

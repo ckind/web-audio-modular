@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type PropType, ref, watch } from "vue";
+import { type PropType, ref, watch, computed } from "vue";
 import type { PlayerModuleOptions } from "@/classes/audio-modules/PlayerModule";
 import WaveformDisplay from "../WaveformDisplay.vue";
 import * as Tone from "tone";
@@ -14,42 +14,61 @@ const props = defineProps({
 });
 
 const amplitudeData = ref<Float32Array<ArrayBuffer>>(new Float32Array());
+const selectedFile = ref<File | File[] | null>(null);
+const selectedFileProxy = computed({
+  get() {
+    // use an empty file to display the name if we're loading
+    // the resource file from module options
+    if (selectedFile.value === null && props.options.resourceFile?.name) {
+      return new File([], props.options.resourceFile.name);
+    } else {
+      return selectedFile.value;
+    }
+  },
+  set(value) {
+    selectedFile.value = value;
+  },
+});
 
 const toggleReverse = () => {
   props.options.reverse = !props.options.reverse;
 };
 
-const onFileUpdated = async (file: File) => {
-  // register the uploaded file
-  ResourceFileManager.registerResource(file.name, file);
-  props.options.resourceFile = new ResourceFile(file.name);
+const loadAmplitudeData = async (blobUrl?: string) => {
+  if (!blobUrl) {
+    amplitudeData.value = new Float32Array();
+    return;
+  }
+  const response = await fetch(blobUrl);
+  const arrayBuffer = await response.arrayBuffer();
+  const buffer =
+    await Tone.getContext().rawContext.decodeAudioData(arrayBuffer);
+
+  amplitudeData.value = buffer.getChannelData(0);
 };
 
-// todo: how update the file-picker to show new resourceFile name?
+watch(selectedFile, (file: File | File[] | null) => {
+  if (file !== null && !Array.isArray(file)) {
+    // register the uploaded file
+    ResourceFileManager.registerResource(file.name, file);
+    props.options.resourceFile = new ResourceFile(file.name);
+
+    // finally release of registered file will be handled by the module instance
+  }
+});
+
 watch(
   () => props.options.resourceFile,
   async (newResourceFile, oldResourceFile) => {
-    const nextName = newResourceFile?.name ?? null;
-    const prevName = oldResourceFile?.name ?? null;
-
-    if (prevName && prevName !== nextName) {
+    if (oldResourceFile && newResourceFile !== oldResourceFile) {
       // release the previously registered resource
-      ResourceFileManager.releaseResource(prevName);
+      ResourceFileManager.releaseResource(oldResourceFile.name);
     }
 
     if (newResourceFile?.name) {
       const url = ResourceFileManager.requestResource(newResourceFile.name);
-      if (!url) {
-        amplitudeData.value = new Float32Array();
-        return;
-      }
       try {
-        const response = await fetch(url);
-        const arrayBuffer = await response.arrayBuffer();
-        const buffer =
-          await Tone.getContext().rawContext.decodeAudioData(arrayBuffer);
-
-        amplitudeData.value = buffer.getChannelData(0);
+        await loadAmplitudeData(url);
       } finally {
         ResourceFileManager.releaseResource(newResourceFile.name);
       }
@@ -63,7 +82,7 @@ watch(
 
 <template>
   <div>
-    <audio-file-picker @file-updated="onFileUpdated" />
+    <audio-file-picker v-model="selectedFileProxy" />
     <v-divider class="my-2" />
     <WaveformDisplay :amplitudeData="amplitudeData" :width="300" :height="60" />
     <v-divider class="my-2" />

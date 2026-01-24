@@ -1,25 +1,13 @@
 <script setup lang="ts">
-import { type PropType, ref, watch } from "vue";
-import * as Tone from "tone";
+import { ref } from "vue";
 
-const emit = defineEmits(["file-updated", "buffer-data-updated"]);
-
-const selectedFile = ref<File | null>(null);
+const selectedFile = defineModel<File | File[] | null>();
 const fileValidationRules = ref([
   (v: any) =>
     !v ||
     (v instanceof File && v.type.startsWith("audio/")) ||
     "Must be an audio file",
 ]);
-
-watch(selectedFile, async (file: File | null) => {
-  if (file && !file.type.startsWith("audio/")) {
-    console.warn("Selected file is not an audio file.");
-  } else {
-    const fileURL = URL.createObjectURL(file!);
-    emit("file-updated", file);
-  }
-});
 </script>
 
 <template>
@@ -27,10 +15,10 @@ watch(selectedFile, async (file: File | null) => {
     class="mb-2"
     prepend-icon="mdi-file-music-outline"
     label="load sample..."
-    v-model="selectedFile"
-    :rules="fileValidationRules"
     hide-details
     density="compact"
     accept="audio/*"
+    v-model="selectedFile"
+    :rules="fileValidationRules"
   ></v-file-input>
 </template>
