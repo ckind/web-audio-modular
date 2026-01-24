@@ -1,39 +1,37 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 
-const options = defineModel({
-  type: Object,
-  required: true,
-});
-
 const props = defineProps({
+  options: {
+    type: Object,
+    required: true,
+  },
   disabled: {
     type: Boolean,
     default: false,
   },
 });
 
+const emit = defineEmits(["options-updated"]);
+
 const stringOptions = ref<Record<string, string>>({
-  ...options.value,
+  ...props.options,
 });
 
 watch(
-  () => options.value,
+  () => props.options,
   (newOptions) => {
     stringOptions.value = { ...newOptions };
   },
   { deep: true },
 );
 
-// todo: should not mutate options directly in here.
-// instead emit new data when options are updated.
-// either replace the whole object or emit a partial
-// object and merge
 watch(
-  () => stringOptions.value,
+  stringOptions,
   (newStringOptions) => {
+    const newOptions: Record<string, any> = { ...props.options };
     for (const key in newStringOptions) {
-      if (typeof options.value[key] === "number") {
+      if (typeof props.options[key] === "number") {
         const num = parseFloat(newStringOptions[key]!);
         if (isNaN(num)) {
           console.warn(
@@ -44,11 +42,12 @@ watch(
           );
           continue; // Skip invalid number inputs
         }
-        options.value[key] = num;
+        newOptions[key] = num;
       } else {
-        options.value[key] = newStringOptions[key];
+        newOptions[key] = newStringOptions[key];
       }
     }
+    emit("options-updated", newOptions);
   },
   { deep: true },
 );

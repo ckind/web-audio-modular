@@ -152,18 +152,6 @@ const finishPatching = (inputInstance: ConnectionInputInstance) => {
   emit("finish-patching", inputInstance);
 };
 
-watch(
-  // todo: should rely on prop mutate to pass up data
-  // we should listen for an options-updated event from
-  // the patch-module-options-input component and pass
-  // that data back up the grapevine to be resolved
-  () => props.moduleInstance.options,
-  (newOptions) => {
-    emit("options-updated", newOptions);
-  },
-  { deep: true },
-);
-
 const onGuiOptionsUpdated = (options: Record<string, any>) => {
   emit("options-updated", options);
 };
@@ -201,7 +189,8 @@ const onGuiOptionsUpdated = (options: Record<string, any>) => {
       <div class="ma-2 d-inline-block">{{ moduleName }}</div>
 
       <patch-module-options-input
-        v-model="moduleInstance.options"
+        :options="moduleInstance.options"
+        @options-updated="onGuiOptionsUpdated"
       ></patch-module-options-input>
     </div>
 
