@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { computed } from "vue";
 import { useAppColors } from "@/store/appColors";
 
 const appColors = useAppColors();
@@ -11,12 +11,14 @@ const props = defineProps({
   },
 });
 
-const value = ref(props.options.value);
-
 const emit = defineEmits(["options-updated"]);
-
-watch(value, (newValue) => {
-  emit("options-updated", { value: Number(newValue) });
+const value = computed({
+  get() {
+    return props.options.value;
+  },
+  set(newValue) {
+    emit("options-updated", { value: Number(newValue) });
+  },
 });
 </script>
 

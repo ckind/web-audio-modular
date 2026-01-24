@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, type PropType } from "vue";
+import { computed, type PropType } from "vue";
 import type { MessageBoxModuleOptions } from "@/classes/audio-modules/MessageBoxModule";
 
 const props = defineProps({
@@ -10,20 +10,13 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["options-updated"]);
-const message = ref<string | undefined>("");
-
-watch(
-  () => props.options.message,
-  (newValue) => {
-    message.value = newValue?.toString();
+const message = computed({
+  get() {
+    return props.options.message?.toString() ?? "";
   },
-);
-
-watch(message, (newValue) => {
-  emit("options-updated", {
-    ...props.options,
-    message: newValue,
-  });
+  set(newValue) {
+    emit("options-updated", { message: newValue });
+  },
 });
 </script>
 

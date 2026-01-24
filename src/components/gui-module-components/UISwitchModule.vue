@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { computed } from "vue";
 
 const props = defineProps({
   options: {
@@ -8,12 +8,14 @@ const props = defineProps({
   },
 });
 
-const isChannel2 = ref(props.options.channel === 2);
-
-const emit = defineEmits(["options-updated"])
-
-watch(isChannel2, (newValue) => {
-  emit("options-updated", { channel: newValue ? 2 : 1 });
+const emit = defineEmits(["options-updated"]);
+const isChannel2 = computed({
+  get() {
+    return props.options.channel === 2;
+  },
+  set(newValue) {
+    emit("options-updated", { channel: newValue ? 2 : 1 });
+  },
 });
 </script>
 
