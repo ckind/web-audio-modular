@@ -52,18 +52,18 @@ const roundToStep = (value: number, step: number) => {
 
 const clamp = (value: number, min: number, max: number) => {
   return Math.min(Math.max(value, min), max);
-};  
+};
 
 const dragCallback = (deltaX: number, deltaY: number) => {
   modelValue.value = roundToStep(
     clamp(
-      modelValue.value + (-deltaY / DRAG_RANGE) * ((props.max - props.min)/ 2),
+      modelValue.value + (-deltaY / DRAG_RANGE) * ((props.max - props.min) / 2),
       props.min,
-      props.max
+      props.max,
     ),
-    props.step
+    props.step,
   );
-}
+};
 
 const { onDragElementStart, dragging } = useDragging(dragCallback);
 </script>
@@ -73,8 +73,8 @@ const { onDragElementStart, dragging } = useDragging(dragCallback);
     <span v-if="label" class="text-medium-emphasis">{{ label }}: </span>
     <input
       v-model.lazy="stringValue"
-      :style="{ width: `${inputWidth}px`}"
-      :class="{ 'no-select': dragging, 'number-input': true }"
+      class="number-input"
+      :style="{ width: `${inputWidth}px` }"
       :min="min"
       :max="max"
       @mousedown.stop="onDragElementStart"
@@ -99,14 +99,5 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type="number"] {
   -moz-appearance: textfield;
-}
-
-/* todo: this doesn't seem to work inside input fields? */
-.no-select {
-  -webkit-touch-callout: none !important; /* iOS Safari */
-  -webkit-user-select: none !important; /* Safari, Chrome, Opera, Android */
-  -moz-user-select: none !important; /* Firefox */
-  -ms-user-select: none !important; /* Internet Explorer/Edge */
-  user-select: none !important; /* Standard syntax */
 }
 </style>

@@ -41,6 +41,9 @@ export default function useDragging(
       (e: TouchEvent) => onDocumentUp(e, data),
       { signal }
     );
+    // prevent text selection during drag operations
+    const preventSelect = (ev: Event) => ev.preventDefault();
+    document.addEventListener("selectstart", preventSelect, { signal });
   }
 
   function onDocumentUp(e: Event, data?: any) {
