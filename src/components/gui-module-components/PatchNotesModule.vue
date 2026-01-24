@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 const props = defineProps({
   options: {
@@ -9,17 +9,27 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["options-updated"]);
+const localNotes = ref(props.options.notes ?? "");
 
-const updateNotes = () => {
-  emit("options-updated", { notes: props.options.notes });
-};
+watch(
+  () => props.options.notes,
+  (newValue) => {
+    if (localNotes.value === newValue) return;
+    localNotes.value = newValue ?? "";
+  },
+  { immediate: true },
+);
+
+watch(localNotes, (newValue) => {
+  if (newValue === props.options.notes) return;
+  emit("options-updated", { notes: newValue });
+});
 </script>
 
 <template>
   <v-textarea
     label="notes"
-    v-model="options.notes"
-    @input="updateNotes"
+    v-model="localNotes"
     @mousedown.stop
     @touchstart.stop
     hide-details
