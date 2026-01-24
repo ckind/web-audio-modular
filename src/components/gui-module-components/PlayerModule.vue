@@ -13,16 +13,18 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(["options-updated"]);
+
 const amplitudeData = ref<Float32Array<ArrayBuffer>>(new Float32Array());
-const selectedFile = ref<File | File[] | null>(null);
-const selectedFileProxy = computed({
+const selectedFileRef = ref<File | File[] | null>(null);
+const selectedFile = computed({
   get() {
     // use an empty file to display the name if we're loading
     // the resource file from module options
-    if (selectedFile.value === null && props.options.resourceFile?.name) {
+    if (selectedFileRef.value === null && props.options.resourceFile?.name) {
       return new File([], props.options.resourceFile.name);
     } else {
-      return selectedFile.value;
+      return selectedFileRef.value;
     }
   },
   set(value) {
@@ -30,8 +32,26 @@ const selectedFileProxy = computed({
   },
 });
 
+const fadeInTime = computed({
+  get() {
+    return props.options.fadeInTime ?? 0;
+  },
+  set(value) {
+    emit("options-updated", { fadeInTime: value });
+  },
+});
+
+const fadeOutTime = computed({
+  get() {
+    return props.options.fadeOutTime ?? 0;
+  },
+  set(value) {
+    emit("options-updated", { fadeOutTime: value });
+  },
+});
+
 const toggleReverse = () => {
-  props.options.reverse = !props.options.reverse;
+  emit("options-updated", { reverse: !props.options.reverse });
 };
 
 const loadAmplitudeData = async (blobUrl?: string) => {
@@ -51,7 +71,7 @@ watch(selectedFile, (file: File | File[] | null) => {
   if (file !== null && !Array.isArray(file)) {
     // register the uploaded file
     ResourceFileManager.registerResource(file.name, file);
-    props.options.resourceFile = new ResourceFile(file.name);
+    emit("options-updated", { resourceFile: new ResourceFile(file.name) });
 
     // finally release of registered file will be handled by the module instance
   }
@@ -78,17 +98,18 @@ watch(
   },
   { immediate: true },
 );
+
 </script>
 
 <template>
   <div>
-    <audio-file-picker v-model="selectedFileProxy" />
+    <audio-file-picker v-model="selectedFile" />
     <v-divider class="my-2" />
     <WaveformDisplay :amplitudeData="amplitudeData" :width="300" :height="60" />
     <v-divider class="my-2" />
     <div class="ma-2">
       <number-input
-        v-model="props.options.fadeInTime"
+        v-model="fadeInTime"
         :min="0"
         :max="2"
         :step="0.01"
@@ -97,7 +118,7 @@ watch(
         class="mr-1"
       />
       <number-input
-        v-model="props.options.fadeOutTime"
+        v-model="fadeOutTime"
         :min="0"
         :max="2"
         :step="0.01"
