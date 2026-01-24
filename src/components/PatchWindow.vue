@@ -19,6 +19,7 @@ import useResizeObserver from "@/composables/useResizeObserver.ts";
 import usePatchShortcuts from "@/composables/usePatchShortcuts";
 import usePatchPersistence from "@/composables/usePatchPersistence";
 import usePatching from "@/composables/usePatching";
+import usePatchSelection from "@/composables/usePatchSelection";
 import Patcher from "@/classes/Patcher";
 import { useAppColors } from "@/store/appColors";
 import { usePatchConsole } from "@/store/patchConsole";
@@ -70,9 +71,6 @@ const patchGraph = ref<PatchGraph>({
   connections: [],
 });
 
-// todo: multiple selected modules and connections
-const selectedModule = ref<ModuleInstance | null>(null);
-const selectedConnection = ref<ConnectionInstance | null>(null);
 
 const showContextMenu = ref(false);
 const contextMenuX = ref(0);
@@ -211,30 +209,6 @@ const duplicateModule = (moduleInstance: ModuleInstance) => {
   selectedModule.value = newInstance;
 };
 
-const onConnectionSelected = (connection: ConnectionInstance) => {
-  clearSelection();
-
-  selectedConnection.value = connection;
-  connection.selected = true;
-};
-
-const onModuleSelected = (module: ModuleInstance) => {
-  clearSelection();
-
-  selectedModule.value = module;
-  module.selected = true;
-};
-
-const clearSelection = () => {
-  if (selectedModule.value) {
-    selectedModule.value.selected = false;
-    selectedModule.value = null;
-  }
-  if (selectedConnection.value) {
-    selectedConnection.value.selected = false;
-    selectedConnection.value = null;
-  }
-};
 
 
 const onModuleInputsUpdated = (
@@ -358,6 +332,14 @@ const { inProgressConnection, onBeginPatching, onFinishPatching, cancelPatching 
     patchGraph,
     patcher,
   });
+
+const {
+  selectedModule,
+  selectedConnection,
+  clearSelection,
+  onConnectionSelected,
+  onModuleSelected,
+} = usePatchSelection();
 
 const { assignKeyListeners, removeKeyListeners } = usePatchShortcuts({
   selectedModule,
