@@ -11,13 +11,20 @@ const props = defineProps({
   },
 });
 
-const value = ref(props.options.value ?? 0.5);
+const emit = defineEmits(["options-updated"]);
+
+const value = computed({
+  get() {
+    return props.options.value ?? 0.5;
+  },
+  set(newValue) {
+    emit("options-updated", { value: Number(newValue) });
+  },
+});
 const isDragging = ref(false);
 const startY = ref(0);
 const startValue = ref(0);
 const DRAG_RANGE = 150;
-
-const emit = defineEmits(["options-updated"]);
 
 const angle = computed(() => {
   const min = props.options.min ?? 0;
@@ -83,10 +90,6 @@ const handleDoubleClick = () => {
   const max = props.options.max ?? 1;
   value.value = (min + max) / 2; // Reset to middle
 };
-
-watch(value, (newValue) => {
-  emit("options-updated", { value: Number(newValue) });
-});
 
 // Add global listeners for mouse move and up
 if (typeof window !== 'undefined') {
