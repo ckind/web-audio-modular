@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { useAppColors } from "@/store/appColors";
-
-const appColors = useAppColors();
+import { ref, watch, nextTick, type PropType } from "vue";
+import type { MidiInputModuleOptions } from "@/classes/audio-modules/MidiInputModule";
 
 const props = defineProps({
   options: {
-    type: Object,
+    type: Object as PropType<MidiInputModuleOptions>,
     required: true,
   },
 });
@@ -14,8 +12,22 @@ const props = defineProps({
 const emit = defineEmits(["options-updated"]);
 
 const selectedDeviceId = ref(props.options.selectedDeviceId);
+const isSyncing = ref(false);
+
+watch(
+  () => props.options.selectedDeviceId,
+  async (newValue) => {
+    if (selectedDeviceId.value === newValue) return;
+    isSyncing.value = true;
+    selectedDeviceId.value = newValue;
+    await nextTick();
+    isSyncing.value = false;
+  },
+  { immediate: true },
+);
 
 watch(selectedDeviceId, (newValue) => {
+  if (isSyncing.value) return;
   emit("options-updated", { selectedDeviceId: newValue });
 });
 </script>

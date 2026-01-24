@@ -5,7 +5,7 @@ import * as Tone from "tone";
 import ModuleOutput from "@/classes/ModuleOutput";
 import { requestMidiDevices } from "@/midi";
 
-type MidiInputModuleOptions = {
+export type MidiInputModuleOptions = {
   availableDevices: MIDIInput[];
   selectedDeviceId: string;
 };
@@ -30,8 +30,8 @@ export default class MidiInputModule extends AudioModule<MidiInputModuleOptions>
         this._options.selectedDeviceId = devices![0]!.id;
       }
 
-      if (this.updateUIInstanceOptions) {
-        this.updateUIInstanceOptions(this._options);
+      if (this.updateUIState) {
+        this.updateUIState({ ...this._options });
       }
     });
   }
