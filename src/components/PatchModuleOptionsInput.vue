@@ -25,6 +25,10 @@ watch(
   { deep: true },
 );
 
+// todo: should not mutate options directly in here.
+// instead emit new data when options are updated.
+// either replace the whole object or emit a partial
+// object and merge
 watch(
   () => stringOptions.value,
   (newStringOptions) => {
