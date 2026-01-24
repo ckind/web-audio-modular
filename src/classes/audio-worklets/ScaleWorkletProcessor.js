@@ -84,7 +84,6 @@ class ScaleWorkletProcessor extends AudioWorkletProcessor {
     const output = outputs[0];
 
     // k-rate params only have one value per render quantum
-    // todo: do extra variable assignments in process callback affect performance?
     const inputMin = parameters.inputMin[0];
     const inputMax = parameters.inputMax[0];
     const outputMin = parameters.outputMin[0];

@@ -182,7 +182,6 @@ const duplicateModule = (moduleInstance: ModuleInstance) => {
   const width = oldEl!.getBoundingClientRect().width;
 
   const newId = crypto.randomUUID();
-  // todo: deep clone options properly
   const newInstance = structuredClone(toRaw(moduleInstance));
 
   newInstance.moduleId = newId;

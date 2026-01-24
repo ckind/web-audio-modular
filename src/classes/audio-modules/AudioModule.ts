@@ -84,7 +84,7 @@ export default abstract class AudioModule<
     this._options = options;
   }
 
-  abstract get type(): AudioModuleType; // todo: how to serialize this?
+  abstract get type(): AudioModuleType;
   abstract updateOptions(options: Partial<TModuleOptions>): void;
   abstract dispose(): void;
 
