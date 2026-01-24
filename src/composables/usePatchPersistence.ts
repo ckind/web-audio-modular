@@ -21,7 +21,7 @@ interface PatchPersistenceOptions {
   onBeforeLoad?: () => void;
 }
 
-const usePatchPersistence = (options: PatchPersistenceOptions) => {
+export default function usePatchPersistence(options: PatchPersistenceOptions) {
   const deepCloneModuleOptions = (opts: Record<string, any>) => {
     const rawOptions = isProxy(opts) ? toRaw(opts) : opts;
     const clonedOptions = structuredClone(rawOptions);
@@ -246,6 +246,4 @@ const usePatchPersistence = (options: PatchPersistenceOptions) => {
     savePatch,
     loadPatch,
   };
-};
-
-export default usePatchPersistence;
+}

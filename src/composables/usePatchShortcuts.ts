@@ -16,7 +16,7 @@ interface PatchShortcutOptions {
   clearSelection: () => void;
 }
 
-const usePatchShortcuts = (options: PatchShortcutOptions) => {
+export default function usePatchShortcuts(options: PatchShortcutOptions) {
   let abortKeyListenersController: AbortController | null = null;
   let abortKeyListenersSignal: AbortSignal | null = null;
   let ctrlKeyDown = false;
@@ -89,6 +89,4 @@ const usePatchShortcuts = (options: PatchShortcutOptions) => {
     assignKeyListeners,
     removeKeyListeners,
   };
-};
-
-export default usePatchShortcuts;
+}

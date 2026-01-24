@@ -14,7 +14,7 @@ interface UsePatchingOptions {
   patcher: Patcher;
 }
 
-const usePatching = (options: UsePatchingOptions) => {
+export default function usePatching(options: UsePatchingOptions) {
   const inProgressConnection = ref<PatchCableInstance | null>(null);
 
   let currentPatchingModule: ModuleInstance | null = null;
@@ -161,6 +161,4 @@ const usePatching = (options: UsePatchingOptions) => {
     onFinishPatching,
     cancelPatching,
   };
-};
-
-export default usePatching;
+}

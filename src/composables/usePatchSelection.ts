@@ -4,7 +4,7 @@ import type {
   ModuleInstance,
 } from "@/types/uIInstanceTypes";
 
-const usePatchSelection = () => {
+export default function usePatchSelection() {
   const selectedModule = ref<ModuleInstance | null>(null);
   const selectedConnection = ref<ConnectionInstance | null>(null);
 
@@ -40,6 +40,4 @@ const usePatchSelection = () => {
     onConnectionSelected,
     onModuleSelected,
   };
-};
-
-export default usePatchSelection;
+}
