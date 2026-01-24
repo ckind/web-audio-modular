@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, type PropType } from "vue";
+import { ref, watch, type PropType } from "vue";
 import type { MessageBoxModuleOptions } from "@/classes/audio-modules/MessageBoxModule";
 
 const props = defineProps({
@@ -10,13 +10,21 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["options-updated"]);
+const message = ref<string | undefined>("");
 
 watch(
   () => props.options.message,
   (newValue) => {
-    emit("options-updated", { message: newValue });
+    message.value = newValue?.toString();
   },
 );
+
+watch(message, (newValue) => {
+  emit("options-updated", {
+    ...props.options,
+    message: newValue,
+  });
+});
 </script>
 
 <template>
@@ -24,7 +32,7 @@ watch(
     <input
       placeholder="enter message..."
       type="text"
-      v-model.lazy="props.options.message"
+      v-model.lazy="message"
       @dblclick.stop=""
       class="message-input d-inline-block"
     />
