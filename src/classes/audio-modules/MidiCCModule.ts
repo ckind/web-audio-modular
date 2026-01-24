@@ -59,10 +59,7 @@ export default class MidiCCToSignalModule extends AudioModule<MidiCCToSignalModu
       this._options.control = data[1]!; // Control number is the first parameter
       this._options.listenForChannelAndControl = false; // Stop listening after capturing the first message
       if (this.updateUIState) {
-        this.updateUIState(
-          { ...this._options },
-          { listenForChannelAndControl: false },
-        );
+        this.updateUIState({ ...this._options }, { listening: false });
       }
       return;
     }
