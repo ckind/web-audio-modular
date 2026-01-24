@@ -4,12 +4,15 @@ import ModuleInput from "@/classes/ModuleInput.ts";
 import ModuleOutput from "@/classes/ModuleOutput";
 import MessageInputNode from "@/classes/MessageInputNode";
 import MessageOutputNode from "@/classes/MessageOutputNode";
-import * as Tone from "tone";
 import type { MessageBusDataType } from "@/types/connectionTypes";
 
-type MidiNoteMessageModuleOptions = {
+export type MidiNoteMessageModuleOptions = {
   channel: number;
   listenForChannel: boolean;
+};
+
+export type MidiNoteMessageGUIState = {
+  listening: boolean;
 };
 
 const getDefaultOptions = (): MidiNoteMessageModuleOptions => ({
@@ -55,8 +58,8 @@ export default class MidiNoteMessageModule extends AudioModule<MidiNoteMessageMo
     if (this._options.listenForChannel) {
       this._options.channel = data[0]! & 0x0f; // Extract channel from MIDI status byte
       this._options.listenForChannel = false; // Stop listening after capturing the first message
-      if (this.updateUIInstanceOptions) {
-        this.updateUIInstanceOptions(this._options);
+      if (this.updateUIState) {
+        this.updateUIState({ ...this._options }, { listening: false });
       }
       return;
     }

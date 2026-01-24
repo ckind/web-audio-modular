@@ -1,39 +1,36 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, type PropType } from "vue";
+import type { MidiNoteMessageModuleOptions, MidiNoteMessageGUIState } from "@/classes/audio-modules/MidiNoteMessageModule";
 
 const props = defineProps({
   options: {
-    type: Object,
+    type: Object as PropType<MidiNoteMessageModuleOptions>,
+    required: true,
+  },
+  guiState: {
+    type: Object as PropType<MidiNoteMessageGUIState>,
     required: true,
   },
 });
 
 const emit = defineEmits(["options-updated"]);
-const localOptions = ref({
-  channel: props.options.channel,
-});
 const listening = ref(false);
 
 watch(
-  () => props.options,
-  (newValue) => {
-    localOptions.value = {
-      channel: newValue.channel,
-    };
-    listening.value = newValue.listenForChannel;
+  () => props.guiState,
+  (newGuiState) => {
+    listening.value = newGuiState?.listening ?? false;
   },
-);
-
-watch(
-  () => localOptions.value,
-  (newValue) => {
-    emit("options-updated", newValue);
-  }, { deep: true }
+  { immediate: true, deep: true },
 );
 
 const listen = () => {
   listening.value = true;
   emit("options-updated", { listenForChannel: true });
+};
+
+const onOptionsUpdated = (newOptions: MidiNoteMessageModuleOptions) => {
+  emit("options-updated", newOptions);
 };
 </script>
 
@@ -49,7 +46,8 @@ const listen = () => {
     </v-btn>
     <patch-module-options-input
       :disabled="listening"
-      v-model="localOptions"
+      :options="props.options"
+      @options-updated="onOptionsUpdated"
     ></patch-module-options-input>
   </div>
 </template>
