@@ -80,8 +80,6 @@ const getModuleInstance = (moduleId: string) => {
 };
 
 const clearPatch = () => {
-  // Release resources owned by current graph before clearing
-  releaseGraphResources(patchGraph.value);
   patchGraph.value = {
     version: import.meta.env.PACKAGE_VERSION,
     modules: [],
@@ -166,12 +164,6 @@ const deleteConnection = (connection: ConnectionInstance) => {
 };
 
 const deleteModule = (moduleId: string) => {
-  // release any resources held by module instance
-  const mi = patchGraph.value.modules.find((m) => m.moduleId === moduleId);
-  if (mi) {
-    releaseModuleInstanceResources(mi as ModuleInstance);
-  }
-
   // remove related connections from graph
   patchGraph.value.connections = patchGraph.value.connections.filter(
     (c) => c.from.moduleId !== moduleId && c.to.moduleId !== moduleId,
@@ -196,9 +188,6 @@ const duplicateModule = (moduleInstance: ModuleInstance) => {
   newInstance.moduleId = newId;
   newInstance.position.x = moduleInstance.position.x + width + 10;
   newInstance.position.y = moduleInstance.position.y;
-
-  // Ensure duplicate acquires its own resource references via manager (RAII)
-  locateResourceFiles(newInstance.options as Record<string, any>);
 
   const newModule = createAudioModule(
     newInstance.type as AudioModuleType,
@@ -321,9 +310,6 @@ const {
   savePatch,
   loadPatch,
   deepCloneModuleOptions,
-  locateResourceFiles,
-  releaseGraphResources,
-  releaseModuleInstanceResources,
 } = usePatchPersistence({
   patchGraph,
   patcher,
@@ -371,8 +357,6 @@ onMounted(() => {
 
 onUnmounted(() => {
   removeKeyListeners();
-  // Release any outstanding resources on unmount to avoid leaks
-  releaseGraphResources(patchGraph.value);
   patcher.clear();
 });
 </script>

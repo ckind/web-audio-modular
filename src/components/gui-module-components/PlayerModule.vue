@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type PropType, ref, watch, computed } from "vue";
+import { type PropType, ref, watch, computed, onUnmounted } from "vue";
 import type { PlayerModuleOptions } from "@/classes/audio-modules/PlayerModule";
 import WaveformDisplay from "../WaveformDisplay.vue";
 import * as Tone from "tone";
@@ -17,6 +17,8 @@ const emit = defineEmits(["options-updated"]);
 
 const amplitudeData = ref<Float32Array<ArrayBuffer>>(new Float32Array());
 const selectedFileRef = ref<File | File[] | null>(null);
+const resourceFileName = ref<string | null>(null);
+
 const selectedFile = computed({
   get() {
     // use an empty file to display the name if we're loading
@@ -28,7 +30,7 @@ const selectedFile = computed({
     }
   },
   set(value) {
-    selectedFile.value = value;
+    selectedFileRef.value = value;
   },
 });
 
@@ -69,22 +71,23 @@ const loadAmplitudeData = async (blobUrl?: string) => {
 
 watch(selectedFile, (file: File | File[] | null) => {
   if (file !== null && !Array.isArray(file)) {
-    // register the uploaded file
-    ResourceFileManager.registerResource(file.name, file);
-    emit("options-updated", { resourceFile: new ResourceFile(file.name) });
+    if (resourceFileName.value !== file.name) {
+      // release reference to the old file (no longer need)
+      if (resourceFileName.value) {
+        ResourceFileManager.releaseResource(resourceFileName.value);
+      }
 
-    // finally release of registered file will be handled by the module instance
+      // register the uploaded file (UI owns this registration)
+      ResourceFileManager.registerResource(file.name, file);
+      resourceFileName.value = file.name;
+    }
+    emit("options-updated", { resourceFile: new ResourceFile(file.name) });
   }
 });
 
 watch(
   () => props.options.resourceFile,
-  async (newResourceFile, oldResourceFile) => {
-    if (oldResourceFile && newResourceFile !== oldResourceFile) {
-      // release the previously registered resource
-      ResourceFileManager.releaseResource(oldResourceFile.name);
-    }
-
+  async (newResourceFile) => {
     if (newResourceFile?.name) {
       const url = ResourceFileManager.requestResource(newResourceFile.name);
       try {
@@ -98,6 +101,13 @@ watch(
   },
   { immediate: true },
 );
+
+onUnmounted(() => {
+  if (resourceFileName.value) {
+    ResourceFileManager.releaseResource(resourceFileName.value);
+    resourceFileName.value = null;
+  }
+});
 
 </script>
 

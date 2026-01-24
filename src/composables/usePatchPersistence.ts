@@ -29,42 +29,9 @@ export default function usePatchPersistence(options: PatchPersistenceOptions) {
     return clonedOptions;
   };
 
-  const locateResourceFiles = (moduleOptions: Record<string, any>) => {
-    Object.keys(moduleOptions).forEach((key) => {
-      const opt = moduleOptions[key];
-      if (opt?.isResourceFile === true && opt?.name) {
-        // Acquire a managed reference to ensure RAII validity
-        const url = ResourceFileManager.requestResource(opt.name);
-        if (!url) {
-          console.warn(
-            `Resource "${opt.name}" not found in manager during reconstruction`,
-          );
-        }
-      }
-    });
-  };
-
-  const releaseModuleInstanceResources = (moduleInstance: ModuleInstance) => {
-    const opts = moduleInstance.options as Record<string, any>;
-    Object.keys(opts).forEach((k) => {
-      const o = toRaw(opts[k]);
-      if (o?.isResourceFile === true && o?.name) {
-        ResourceFileManager.releaseResource(o.name);
-      }
-    });
-  };
-
-  const releaseGraphResources = (graph: PatchGraph) => {
-    try {
-      graph.modules.forEach((m) => {
-        releaseModuleInstanceResources(m as ModuleInstance);
-      });
-    } catch (err) {
-      console.warn("releaseGraphResources encountered an error:", err);
-    }
-  };
-
   const saveResourceFiles = async (zip: JSZip) => {
+    // Resource files should be requested/released only by consumers.
+    // Persistence only registers resources on load and requests when saving blobs.
     const resources = zip.folder("resources");
 
     for (let i = 0; i < options.patchGraph.value.modules.length; i++) {
@@ -163,8 +130,6 @@ export default function usePatchPersistence(options: PatchPersistenceOptions) {
       options.onBeforeReconstruct?.();
 
       options.patchGraph.value.modules.forEach((m) => {
-        locateResourceFiles(m.options);
-
         // create deep copy of options so UI model and audio graph model
         // are decoupled. state is shared between the two via dedicated methods
         const module = createAudioModule(
@@ -241,9 +206,6 @@ export default function usePatchPersistence(options: PatchPersistenceOptions) {
 
   return {
     deepCloneModuleOptions,
-    locateResourceFiles,
-    releaseGraphResources,
-    releaseModuleInstanceResources,
     savePatch,
     loadPatch,
   };
