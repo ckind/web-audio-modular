@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import { useAppColors } from "@/store/appColors";
+import useDragging from "@/composables/useDragging";
 
 const appColors = useAppColors();
 
@@ -21,9 +22,7 @@ const value = computed({
     emit("options-updated", { value: Number(newValue) });
   },
 });
-const isDragging = ref(false);
-const startY = ref(0);
-const startValue = ref(0);
+
 const DRAG_RANGE = 150;
 
 const angle = computed(() => {
@@ -61,41 +60,24 @@ const arcPath = computed(() => {
   return `M ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`;
 });
 
-const handleMouseDown = (e: MouseEvent) => {
-  isDragging.value = true;
-  startY.value = e.clientY;
-  startValue.value = value.value;
-  e.preventDefault();
-};
-
-const handleMouseMove = (e: MouseEvent) => {
-  if (!isDragging.value) return;
-  
+// Use reusable dragging composable to handle mouse/touch drags
+const dragCallback = (deltaX: number, deltaY: number) => {
   const min = props.options.min ?? 0;
   const max = props.options.max ?? 1;
   const sensitivity = (max - min) / DRAG_RANGE;
-  
-  const deltaY = startY.value - e.clientY; // Inverted: up increases value
-  const newValue = startValue.value + deltaY * sensitivity;
-  
-  value.value = Math.max(min, Math.min(max, newValue));
+
+  // composable reports deltaY = curr - prev, so moving up -> negative deltaY
+  const deltaValue = -deltaY * sensitivity;
+  value.value = Math.max(min, Math.min(max, value.value + deltaValue));
 };
 
-const handleMouseUp = () => {
-  isDragging.value = false;
-};
+const { onDragElementStart, dragging } = useDragging(dragCallback);
 
 const handleDoubleClick = () => {
   const min = props.options.min ?? 0;
   const max = props.options.max ?? 1;
   value.value = (min + max) / 2; // Reset to middle
 };
-
-// Add global listeners for mouse move and up
-if (typeof window !== 'undefined') {
-  window.addEventListener('mousemove', handleMouseMove);
-  window.addEventListener('mouseup', handleMouseUp);
-}
 </script>
 
 <template>
@@ -106,10 +88,6 @@ if (typeof window !== 'undefined') {
       viewBox="5 5 90 90"
       width="70"
       height="70"
-      @mousedown="handleMouseDown"
-      @dblclick="handleDoubleClick"
-      @mousedown.stop
-      @touchstart.stop
     >
       <!-- Background circle -->
       <circle
@@ -132,15 +110,18 @@ if (typeof window !== 'undefined') {
         stroke-linecap="round"
       />
       
-      <!-- Center knob -->
+      <!-- Center knob (drag hitbox limited to this circle) -->
       <circle
         class="knob-face"
         cx="50"
         cy="50"
         r="30"
-        :fill="isDragging ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.05)'"
+        :fill="dragging ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.05)'"
         :stroke="appColors.textColor"
         stroke-width="1"
+        @mousedown.stop="onDragElementStart"
+        @touchstart.stop="onDragElementStart"
+        @dblclick.stop="handleDoubleClick"
       />
       
       <!-- Indicator line -->
