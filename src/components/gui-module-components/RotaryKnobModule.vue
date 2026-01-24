@@ -82,7 +82,6 @@ const handleDoubleClick = () => {
 
 <template>
   <div class="rotary-knob-container">
-    <!-- todo: should reduce hitbox for knob drag so that it only includes knob circl now whole svg view box -->
     <svg
       class="rotary-knob"
       viewBox="5 5 90 90"
