@@ -18,10 +18,29 @@ const stringOptions = ref<Record<string, string>>({
   ...props.options,
 });
 
+const shallowEqual = (
+  a: Record<string, any>,
+  b: Record<string, any>,
+): boolean => {
+  const aKeys = Object.keys(a);
+  const bKeys = Object.keys(b);
+
+  if (aKeys.length !== bKeys.length) return false;
+
+  for (const key of aKeys) {
+    if (a[key] !== b[key]) return false;
+  }
+
+  return true;
+};
+
 watch(
   () => props.options,
   (newOptions) => {
-    stringOptions.value = { ...newOptions };
+    const nextOptions = { ...newOptions } as Record<string, any>;
+    if (!shallowEqual(stringOptions.value, nextOptions)) {
+      stringOptions.value = nextOptions;
+    }
   },
   { deep: true },
 );
@@ -47,7 +66,9 @@ watch(
         newOptions[key] = newStringOptions[key];
       }
     }
-    emit("options-updated", newOptions);
+    if (!shallowEqual(props.options as Record<string, any>, newOptions)) {
+      emit("options-updated", newOptions);
+    }
   },
   { deep: true },
 );

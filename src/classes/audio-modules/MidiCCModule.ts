@@ -7,10 +7,14 @@ import ModuleOutput from "@/classes/ModuleOutput";
 import type { MessageBusDataType } from "@/types/connectionTypes";
 import MessageOutputNode from "@/classes/MessageOutputNode";
 
-type MidiCCToSignalModuleOptions = {
+export type MidiCCToSignalModuleOptions = {
   channel: number;
   control: number;
   listenForChannelAndControl: boolean;
+};
+
+export type MidiCCToSignalGUIState = {
+  listening?: boolean;
 };
 
 const getDefaultOptions = (): MidiCCToSignalModuleOptions => ({
@@ -54,8 +58,11 @@ export default class MidiCCToSignalModule extends AudioModule<MidiCCToSignalModu
       this._options.channel = data[0]! & 0x0f; // Extract channel from MIDI status byte
       this._options.control = data[1]!; // Control number is the first parameter
       this._options.listenForChannelAndControl = false; // Stop listening after capturing the first message
-      if (this.updateUIInstanceOptions) {
-        this.updateUIInstanceOptions(this._options);
+      if (this.updateUIState) {
+        this.updateUIState(
+          { ...this._options },
+          { listenForChannelAndControl: false },
+        );
       }
       return;
     }

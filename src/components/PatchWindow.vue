@@ -62,7 +62,7 @@ const props = defineProps({
 // Data-flow is typically one-way from patchGraph (UI) to patcher (audio graph).
 // This is implemented by calling the updateOptions method on the IAudioModule.
 // Their are exceptions for some GUI modules which need to be updated based on audio node
-// changes. The optional updateGUIState is provided for this purpose.
+// changes. The optional updateUIState is provided for this purpose.
 
 const patcher = new Patcher();
 const patchGraph = ref<PatchGraph>({
@@ -71,10 +71,13 @@ const patchGraph = ref<PatchGraph>({
   connections: [],
 });
 
-
 const showContextMenu = ref(false);
 const contextMenuX = ref(0);
 const contextMenuY = ref(0);
+
+const getModuleInstance = (moduleId: string) => {
+  return patchGraph.value.modules.find((m) => m.moduleId === moduleId);
+};
 
 const clearPatch = () => {
   // Release resources owned by current graph before clearing
@@ -118,7 +121,7 @@ const addModule = (moduleType: AudioModuleType, guiComponent?: string) => {
   patcher.addModule(module);
   patchGraph.value.modules.push(moduleInstance);
 
-  // DEPRECATED: refactor to use updateGUIState
+  // DEPRECATED: refactor to use updateUIState
   module.updateUIInstanceOptions = (data: any) => {
     // need to query the graph to reference to exact ui instance
     patchGraph.value.modules.find(
@@ -126,10 +129,21 @@ const addModule = (moduleType: AudioModuleType, guiComponent?: string) => {
     )!.options = { ...moduleInstance.options, ...data };
   };
 
-  module.updateGUIState = (data: any) => {
-    patchGraph.value.modules.find(
+  module.updateUIState = (options: any, guiState?: any) => {
+    // need to re-query the graph to reference to exact ui instance 
+    const instance = patchGraph.value.modules.find(
       (m) => m.moduleId === moduleInstance.moduleId,
-    )!.guiState = { ...moduleInstance.guiState, ...data };
+    );
+
+    if (!instance) return;
+
+    if (options) {
+      instance.options = { ...instance.options, ...options };
+    }
+
+    if (guiState) {
+      instance.guiState = { ...instance.guiState, ...guiState };
+    }
   };
 
   updateModulePositionStyle(moduleInstance.moduleId, moduleInstance.position);
@@ -209,8 +223,6 @@ const duplicateModule = (moduleInstance: ModuleInstance) => {
   selectedModule.value = newInstance;
 };
 
-
-
 const onModuleInputsUpdated = (
   moduleId: string,
   inputs: ConnectionInputInstance[],
@@ -247,10 +259,16 @@ const onModuleOutputsUpdated = (
 
 const onModuleOptionsUpdated = (
   moduleId: string,
-  options: Record<string, any>,
+  newOptions: Record<string, any>,
 ) => {
+  const moduleInstance = getModuleInstance(moduleId);
+
+  if (moduleInstance) {
+    moduleInstance.options = { ...moduleInstance.options, ...newOptions };
+  }
+
   const module = patcher.getModule(moduleId);
-  module.updateOptions(options);
+  module.updateOptions(newOptions);
 };
 
 const updateModulePositionStyle = (moduleId: string, position: Position) => {
@@ -307,7 +325,6 @@ useResizeObserver("patch-window", (entries) => {
     entries[0]!.target.getBoundingClientRect().y + window.scrollY;
 });
 
-
 const {
   savePatch,
   loadPatch,
@@ -327,11 +344,15 @@ const {
   },
 });
 
-const { inProgressConnection, onBeginPatching, onFinishPatching, cancelPatching } =
-  usePatching({
-    patchGraph,
-    patcher,
-  });
+const {
+  inProgressConnection,
+  onBeginPatching,
+  onFinishPatching,
+  cancelPatching,
+} = usePatching({
+  patchGraph,
+  patcher,
+});
 
 const {
   selectedModule,

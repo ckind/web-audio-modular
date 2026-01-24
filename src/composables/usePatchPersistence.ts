@@ -173,13 +173,19 @@ export default function usePatchPersistence(options: PatchPersistenceOptions) {
           deepCloneModuleOptions(m.options),
         );
 
-        // DEPRECATED: refactor to use updateGUIState
+        // DEPRECATED: refactor to use updateUIState
         module.updateUIInstanceOptions = (data: any) => {
           m.options = { ...m.options, ...data };
         };
 
-        module.updateGUIState = (data: any) => {
-          m.guiState = { ...m.guiState, ...data };
+        module.updateUIState = (options: any, guiState?: any) => {
+          if (options) {
+            m.options = { ...m.options, ...options };
+          }
+
+          if (guiState) {
+            m.guiState = { ...m.guiState, ...guiState };
+          }
         };
 
         options.patcher.addModule(module);

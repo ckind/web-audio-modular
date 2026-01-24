@@ -1,52 +1,59 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, type PropType } from "vue";
+import type {
+  MidiCCToSignalModuleOptions,
+  MidiCCToSignalGUIState,
+} from "@/classes/audio-modules/MidiCCModule";
 
 const props = defineProps({
   options: {
-    type: Object,
+    type: Object as PropType<MidiCCToSignalModuleOptions>,
+    required: true,
+  },
+  guiState: {
+    type: Object as PropType<MidiCCToSignalGUIState>,
     required: true,
   },
 });
 
 const emit = defineEmits(["options-updated"]);
-const localOptions = ref({
-  channel: props.options.channel,
-  control: props.options.control,
-});
 const listening = ref(false);
 
 watch(
-  () => props.options,
-  (newValue) => {
-    localOptions.value = {
-      channel: newValue.channel,
-      control: newValue.control,
-    };
-    listening.value = newValue.listenForChannelAndControl;
+  () => props.guiState,
+  (newGuiState) => {
+    listening.value = newGuiState?.listening ?? false;
   },
-);
-
-watch(
-  () => localOptions.value,
-  (newValue) => {
-    emit("options-updated", newValue);
-  },
+  { immediate: true, deep: true },
 );
 
 const listen = () => {
   listening.value = true;
-  emit("options-updated", { listenForChannelAndControl: true });
+  emit("options-updated", {
+    listenForChannelAndControl: true,
+  });
+};
+
+const onOptionsUpdated = (newOptions: MidiCCToSignalModuleOptions) => {
+  emit("options-updated", newOptions);
 };
 </script>
 
 <template>
   <div>
-    <v-btn :disabled="listening" density="compact" @click="listen" class="mr-2 text-lowercase">
+    <v-btn
+      :disabled="listening"
+      density="compact"
+      @click="listen"
+      class="mr-2 text-lowercase"
+    >
       {{ listening ? "Listening..." : "map cc" }}
     </v-btn>
+
     <patch-module-options-input
       :disabled="listening"
-      v-model="localOptions"
+      :options="props.options"
+      @options-updated="onOptionsUpdated"
     ></patch-module-options-input>
   </div>
 </template>

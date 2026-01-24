@@ -62,13 +62,13 @@ export interface IAudioModule {
 
   updateOptions(options: Partial<any>): void;
   dispose(): void;
-  updateGUIState?: UpdateUIStateCallback;
+  updateUIState?: UpdateUIStateCallback;
 
-  // DEPRECATED: refactor to use updateGUIState
+  // DEPRECATED: refactor to use updateUIState
   updateUIInstanceOptions?: UpdateUIStateCallback;
 }
 
-export type UpdateUIStateCallback = (data: any) => void;
+export type UpdateUIStateCallback = (options: any, guiState?: any) => void;
 
 export default abstract class AudioModule<
   TModuleOptions,
@@ -79,10 +79,10 @@ export default abstract class AudioModule<
 
   public id: ModuleId;
 
-  // optional callback used to send GUI state data back to the view model
-  public updateGUIState?: UpdateUIStateCallback;
+  // optional callback used to send UI state data back to the view model
+  public updateUIState?: UpdateUIStateCallback;
 
-  // DEPRECATED: refactor to use updateGUIState
+  // DEPRECATED: refactor to use updateUIState
   public updateUIInstanceOptions?: UpdateUIStateCallback;
 
   constructor(id: ModuleId, options: TModuleOptions) {
