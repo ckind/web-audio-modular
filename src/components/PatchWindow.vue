@@ -121,14 +121,6 @@ const addModule = (moduleType: AudioModuleType, guiComponent?: string) => {
   patcher.addModule(module);
   patchGraph.value.modules.push(moduleInstance);
 
-  // DEPRECATED: refactor to use updateUIState
-  module.updateUIInstanceOptions = (data: any) => {
-    // need to query the graph to reference to exact ui instance
-    patchGraph.value.modules.find(
-      (m) => m.moduleId === moduleInstance.moduleId,
-    )!.options = { ...moduleInstance.options, ...data };
-  };
-
   module.updateUIState = (options: any, guiState?: any) => {
     // need to re-query the graph to reference to exact ui instance 
     const instance = patchGraph.value.modules.find(

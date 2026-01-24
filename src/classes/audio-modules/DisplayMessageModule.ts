@@ -29,8 +29,8 @@ export default class DisplayMessageModule extends AudioModule<DisplayMessageModu
   }
 
   messageCallback(time: number, data?: MessageBusDataType): void {
-    if (this.updateUIInstanceOptions) {
-      this.updateUIInstanceOptions({ message: data });
+    if (this.updateUIState) {
+      this.updateUIState({ message: data });
     }
   }
 

@@ -45,8 +45,8 @@ export default class MessageBoxModule extends AudioModule<MessageBoxModuleOption
   private _setMessageCallack(time: number, data?: MessageBusDataType) {
     Tone.getTransport().schedule(() => {
       this._options.message = data;
-      if (this.updateUIInstanceOptions) {
-        this.updateUIInstanceOptions(this._options);
+      if (this.updateUIState) {
+        this.updateUIState(this._options);
       }
     }, time);
   }
