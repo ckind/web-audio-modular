@@ -170,12 +170,12 @@ export default function usePatchPersistence(options: PatchPersistenceOptions) {
   };
 
   const loadPatch = () => {
-    options.onBeforeLoad?.();
-
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "*.wam.zip";
     input.onchange = async (e: Event) => {
+      options.onBeforeLoad?.();
+
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
 
