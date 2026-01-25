@@ -1,35 +1,31 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { type PropType, computed } from "vue";
+import type { PatchNotesModuleOptions } from "@/classes/audio-modules/PatchNotesModule";
 
 const props = defineProps({
   options: {
-    type: Object,
+    type: Object as PropType<PatchNotesModuleOptions>,
     required: true,
   },
 });
 
 const emit = defineEmits(["options-updated"]);
-const localNotes = ref(props.options.notes ?? "");
 
-watch(
-  () => props.options.notes,
-  (newValue) => {
-    if (localNotes.value === newValue) return;
-    localNotes.value = newValue ?? "";
+const notes = computed({
+  get() {
+    return props.options.notes;
   },
-  { immediate: true },
-);
-
-watch(localNotes, (newValue) => {
-  if (newValue === props.options.notes) return;
-  emit("options-updated", { notes: newValue });
+  set(value) {
+    emit("options-updated", { notes: value });
+  }
 });
+
 </script>
 
 <template>
   <v-textarea
     label="notes"
-    v-model="localNotes"
+    v-model="notes"
     @mousedown.stop
     @touchstart.stop
     hide-details
@@ -38,5 +34,3 @@ watch(localNotes, (newValue) => {
     auto-grow
   ></v-textarea>
 </template>
-
-<style scoped></style>
