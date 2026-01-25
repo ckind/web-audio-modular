@@ -78,7 +78,7 @@ export default function usePatchPersistence(options: PatchPersistenceOptions) {
       const url = URL.createObjectURL(content);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "patch.wam.zip";
+      a.download = "untitled.wamp";
       a.click();
 
       URL.revokeObjectURL(url);
@@ -172,7 +172,7 @@ export default function usePatchPersistence(options: PatchPersistenceOptions) {
   const loadPatch = () => {
     const input = document.createElement("input");
     input.type = "file";
-    input.accept = "*.wam.zip";
+    input.accept = ".wamp";
     input.onchange = async (e: Event) => {
       options.onBeforeLoad?.();
 
