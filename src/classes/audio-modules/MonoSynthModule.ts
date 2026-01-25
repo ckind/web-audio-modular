@@ -201,8 +201,11 @@ export default class MonoSynthModule extends AudioModule<MonoSynthModuleOptions>
     ) {
       const noteNumber = data[1]!; // MIDI note number (0-127)
       this._notesDown.delete(noteNumber);
-      this._ampEnvNode.triggerRelease(time);
-      this._filterEnvNode.triggerRelease(time);
+
+      if (this._notesDown.size === 0) {
+        this._ampEnvNode.triggerRelease(time);
+        this._filterEnvNode.triggerRelease(time);
+      }
     } else if ((data[0]! & 0xf0) === 0xb0 && data[1]! === 64) {
       const sustainOn = data[2]! >= 64;
       if (sustainOn) {
