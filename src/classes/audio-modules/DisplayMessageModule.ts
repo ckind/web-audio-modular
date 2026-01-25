@@ -5,7 +5,7 @@ import MessageInputNode from "@/classes/MessageInputNode";
 import type { MessageBusDataType } from "@/types/connectionTypes";
 
 type DisplayMessageModuleOptions = {
-  message: "";
+  message: string;
 };
 
 const getDefaultOptions = (): DisplayMessageModuleOptions => ({
@@ -30,7 +30,7 @@ export default class DisplayMessageModule extends AudioModule<DisplayMessageModu
 
   messageCallback(time: number, data?: MessageBusDataType): void {
     if (this.updateUIState) {
-      this.updateUIState({ message: data });
+      this.updateUIState({ message: data?.toString() ?? "" });
     }
   }
 
