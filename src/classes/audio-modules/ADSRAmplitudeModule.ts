@@ -60,13 +60,13 @@ export default class ADSRAmplitudeModule extends AudioModule<ADSRAmplitudeModule
   }
 
   triggerAttackCallback(time: number, data?: MessageBusDataType) {
-    // todo: convert incoming string to number?
-    if (data !== undefined && typeof data === "number") {
-      if (isNormalRange(data)) {
-        this._ampEnvNode.triggerAttack(time, data);
+    const num = Number(data);
+    if (data && !isNaN(num)) {
+      if (isNormalRange(num)) {
+        this._ampEnvNode.triggerAttack(time, num);
         return;
-      } else if (isMidiRange(data)) {
-        const normalizedValue = data / 127;
+      } else if (isMidiRange(num)) {
+        const normalizedValue = num / 127;
         this._ampEnvNode.triggerAttack(time, normalizedValue);
         return;
       }

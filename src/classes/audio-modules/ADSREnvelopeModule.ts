@@ -50,7 +50,7 @@ export default class ADSREnvelopeModule extends AudioModule<ADSREnvelopeModuleOp
       new ModuleInput(
         "trigger-release",
         new MessageInputNode(this.triggerReleaseCallback.bind(this)),
-      )
+      ),
     ];
   }
 
@@ -59,13 +59,13 @@ export default class ADSREnvelopeModule extends AudioModule<ADSREnvelopeModuleOp
   }
 
   triggerAttackCallback(time: number, data?: MessageBusDataType) {
-    // todo: convert incoming string to number?
-    if (data !== undefined && typeof data === "number") {
-      if (isNormalRange(data)) {
-        this._envelopeNode.triggerAttack(time, data);
+    const num = Number(data);
+    if (data && !isNaN(num)) {
+      if (isNormalRange(num)) {
+        this._envelopeNode.triggerAttack(time, num);
         return;
-      } else if (isMidiRange(data)) {
-        const normalizedValue = data / 127;
+      } else if (isMidiRange(num)) {
+        const normalizedValue = num / 127;
         this._envelopeNode.triggerAttack(time, normalizedValue);
         return;
       }
