@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ADSREnvelope: typeof import('./src/components/ADSREnvelope.vue')['default']
     AudioFilePicker: typeof import('./src/components/AudioFilePicker.vue')['default']
     ButtonTrigModule: typeof import('./src/components/gui-module-components/ButtonTrigModule.vue')['default']
     DisplayMessageModule: typeof import('./src/components/gui-module-components/DisplayMessageModule.vue')['default']
@@ -20,6 +21,7 @@ declare module 'vue' {
     MidiCCModule: typeof import('./src/components/gui-module-components/MidiCCModule.vue')['default']
     MidiInputModule: typeof import('./src/components/gui-module-components/MidiInputModule.vue')['default']
     MidiNoteMessageModule: typeof import('./src/components/gui-module-components/MidiNoteMessageModule.vue')['default']
+    MonoSynthModule: typeof import('./src/components/gui-module-components/MonoSynthModule.vue')['default']
     NumberInput: typeof import('./src/components/NumberInput.vue')['default']
     PatchCable: typeof import('./src/components/PatchCable.vue')['default']
     PatchConnection: typeof import('./src/components/PatchConnection.vue')['default']

@@ -39,6 +39,7 @@ import DelayModule from "@/classes/audio-modules/DelayModule";
 import SamplerModule from "@/classes/audio-modules/SamplerModule";
 import PlayerModule from "@/classes/audio-modules/PlayerModule";
 import GrainPlayerModule from "@/classes/audio-modules/GrainPlayerModule";
+import MonoSynthModule from "@/classes/audio-modules/MonoSynthModule";
 import PulseOscillatorModule from "@/classes/audio-modules/PulseOscillatorModule";
 import FMOscillatorModule from "@/classes/audio-modules/FMOscillatorModule";
 import ConstantSignalModule from "@/classes/audio-modules/ConstantSignalModule";
@@ -113,6 +114,8 @@ export function createAudioModule(
       return new MidiNumToHzModule(id, options);
     case "sampler":
       return new SamplerModule(id, options);
+    case "synth-mono":
+      return new MonoSynthModule(id, options);
     case "sampler-plus":
       return new SamplerPlusModule(id, options);
     case "player":

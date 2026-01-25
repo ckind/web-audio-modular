@@ -13,6 +13,7 @@ import PlayerModule from "@/components/gui-module-components/PlayerModule.vue";
 import GrainPlayerModule from "@/components/gui-module-components/GrainPlayerModule.vue";
 import RotaryKnobModule from "@/components/gui-module-components/RotaryKnobModule.vue";
 import UISwitchModule from "@/components/gui-module-components/UISwitchModule.vue";
+import MonoSynthModule from "@/components/gui-module-components/MonoSynthModule.vue";
 
 export default function useGUIComponents() {
   const components: Record<string, Component> = {
@@ -29,7 +30,8 @@ export default function useGUIComponents() {
     PlayerModule,
     GrainPlayerModule,
     RotaryKnobModule,
-    UISwitchModule
+    UISwitchModule,
+    MonoSynthModule,
   };
 
   return components;

@@ -586,6 +586,22 @@ export const availableModules: ModuleDescriptor[] = [
       },
     ],
   },
+  {
+    title: "synth-mono",
+    type: "synth-mono",
+    GUIComponent: "MonoSynthModule",
+    categories: ["instrument", "signal"],
+    description:
+      "A simple monophonic synth with two oscillators, noise source, filter and dedicated envelopes for amp and filter.",
+    inputDescriptions: [],
+    outputDescriptions: [
+      {
+        name: "output",
+        description: "Synth audio output",
+        type: "signal",
+      },
+    ],
+  },
   // {
   //   title: "sampler-plus",
   //   type: "sampler-plus",

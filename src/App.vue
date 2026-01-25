@@ -12,6 +12,7 @@ const appColors = useAppColors();
 const userSettings = useUserSettings();
 
 const updateAppColors = () => {
+  appColors.setPrimaryColor(theme.current.value.colors["primary"] ?? "#fff");
   appColors.setSignalColor(theme.current.value.colors["secondary"] ?? "#fff");
   appColors.setMessageBusColor(
     theme.current.value.colors["on-surface"] ?? "#fff",
