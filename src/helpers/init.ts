@@ -33,8 +33,8 @@ export function init(callback?: () => void) {
   onMounted(async () => {
     const ctx = await createAudioContext();
     await registerAudioWorklets(ctx, [
-      "./classes/audio-worklets/ScaleWorkletProcessor.js",
-      "./classes/audio-worklets/SamplerPlusWorkletProcessor.js",
+      "../classes/audio-worklets/ScaleWorkletProcessor.js",
+      "../classes/audio-worklets/SamplerPlusWorkletProcessor.js",
     ]);
 
     Tone.setContext(ctx);
