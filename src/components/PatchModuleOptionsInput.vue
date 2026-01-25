@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
+import { shallowEqual } from "@/helpers/options";
 
 const props = defineProps({
   options: {
@@ -17,22 +18,6 @@ const emit = defineEmits(["options-updated"]);
 const stringOptions = ref<Record<string, string>>({
   ...props.options,
 });
-
-const shallowEqual = (
-  a: Record<string, any>,
-  b: Record<string, any>,
-): boolean => {
-  const aKeys = Object.keys(a);
-  const bKeys = Object.keys(b);
-
-  if (aKeys.length !== bKeys.length) return false;
-
-  for (const key of aKeys) {
-    if (a[key] !== b[key]) return false;
-  }
-
-  return true;
-};
 
 watch(
   () => props.options,

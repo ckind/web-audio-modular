@@ -1,6 +1,6 @@
 import * as Tone from "tone";
 import { onMounted } from "vue";
-import { createAudioContext } from "./composables/useAudioGlobalContext";
+import { createAudioContext } from "../composables/useAudioGlobalContext";
 
 function setupAutoResume() {
   document.addEventListener(

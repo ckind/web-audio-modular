@@ -8,7 +8,7 @@ import type { MessageBusDataType } from "@/types/connectionTypes";
 import {
   semitonesToFrequencyMult,
   centsToFrequencyMult,
-} from "@/units";
+} from "@/helpers/units";
 
 export type SampleSlot = {
   number: number;

@@ -7,7 +7,7 @@ import * as Tone from "tone";
 import type { MessageBusDataType } from "@/types/connectionTypes";
 import ResourceFile from "@/classes/ResourceFile";
 import ResourceFileManager from "@/classes/ResourceFileManager";
-import { clamp } from "@/units";
+import { clamp } from "@/helpers/units";
 
 export type PlayerModuleOptions = {
   resourceFile: ResourceFile | null;

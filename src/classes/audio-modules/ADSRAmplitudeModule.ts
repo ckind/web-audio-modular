@@ -4,7 +4,7 @@ import ModuleInput from "@/classes/ModuleInput";
 import ModuleOutput from "@/classes/ModuleOutput";
 import MessageInputNode from "@/classes/MessageInputNode";
 import type { MessageBusDataType } from "@/types/connectionTypes";
-import { isNormalRange, isMidiRange } from "@/units";
+import { isNormalRange, isMidiRange } from "@/helpers/units";
 import * as Tone from "tone";
 
 type ADSRAmplitudeModuleOptions = {

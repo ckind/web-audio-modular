@@ -6,6 +6,10 @@ export function centsToFrequencyMult(cents: number): number {
   return Math.pow(2, cents / 1200);
 }
 
+export function midiNoteToFrequency(note: number): number {
+  return 440 * Math.pow(2, (note - 69) / 12);
+}
+
 export function isNormalRange(value: any): value is number {
   return typeof value === "number" && value >= 0 && value <= 1;
 };

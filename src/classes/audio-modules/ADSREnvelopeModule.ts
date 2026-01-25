@@ -5,7 +5,7 @@ import ModuleOutput from "@/classes/ModuleOutput";
 import MessageInputNode from "@/classes/MessageInputNode";
 import * as Tone from "tone";
 import type { MessageBusDataType } from "@/types/connectionTypes";
-import { isNormalRange, isMidiRange } from "@/units";
+import { isNormalRange, isMidiRange } from "@/helpers/units";
 
 type ADSREnvelopeModuleOptions = {
   attack: number;

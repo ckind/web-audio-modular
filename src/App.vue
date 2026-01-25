@@ -5,7 +5,7 @@ import { useTheme } from "vuetify";
 import { useAudioSettings } from "@/store/audioSettings";
 import { usePatchConsole } from "@/store/patchConsole";
 import { useUserSettings } from "@/store/userSettings";
-import { init } from "@/toneInit";
+import { init } from "@/helpers/init";
 
 const theme = useTheme();
 const appColors = useAppColors();

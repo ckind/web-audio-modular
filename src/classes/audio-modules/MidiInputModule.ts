@@ -3,7 +3,7 @@ import type { AudioModuleType } from "@/classes/audio-modules/AudioModule";
 import MessageOutputNode from "@/classes/MessageOutputNode";
 import * as Tone from "tone";
 import ModuleOutput from "@/classes/ModuleOutput";
-import { requestMidiDevices } from "@/midi";
+import { requestMidiDevices } from "@/helpers/midi";
 
 export type MidiInputModuleOptions = {
   availableDevices: MIDIInput[];
