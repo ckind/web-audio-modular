@@ -6,8 +6,8 @@
 
 - the state of a patch is represented by two different models, the PatchGraph which is a serializable model representing the state of the UI instances, and the Patcher class which maintains internal audio resources
 - each model maintains its own representation of the graph and should be completely decoupled from the other
-- consistency in the state of the overall patch is maintained via dedicated methods
-- the module options object represents the state of an audio module (these are strongly typed and defined for each AudioModule class)
+- commuciating state changes between the two is managed via dedicated methods
+- the module options object represents the settings of an audio module (these are strongly typed and defined for each AudioModule class), and is used to recall the state of the module when loading a patch as well as to serialize the module state when saving a patch
 - the `updateOptions` method on the AudioModule class syncs options updates from the UI model to the internal audio module
 - the `updateUIState` callback method syncs options and other relevant GUI data updated from the internal audio module to the UI model
 - `updateUIState(options, guiState)` merges options into the UI instance options and GUI-only state into guiState
@@ -15,9 +15,10 @@
 
 ### ui module data-flow patterns
 
-- module options data flow is one-way: module component → module UI instance (view model) → internal audio module class
-- UI state data flow is one-way: internal module class → module UI instance (view model) → module component
-- the module UI component resolves state changes by listening to UI instance `options` props for internal updates and emitting a (partial) options object via the `options-updated` event to signal user changes
+- patch state data can flow in one of two directions
+- 1. module vue component → module UI instance (view model) → internal audio module class
+- 2. internal audio module class → module UI instance (view model) → module vue component
+- the module vue component resolves state changes by listening to UI instance `options` props for updates from the internal audio module and emitting a (partial) options object via the `options-updated` event to signal changes made by the user in the UI
 
 ### naming and event conventions
 
@@ -33,10 +34,10 @@
 
 ### resource file management
 
-- Resource files (audio samples, etc.) are represented in the UI/patch model by a lightweight `ResourceFile` marker (name + isResourceFile flag). The binary data and Blob URLs are managed separately by `ResourceFileManager`.
+- Resource files (audio samples, etc.) are represented in the UI/patch model by a lightweight `ResourceFile` object (name + isResourceFile flag). The binary data and Blob URLs are managed separately by `ResourceFileManager`.
 - Responsibilities:
 	- Persistence (`usePatchPersistence`) — when loading a patch: unzip and `registerResource(name, blob)` for each resource bundle entry. When saving a patch, request the Blob URL for each registered name to extract the blob into the archive. Persistence should NOT `request` or `release` resources for normal runtime consumption — it only registers on load and relies on consumers to `request`/`release`.
-	- UI components — are consumers when they need to read/preview a resource (waveform, metadata). UI components should `registerResource` when the user uploads a new file, and `releaseResource` in their `onUnmounted` or when they replace the uploaded file. For temporary reads (waveform generation), `requestResource` → use → `releaseResource`.
+	- UI components — are consumers when they need to read/preview a resource (waveform, metadata). UI components should `registerResource` when the user uploads a new file, and `releaseResource` in their `onUnmounted` hook or when they replace the uploaded file. For temporary reads (e.g. waveform display), `requestResource` → use → `releaseResource`.
 	- Audio modules — are consumers when they need the Blob URL to load into an audio node. Audio modules should `requestResource` in `updateOptions` and `releaseResource` in `dispose` (or when replacing the resource). They own their own lifetime for playback.
 
 - Rules and invariants:
@@ -44,7 +45,7 @@
 	- Request/Release: A consumer that needs a URL must call `requestResource(name)` and later `releaseResource(name)`. `requestResource` increments refCount; `releaseResource` decrements and will revoke the URL when count reaches zero.
 	- Ownership: The code path that calls `registerResource` should be responsible for releasing that registration (e.g. UI uploads). For load-time registrations, the preferred flow is:
 		1. Persistence (`usePatchPersistence`) registers resource blobs during unzip and reconstructs the patch.
-		2. During reconstruction each audio module or UI component that needs a resource should `requestResource(name)` to explicitly take ownership for runtime use (for example, audio modules typically do this in `updateOptions`).
+		2. During reconstruction each audio module or UI component that needs a resource should `requestResource(name)` to explicitly take ownership for runtime use (for example, audio modules typically do this in `updateOptions` or in their class constructor).
 		3. After reconstruction hands over ownership to consumers, persistence should `releaseResource(name)` for the registrations it created to avoid holding long‑lived references and leaking memory when a resource is removed from the patch.
 		This pattern avoids races, ensures ownership is explicit, and prevents persistence from being a long‑term owner of resources.
 	- Avoid double releases: Consumers must not assume `releaseResource` will be called elsewhere; coordinate ownership clearly (e.g., UI cleans up UI registrations; audio modules clean up audio registrations).
