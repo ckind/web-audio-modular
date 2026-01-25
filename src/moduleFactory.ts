@@ -10,6 +10,7 @@ import LoggerModule from "@/classes/audio-modules/LoggerModule";
 import ScaleModule from "@/classes/audio-modules/ScaleModule";
 import MessageToSignalModule from "@/classes/audio-modules/MessageToSignalModule";
 import SequenceModule from "@/classes/audio-modules/SequenceModule";
+import StepSequencerModule from "@/classes/audio-modules/StepSequencerModule";
 import SliderModule from "@/classes/audio-modules/SliderModule";
 import DisplayMessageModule from "@/classes/audio-modules/DisplayMessageModule";
 import FilterModule from "@/classes/audio-modules/FilterModule";
@@ -52,7 +53,7 @@ export function createAudioModule(
   type: AudioModuleType,
   id: string,
   options?: any,
-): IAudioModule {
+): IAudioModule<Record<string, any>> {
   switch (type) {
     case "speaker-output":
       return new SpeakerOutputModule(id, options);
@@ -76,6 +77,8 @@ export function createAudioModule(
       return new MessageToSignalModule(id, options);
     case "sequence":
       return new SequenceModule(id, options);
+    case "seq-step":
+      return new StepSequencerModule(id, options);
     case "ui-slider":
       return new SliderModule(id, options);
     case "ui-knob":

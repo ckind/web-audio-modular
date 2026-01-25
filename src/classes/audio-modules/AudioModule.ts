@@ -20,6 +20,7 @@ export type AudioModuleType =
   | "msg-sample"
   | "sample-and-hold"
   | "sequence"
+  | "seq-step"
   | "ui-slider"
   | "ui-slider-msg"
   | "msg-display"
@@ -54,23 +55,23 @@ export type AudioModuleType =
 
 export type ModuleId = string;
 
-export interface IAudioModule {
+export interface IAudioModule<TModuleOptions> {
   id: ModuleId;
   type: AudioModuleType;
   inputs: IModuleInput[];
   outputs: IModuleOutput[];
-  options: any;
+  options: TModuleOptions;
 
-  updateOptions(options: Partial<any>): void;
+  updateOptions(options: Partial<TModuleOptions>): void;
   dispose(): void;
-  updateUIState?: UpdateUIStateCallback;
+  updateUIState?: UpdateUIStateCallback<TModuleOptions>;
 }
 
-export type UpdateUIStateCallback = (options: any, guiState?: any) => void;
+export type UpdateUIStateCallback<TModuleOptions> = (options: Partial<TModuleOptions>, guiState?: any) => void;
 
 export default abstract class AudioModule<
   TModuleOptions,
-> implements IAudioModule {
+> implements IAudioModule<TModuleOptions> {
   protected _inputs: IModuleInput[] = [];
   protected _outputs: IModuleOutput[] = [];
   protected _options: TModuleOptions;
@@ -78,7 +79,7 @@ export default abstract class AudioModule<
   public id: ModuleId;
 
   // optional callback used to send UI state data back to the view model
-  public updateUIState?: UpdateUIStateCallback;
+  public updateUIState?: UpdateUIStateCallback<TModuleOptions>;
 
   constructor(id: ModuleId, options: TModuleOptions) {
     this.id = id;

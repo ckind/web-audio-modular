@@ -104,10 +104,10 @@ const addModule = (moduleType: AudioModuleType, guiComponent?: string) => {
     guiComponent: guiComponent,
     guiState: {},
     options: deepCloneModuleOptions(module.options),
-    outputs: module.outputs.map((o) => {
+    outputs: module.outputs.map((o: any) => {
       return { name: o.name, type: o.type };
     }),
-    inputs: module.inputs.map((i) => {
+    inputs: module.inputs.map((i: any) => {
       return { name: i.name, type: i.type };
     }),
     position: {
@@ -119,7 +119,7 @@ const addModule = (moduleType: AudioModuleType, guiComponent?: string) => {
   patcher.addModule(module);
   patchGraph.value.modules.push(moduleInstance);
 
-  module.updateUIState = (options: any, guiState?: any) => {
+  module.updateUIState = (options: Partial<any>, guiState?: any) => {
     // need to re-query the graph to reference to exact ui instance 
     const instance = patchGraph.value.modules.find(
       (m) => m.moduleId === moduleInstance.moduleId,

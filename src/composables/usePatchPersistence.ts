@@ -138,7 +138,7 @@ export default function usePatchPersistence(options: PatchPersistenceOptions) {
           deepCloneModuleOptions(m.options),
         );
 
-        module.updateUIState = (options: any, guiState?: any) => {
+        module.updateUIState = (options: Partial<any>, guiState?: any) => {
           if (options) {
             m.options = { ...m.options, ...options };
           }

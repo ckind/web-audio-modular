@@ -14,6 +14,7 @@ import GrainPlayerModule from "@/components/gui-module-components/GrainPlayerMod
 import RotaryKnobModule from "@/components/gui-module-components/RotaryKnobModule.vue";
 import UISwitchModule from "@/components/gui-module-components/UISwitchModule.vue";
 import MonoSynthModule from "@/components/gui-module-components/MonoSynthModule.vue";
+import StepSequencerModule from "@/components/gui-module-components/StepSequencerModule.vue";
 
 export default function useGUIComponents() {
   const components: Record<string, Component> = {
@@ -32,6 +33,7 @@ export default function useGUIComponents() {
     RotaryKnobModule,
     UISwitchModule,
     MonoSynthModule,
+    StepSequencerModule,
   };
 
   return components;

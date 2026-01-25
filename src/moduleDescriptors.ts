@@ -24,6 +24,27 @@ export type OutputDescriptor = {
 
 export const availableModules: ModuleDescriptor[] = [
   {
+    title: "seq-step",
+    type: "seq-step",
+    GUIComponent: "StepSequencerModule",
+    categories: ["sequencer", "message-bus"],
+    description: "Step sequencer with configurable patterns and output modes (Quad, Duo, Single).",
+    inputDescriptions: [
+      {
+        name: "trigger-input",
+        description: "Trigger input to advance the sequencer",
+        type: "message-bus",
+      },
+    ],
+    outputDescriptions: [
+      {
+        name: "sequence-output",
+        description: "Sequenced message output (Quad, Duo, or Single mode)",
+        type: "message-bus",
+      },
+    ],
+  },
+  {
     title: "osc",
     type: "osc",
     categories: ["source", "signal"],
@@ -201,7 +222,7 @@ export const availableModules: ModuleDescriptor[] = [
   {
     title: "sequence",
     type: "sequence",
-    categories: ["timing", "message-bus"],
+    categories: ["sequencer", "message-bus"],
     description: "Sequencer for generating timed messages in patterns.",
     inputDescriptions: [],
     outputDescriptions: [
