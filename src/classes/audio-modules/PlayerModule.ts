@@ -7,6 +7,7 @@ import * as Tone from "tone";
 import type { MessageBusDataType } from "@/types/connectionTypes";
 import ResourceFile from "@/classes/ResourceFile";
 import ResourceFileManager from "@/classes/ResourceFileManager";
+import { clamp } from "@/units";
 
 export type PlayerModuleOptions = {
   resourceFile: ResourceFile | null;
@@ -86,12 +87,15 @@ export default class PlayerModule extends AudioModule<PlayerModuleOptions> {
   }
 
   startPositionInputCallback(time: number, data?: MessageBusDataType): void {
-    // todo: validate data is between 0 and 1
-    Tone.getTransport().schedule(() => {
-      if (this._player.loaded && typeof data === "number") {
-        this._startPositionSeconds = data * this._player.buffer.duration;
-      }
-    }, time);
+    const num = Number(data);
+    if (data && !isNaN(num)) {
+      Tone.getTransport().schedule(() => {
+        if (this._player.loaded) {
+          this._startPositionSeconds =
+            clamp(num, 0, 1) * this._player.buffer.duration;
+        }
+      }, time);
+    }
   }
 
   updateOptions(newOptions: Partial<PlayerModuleOptions>): void {

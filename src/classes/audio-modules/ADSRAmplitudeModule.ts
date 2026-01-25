@@ -4,6 +4,7 @@ import ModuleInput from "@/classes/ModuleInput";
 import ModuleOutput from "@/classes/ModuleOutput";
 import MessageInputNode from "@/classes/MessageInputNode";
 import type { MessageBusDataType } from "@/types/connectionTypes";
+import { isNormalRange, isMidiRange } from "@/units";
 import * as Tone from "tone";
 
 type ADSRAmplitudeModuleOptions = {
@@ -19,14 +20,6 @@ const getDefaultOptions = (): ADSRAmplitudeModuleOptions => ({
   sustain: 0.5,
   release: 1,
 });
-
-const isNormalRange = (value: any): value is number => {
-  return typeof value === "number" && value >= 0 && value <= 1;
-};
-
-const isMidiRange = (value: any): value is number => {
-  return Number.isInteger(value) && value >= 0 && value <= 127;
-};
 
 export default class ADSRAmplitudeModule extends AudioModule<ADSRAmplitudeModuleOptions> {
   private _ampEnvNode: Tone.AmplitudeEnvelope;
