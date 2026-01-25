@@ -12,7 +12,7 @@ type ConvolutionReverbModuleOptions = {
 
 const getDefaultOptions = (): ConvolutionReverbModuleOptions => ({
   preDelay: 0.2,
-  decay: 4,
+  decay: 12,
   wet: 1,
 });
 
