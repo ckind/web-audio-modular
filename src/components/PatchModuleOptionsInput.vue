@@ -60,6 +60,7 @@ watch(
 </script>
 
 <template>
+  <!-- todo: v-model.lazy doesn't fire if you click on another element that stops event propogation -->
   <input
     :disabled="disabled"
     v-for="(value, key) in stringOptions"
