@@ -40,7 +40,7 @@ export type AudioModuleType =
   | "env-amp"
   | "str-input"
   | "msg-regex"
-  | "msg-counter"
+  | "num-counter"
   | "msg-mod"
   | "msg-add"
   | "msg-multiply"

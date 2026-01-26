@@ -7,17 +7,17 @@ import ModuleInput from "../ModuleInput";
 import * as Tone from "tone";
 import type { MessageBusDataType } from "@/types/connectionTypes";
 
-type MessageCounterModuleOptions = {};
+type NumberCounterModuleOptions = {};
 
-const getDefaultOptions = (): MessageCounterModuleOptions => ({});
+const getDefaultOptions = (): NumberCounterModuleOptions => ({});
 
-export default class MessageCounterModule extends AudioModule<MessageCounterModuleOptions> {
+export default class NumberCounterModule extends AudioModule<NumberCounterModuleOptions> {
   private _messageOutputNode: MessageOutputNode;
   private _incrementInputNode: MessageInputNode;
   private _setInputNode: MessageInputNode;
   private _count = 0;
 
-  constructor(id: string, options?: MessageCounterModuleOptions) {
+  constructor(id: string, options?: NumberCounterModuleOptions) {
     super(id, options ?? getDefaultOptions());
 
     this._incrementInputNode = new MessageInputNode(
@@ -37,7 +37,7 @@ export default class MessageCounterModule extends AudioModule<MessageCounterModu
   }
 
   get type(): AudioModuleType {
-    return "msg-counter";
+    return "num-counter";
   }
 
   private _incrementInputCallback(
@@ -54,7 +54,7 @@ export default class MessageCounterModule extends AudioModule<MessageCounterModu
     }
   }
 
-  updateOptions(options: Partial<MessageCounterModuleOptions>): void {}
+  updateOptions(options: Partial<NumberCounterModuleOptions>): void {}
 
   dispose(): void {}
 }

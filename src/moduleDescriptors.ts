@@ -647,26 +647,26 @@ export const availableModules: ModuleDescriptor[] = [
   //   ],
   // },
   {
-    title: "msg-counter",
-    type: "msg-counter",
+    title: "num-counter",
+    type: "num-counter",
     categories: ["message", "message-bus"],
-    description: "Counts messages and outputs the current count.",
+    description: "Keeps a counter and outputs the current value",
     inputDescriptions: [
       {
         name: "increment",
-        description: "Input message to increment the counter",
+        description: "Input message (any) to increment the counter",
         type: "message-bus",
       },
       {
         name: "set",
-        description: "Input message to set the counter to a specific value",
+        description: "Input message (number) to set the counter to a specific value",
         type: "message-bus",
       },
     ],
     outputDescriptions: [
       {
         name: "counter-output",
-        description: "Output message with the current counter value",
+        description: "Output message (number) with the current counter value",
         type: "message-bus",
       },
     ],

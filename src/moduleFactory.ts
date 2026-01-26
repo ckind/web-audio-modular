@@ -27,7 +27,7 @@ import StringInputModule from "@/classes/audio-modules/StringInputModule";
 import MidiNumToHzModule from "@/classes/audio-modules/MidiNumToHzModule";
 import SamplerPlusModule from "@/classes/audio-modules/SamplerPlusModule";
 import MessageRegexModule from "@/classes/audio-modules/MessageRegexModule";
-import MessageCounterModule from "@/classes/audio-modules/MessageCounterModule";
+import MessageCounterModule from "@/classes/audio-modules/NumberCounterModule";
 import MessageModModule from "@/classes/audio-modules/MessageModModule";
 import MessageAddModule from "@/classes/audio-modules/MessageAddModule";
 import MessageMultiplyModule from "@/classes/audio-modules/MessageMultiplyModule";
@@ -128,7 +128,7 @@ export function createAudioModule(
       return new GrainPlayerModule(id, options);
     case "msg-regex":
       return new MessageRegexModule(id, options);
-    case "msg-counter":
+    case "num-counter":
       return new MessageCounterModule(id, options);
     case "msg-mod":
       return new MessageModModule(id, options);
