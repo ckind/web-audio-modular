@@ -7,19 +7,19 @@ import ModuleInput from "../ModuleInput";
 import type { MessageBusDataType } from "@/types/connectionTypes";
 import { isAnyArray } from "@/helpers/message";
 
-export type MessageListElementModuleOptions = {
+export type ListElementModuleOptions = {
   index: number;
 };
 
-const getDefaultOptions = (): MessageListElementModuleOptions => ({
+const getDefaultOptions = (): ListElementModuleOptions => ({
   index: 0,
 });
 
-export default class MessageListElementModule extends AudioModule<MessageListElementModuleOptions> {
+export default class ListElementModule extends AudioModule<ListElementModuleOptions> {
   private _messageInputNode: MessageInputNode;
   private _messageOutputNode: MessageOutputNode;
 
-  constructor(id: string, options?: MessageListElementModuleOptions) {
+  constructor(id: string, options?: ListElementModuleOptions) {
     super(id, options ?? getDefaultOptions());
 
     this._messageInputNode = new MessageInputNode(
@@ -32,7 +32,7 @@ export default class MessageListElementModule extends AudioModule<MessageListEle
   }
 
   get type(): AudioModuleType {
-    return "msg-list-element";
+    return "list-element";
   }
 
   private _messageInputCallback(time: number, data?: MessageBusDataType): void {
@@ -47,7 +47,7 @@ export default class MessageListElementModule extends AudioModule<MessageListEle
     }
   }
 
-  updateOptions(options: Partial<MessageListElementModuleOptions>): void {
+  updateOptions(options: Partial<ListElementModuleOptions>): void {
     if (options.index !== undefined) {
       this._options.index = options.index;
     }

@@ -734,14 +734,14 @@ export const availableModules: ModuleDescriptor[] = [
     ],
   },
   {
-    title: "msg-list-element",
-    type: "msg-list-element",
+    title: "list-element",
+    type: "list-element",
     categories: ["message", "message-bus"],
-    description: "Extracts a specific element from a message array by index.",
+    description: "Extracts a specific element from a message list by index.",
     inputDescriptions: [
       {
         name: "input",
-        description: "Array message to extract from",
+        description: "list message to extract from",
         type: "message-bus",
       },
     ],
