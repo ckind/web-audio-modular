@@ -204,7 +204,8 @@ export const availableModules: ModuleDescriptor[] = [
     title: "num-to-signal",
     type: "num-to-signal",
     categories: ["message", "signal"],
-    description: "Converts discrete number messages into continuous control signals.",
+    description:
+      "Converts discrete number messages into continuous control signals.",
     inputDescriptions: [
       {
         name: "input",
@@ -659,7 +660,8 @@ export const availableModules: ModuleDescriptor[] = [
       },
       {
         name: "set",
-        description: "Input message (number) to set the counter to a specific value",
+        description:
+          "Input message (number) to set the counter to a specific value",
         type: "message-bus",
       },
     ],
@@ -781,7 +783,8 @@ export const availableModules: ModuleDescriptor[] = [
     title: "msg-regex",
     type: "msg-regex",
     categories: ["message", "message-bus"],
-    description: "Filters messages using regular expression pattern matching.",
+    description:
+      "Filters messages using regular expression pattern matching. The incoming message is converted to a string, checked against the regex, and forwarded as its original data type if there is a match.",
     inputDescriptions: [
       { name: "input", description: "Messages to filter", type: "message-bus" },
     ],
