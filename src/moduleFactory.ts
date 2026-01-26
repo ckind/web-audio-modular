@@ -48,7 +48,7 @@ import RotaryKnobModule from "@/classes/audio-modules/RotaryKnobModule";
 import RotaryKnobMessageModule from "@/classes/audio-modules/RotaryKnobMessageModule";
 import UISwitchModule from "@/classes/audio-modules/UISwitchModule";
 import ListElementModule from "@/classes/audio-modules/ListElementModule";
-import MessageListMergeModule from "@/classes/audio-modules/MessageListMergeModule"
+import ListMergeModule from "@/classes/audio-modules/ListMergeModule"
 
 export function createAudioModule(
   type: AudioModuleType,
@@ -138,8 +138,8 @@ export function createAudioModule(
       return new NumberMultiplyModule(id, options);
     case "list-element":
       return new ListElementModule(id, options);
-    case "msg-list-merge":
-      return new MessageListMergeModule(id, options);
+    case "list-merge":
+      return new ListMergeModule(id, options);
     case "msg-sample":
       return new MessageSampleSignalModule(id, options);
     case "sample-and-hold":

@@ -7,17 +7,17 @@ import ModuleInput from "../ModuleInput";
 import type { MessageBusDataType } from "@/types/connectionTypes";
 import { mergeMessageElements } from "@/helpers/message.ts";
 
-export type MessageListElementModuleOptions = {};
+export type ListElementModuleOptions = {};
 
-const getDefaultOptions = (): MessageListElementModuleOptions => ({});
+const getDefaultOptions = (): ListElementModuleOptions => ({});
 
-export default class MessageListElementModule extends AudioModule<MessageListElementModuleOptions> {
+export default class ListElementModule extends AudioModule<ListElementModuleOptions> {
   private _messageInput1Node: MessageInputNode;
   private _messageInput2Node: MessageInputNode;
   private _messageOutputNode: MessageOutputNode;
   private _store: Array<MessageBusDataType | null> = [null, null];
 
-  constructor(id: string, options?: MessageListElementModuleOptions) {
+  constructor(id: string, options?: ListElementModuleOptions) {
     super(id, options ?? getDefaultOptions());
 
     this._messageInput1Node = new MessageInputNode(
@@ -38,7 +38,7 @@ export default class MessageListElementModule extends AudioModule<MessageListEle
   }
 
   get type(): AudioModuleType {
-    return "msg-list-merge";
+    return "list-merge";
   }
 
   private _messageInputCallback(
@@ -62,7 +62,7 @@ export default class MessageListElementModule extends AudioModule<MessageListEle
     }
   }
 
-  updateOptions(options: Partial<MessageListElementModuleOptions>): void {}
+  updateOptions(options: Partial<ListElementModuleOptions>): void {}
 
   dispose(): void {}
 }

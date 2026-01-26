@@ -754,8 +754,8 @@ export const availableModules: ModuleDescriptor[] = [
     ],
   },
   {
-    title: "msg-list-merge",
-    type: "msg-list-merge",
+    title: "list-merge",
+    type: "list-merge",
     categories: ["message", "message-bus"],
     description:
       "Merge incoming messages into a single list. When the first message arrives on either input 1 or input 2, it is stored. When the next message arrives on the other input, a list containing both messages is send to the output and the store is cleared. List inputs are concatenated together.",
