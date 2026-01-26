@@ -46,6 +46,7 @@ export type AudioModuleType =
   | "msg-multiply"
   | "midi-num-to-hz"
   | "msg-list-element"
+  | "msg-list-merge"
   | "sampler"
   | "sampler-plus"
   | "player"

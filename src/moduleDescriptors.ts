@@ -28,7 +28,8 @@ export const availableModules: ModuleDescriptor[] = [
     type: "seq-step",
     GUIComponent: "StepSequencerModule",
     categories: ["sequencer", "message-bus"],
-    description: "Step sequencer with configurable patterns and output modes (Quad, Duo, Single).",
+    description:
+      "Step sequencer with configurable patterns and output modes (Quad, Duo, Single).",
     inputDescriptions: [
       {
         name: "trigger-input",
@@ -709,7 +710,8 @@ export const availableModules: ModuleDescriptor[] = [
         type: "message-bus",
       },
     ],
-  },  {
+  },
+  {
     title: "msg-multiply",
     type: "msg-multiply",
     categories: ["message"],
@@ -735,12 +737,42 @@ export const availableModules: ModuleDescriptor[] = [
     categories: ["message", "message-bus"],
     description: "Extracts a specific element from a message array by index.",
     inputDescriptions: [
-      { name: "input", description: "Array message to extract from", type: "message-bus" },
+      {
+        name: "input",
+        description: "Array message to extract from",
+        type: "message-bus",
+      },
     ],
     outputDescriptions: [
       {
         name: "output",
         description: "Extracted element at specified index",
+        type: "message-bus",
+      },
+    ],
+  },
+  {
+    title: "msg-list-merge",
+    type: "msg-list-merge",
+    categories: ["message", "message-bus"],
+    description:
+      "Merge incoming messages into a single list. When the first message arrives on either input 1 or input 2, it is stored. When the next message arrives on the other input, a list containing both messages is send to the output and the store is cleared. List inputs are concatenated together.",
+    inputDescriptions: [
+      {
+        name: "input-1",
+        description: "Accepts any message type",
+        type: "message-bus",
+      },
+      {
+        name: "input-2",
+        description: "Accepts any message type",
+        type: "message-bus",
+      },
+    ],
+    outputDescriptions: [
+      {
+        name: "output",
+        description: "Conjoined inputs",
         type: "message-bus",
       },
     ],

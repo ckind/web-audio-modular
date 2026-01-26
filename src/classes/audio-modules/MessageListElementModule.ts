@@ -5,6 +5,7 @@ import MessageInputNode from "@/classes/MessageInputNode";
 import ModuleOutput from "@/classes/ModuleOutput";
 import ModuleInput from "../ModuleInput";
 import type { MessageBusDataType } from "@/types/connectionTypes";
+import { isAnyArray } from "@/helpers/message";
 
 export type MessageListElementModuleOptions = {
   index: number;
@@ -13,10 +14,6 @@ export type MessageListElementModuleOptions = {
 const getDefaultOptions = (): MessageListElementModuleOptions => ({
   index: 0,
 });
-
-function isAnyArray(value: any): boolean {
-  return Array.isArray(value) || ArrayBuffer.isView(value);
-}
 
 export default class MessageListElementModule extends AudioModule<MessageListElementModuleOptions> {
   private _messageInputNode: MessageInputNode;
