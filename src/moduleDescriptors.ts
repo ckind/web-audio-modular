@@ -692,21 +692,21 @@ export const availableModules: ModuleDescriptor[] = [
     ],
   },
   {
-    title: "msg-add",
-    type: "msg-add",
+    title: "num-add",
+    type: "num-add",
     categories: ["message", "message-bus"],
-    description: "Performs addition on message values.",
+    description: "Performs addition on number messages.",
     inputDescriptions: [
       {
         name: "input",
-        description: "Input message value",
+        description: "Input message (number) value",
         type: "message-bus",
       },
     ],
     outputDescriptions: [
       {
         name: "output",
-        description: "Output message with addition result",
+        description: "Output message (number) with addition result",
         type: "message-bus",
       },
     ],

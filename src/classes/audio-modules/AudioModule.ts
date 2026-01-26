@@ -42,7 +42,7 @@ export type AudioModuleType =
   | "msg-regex"
   | "num-counter"
   | "msg-mod"
-  | "msg-add"
+  | "num-add"
   | "msg-multiply"
   | "midi-num-to-hz"
   | "msg-list-element"
