@@ -201,10 +201,10 @@ export const availableModules: ModuleDescriptor[] = [
     ],
   },
   {
-    title: "msg-to-signal",
-    type: "msg-to-signal",
+    title: "num-to-signal",
+    type: "num-to-signal",
     categories: ["message", "signal"],
-    description: "Converts discrete messages into continuous control signals.",
+    description: "Converts discrete number messages into continuous control signals.",
     inputDescriptions: [
       {
         name: "input",

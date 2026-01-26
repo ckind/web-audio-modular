@@ -16,7 +16,7 @@ export type AudioModuleType =
   | "logger"
   | "scale"
   | "scale-exp"
-  | "msg-to-signal"
+  | "num-to-signal"
   | "msg-sample"
   | "sample-and-hold"
   | "sequence"

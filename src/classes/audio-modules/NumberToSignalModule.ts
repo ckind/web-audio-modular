@@ -6,16 +6,16 @@ import MessageInputNode from "../MessageInputNode";
 import ModuleOutput from "../ModuleOutput";
 import type { MessageBusDataType } from "@/types/connectionTypes";
 
-type MessageToSignalModuleOptions = {};
+type NumberToSignalModuleOptions = {};
 
-const getDefaultOptions = (): MessageToSignalModuleOptions => ({});
+const getDefaultOptions = (): NumberToSignalModuleOptions => ({});
 
-export default class MessageToSignalModule extends AudioModule<MessageToSignalModuleOptions> {
+export default class NumberToSignalModule extends AudioModule<NumberToSignalModuleOptions> {
   private _signal: Tone.Signal;
 
   constructor(
     id: string,
-    options?: MessageToSignalModuleOptions
+    options?: NumberToSignalModuleOptions
   ) {
     super(id, options ?? getDefaultOptions());
 
@@ -27,7 +27,7 @@ export default class MessageToSignalModule extends AudioModule<MessageToSignalMo
   }
 
   get type(): AudioModuleType {
-    return "msg-to-signal";
+    return "num-to-signal";
   }
 
   private _messageCallback(time: number, data?: MessageBusDataType) {
@@ -39,7 +39,7 @@ export default class MessageToSignalModule extends AudioModule<MessageToSignalMo
     }
   }
 
-  updateOptions(options: Partial<MessageToSignalModuleOptions>): void {
+  updateOptions(options: Partial<NumberToSignalModuleOptions>): void {
     // No options to update for message to signal module
   }
 

@@ -8,7 +8,7 @@ import GainModule from "@/classes/audio-modules/GainModule";
 import ClockModule from "@/classes/audio-modules/ClockModule";
 import LoggerModule from "@/classes/audio-modules/LoggerModule";
 import ScaleModule from "@/classes/audio-modules/ScaleModule";
-import MessageToSignalModule from "@/classes/audio-modules/MessageToSignalModule";
+import NumberToSignalModule from "@/classes/audio-modules/NumberToSignalModule";
 import SequenceModule from "@/classes/audio-modules/SequenceModule";
 import StepSequencerModule from "@/classes/audio-modules/StepSequencerModule";
 import SliderModule from "@/classes/audio-modules/SliderModule";
@@ -74,8 +74,8 @@ export function createAudioModule(
       return new LoggerModule(id, options);
     case "scale":
       return new ScaleModule(id, options);
-    case "msg-to-signal":
-      return new MessageToSignalModule(id, options);
+    case "num-to-signal":
+      return new NumberToSignalModule(id, options);
     case "sequence":
       return new SequenceModule(id, options);
     case "seq-step":
