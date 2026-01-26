@@ -30,7 +30,7 @@ import MessageRegexModule from "@/classes/audio-modules/MessageRegexModule";
 import MessageCounterModule from "@/classes/audio-modules/NumberCounterModule";
 import NumberModModule from "@/classes/audio-modules/NumberModModule";
 import NumberAddModule from "@/classes/audio-modules/NumberAddModule";
-import MessageMultiplyModule from "@/classes/audio-modules/MessageMultiplyModule";
+import NumberMultiplyModule from "@/classes/audio-modules/NumberMultiplyModule";
 import MessageSampleSignalModule from "@/classes/audio-modules/MessageSampleSignalModule";
 import SampleAndHoldModule from "@/classes/audio-modules/SampleAndHoldModule";
 import FxDelayModule from "@/classes/audio-modules/FxDelayModule";
@@ -134,8 +134,8 @@ export function createAudioModule(
       return new NumberModModule(id, options);
     case "num-add":
       return new NumberAddModule(id, options);
-    case "msg-multiply":
-      return new MessageMultiplyModule(id, options);
+    case "num-multiply":
+      return new NumberMultiplyModule(id, options);
     case "msg-list-element":
       return new MessageListElementModule(id, options);
     case "msg-list-merge":

@@ -3,23 +3,22 @@ import type { AudioModuleType } from "@/classes/audio-modules/AudioModule";
 import MessageOutputNode from "@/classes/MessageOutputNode";
 import MessageInputNode from "@/classes/MessageInputNode";
 import ModuleOutput from "@/classes/ModuleOutput";
-import ModuleInput from "../ModuleInput";
-import * as Tone from "tone";
+import ModuleInput from "@/classes/ModuleInput";
 import type { MessageBusDataType } from "@/types/connectionTypes";
 
-export type MessageMultiplyModuleOptions = {
+export type NumberMultiplyModuleOptions = {
   multiplier: number;
 };
 
-const getDefaultOptions = (): MessageMultiplyModuleOptions => ({
+const getDefaultOptions = (): NumberMultiplyModuleOptions => ({
   multiplier: 1,
 });
 
-export default class MessageMultiplyModule extends AudioModule<MessageMultiplyModuleOptions> {
+export default class NumberMultiplyModule extends AudioModule<NumberMultiplyModuleOptions> {
   private _messageInputNode: MessageInputNode;
   private _messageOutputNode: MessageOutputNode;
 
-  constructor(id: string, options?: MessageMultiplyModuleOptions) {
+  constructor(id: string, options?: NumberMultiplyModuleOptions) {
     super(id, options ?? getDefaultOptions());
 
     this._messageInputNode = new MessageInputNode(
@@ -32,7 +31,7 @@ export default class MessageMultiplyModule extends AudioModule<MessageMultiplyMo
   }
 
   get type(): AudioModuleType {
-    return "msg-multiply";
+    return "num-multiply";
   }
 
   private _messageInputCallback(time: number, data?: MessageBusDataType): void {
@@ -45,7 +44,7 @@ export default class MessageMultiplyModule extends AudioModule<MessageMultiplyMo
     }
   }
 
-  updateOptions(options: Partial<MessageMultiplyModuleOptions>): void {
+  updateOptions(options: Partial<NumberMultiplyModuleOptions>): void {
     if (options.multiplier !== undefined) {
       this._options.multiplier = options.multiplier;
     }
