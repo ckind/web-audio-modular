@@ -3,23 +3,22 @@ import type { AudioModuleType } from "@/classes/audio-modules/AudioModule";
 import MessageOutputNode from "@/classes/MessageOutputNode";
 import MessageInputNode from "@/classes/MessageInputNode";
 import ModuleOutput from "@/classes/ModuleOutput";
-import ModuleInput from "../ModuleInput";
-import * as Tone from "tone";
+import ModuleInput from "@/classes/ModuleInput";
 import type { MessageBusDataType } from "@/types/connectionTypes";
 
-export type MessageModModuleOptions = {
+export type NumberModModuleOptions = {
   divisor: number;
 };
 
-const getDefaultOptions = (): MessageModModuleOptions => ({
+const getDefaultOptions = (): NumberModModuleOptions => ({
   divisor: 12,
 });
 
-export default class MessageModModule extends AudioModule<MessageModModuleOptions> {
+export default class NumberModModule extends AudioModule<NumberModModuleOptions> {
   private _messageInputNode: MessageInputNode;
   private _messageOutputNode: MessageOutputNode;
 
-  constructor(id: string, options?: MessageModModuleOptions) {
+  constructor(id: string, options?: NumberModModuleOptions) {
     super(id, options ?? getDefaultOptions());
 
     this._messageInputNode = new MessageInputNode(
@@ -32,7 +31,7 @@ export default class MessageModModule extends AudioModule<MessageModModuleOption
   }
 
   get type(): AudioModuleType {
-    return "msg-mod";
+    return "num-mod";
   }
 
   private _messageInputCallback(time: number, data?: MessageBusDataType): void {
@@ -45,7 +44,7 @@ export default class MessageModModule extends AudioModule<MessageModModuleOption
     }
   }
 
-  updateOptions(options: Partial<MessageModModuleOptions>): void {
+  updateOptions(options: Partial<NumberModModuleOptions>): void {
     if (options.divisor !== undefined) {
       this._options.divisor = options.divisor;
     }

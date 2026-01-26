@@ -28,7 +28,7 @@ import MidiNumToHzModule from "@/classes/audio-modules/MidiNumToHzModule";
 import SamplerPlusModule from "@/classes/audio-modules/SamplerPlusModule";
 import MessageRegexModule from "@/classes/audio-modules/MessageRegexModule";
 import MessageCounterModule from "@/classes/audio-modules/NumberCounterModule";
-import MessageModModule from "@/classes/audio-modules/MessageModModule";
+import NumberModModule from "@/classes/audio-modules/NumberModModule";
 import NumberAddModule from "@/classes/audio-modules/NumberAddModule";
 import MessageMultiplyModule from "@/classes/audio-modules/MessageMultiplyModule";
 import MessageSampleSignalModule from "@/classes/audio-modules/MessageSampleSignalModule";
@@ -130,8 +130,8 @@ export function createAudioModule(
       return new MessageRegexModule(id, options);
     case "num-counter":
       return new MessageCounterModule(id, options);
-    case "msg-mod":
-      return new MessageModModule(id, options);
+    case "num-mod":
+      return new NumberModModule(id, options);
     case "num-add":
       return new NumberAddModule(id, options);
     case "msg-multiply":

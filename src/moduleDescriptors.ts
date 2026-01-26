@@ -672,21 +672,21 @@ export const availableModules: ModuleDescriptor[] = [
     ],
   },
   {
-    title: "msg-mod",
-    type: "msg-mod",
+    title: "num-mod",
+    type: "num-mod",
     categories: ["message", "message-bus"],
-    description: "Performs modulo operation on message values.",
+    description: "Performs modulo operation on number message values.",
     inputDescriptions: [
       {
         name: "input",
-        description: "Input message value",
+        description: "Input message (number) value",
         type: "message-bus",
       },
     ],
     outputDescriptions: [
       {
         name: "output",
-        description: "Output message with modulo result",
+        description: "Output message (number) with modulo result",
         type: "message-bus",
       },
     ],
