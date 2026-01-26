@@ -25,7 +25,7 @@ const message = computed({
     <input
       placeholder="enter message..."
       type="text"
-      v-model.lazy="message"
+      v-model="message"
       @dblclick.stop=""
       class="message-input d-inline-block"
     />
