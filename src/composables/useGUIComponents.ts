@@ -1,6 +1,6 @@
 import { type Component } from "vue";
 import SliderModule from "@/components/gui-module-components/SliderModule.vue";
-import DisplayMessageModule from "@/components/gui-module-components/DisplayMessageModule.vue";
+import MessageDisplayModule from "@/components/gui-module-components/MessageDisplayModule.vue";
 import ButtonTrigModule from "@/components/gui-module-components/ButtonTrigModule.vue";
 import StringInputModule from "@/components/gui-module-components/StringInputModule.vue";
 import MidiInputModule from "@/components/gui-module-components/MidiInputModule.vue";
@@ -19,7 +19,7 @@ import StepSequencerModule from "@/components/gui-module-components/StepSequence
 export default function useGUIComponents() {
   const components: Record<string, Component> = {
     SliderModule,
-    DisplayMessageModule,
+    MessageDisplayModule,
     ButtonTrigModule,
     StringInputModule,
     MidiInputModule,

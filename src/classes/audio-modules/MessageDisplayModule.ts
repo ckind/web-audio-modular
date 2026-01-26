@@ -4,16 +4,16 @@ import type { AudioModuleType } from "@/classes/audio-modules/AudioModule.ts";
 import MessageInputNode from "@/classes/MessageInputNode";
 import type { MessageBusDataType } from "@/types/connectionTypes";
 
-type DisplayMessageModuleOptions = {
-  message: string;
+type MessageDisplayModuleOptions = {
+  message: MessageBusDataType;
 };
 
-const getDefaultOptions = (): DisplayMessageModuleOptions => ({
+const getDefaultOptions = (): MessageDisplayModuleOptions => ({
   message: "",
 });
 
-export default class DisplayMessageModule extends AudioModule<DisplayMessageModuleOptions> {
-  constructor(id: string, options?: DisplayMessageModuleOptions) {
+export default class MessageDisplayModule extends AudioModule<MessageDisplayModuleOptions> {
+  constructor(id: string, options?: MessageDisplayModuleOptions) {
     super(id, options ?? getDefaultOptions());
 
     this._inputs = [
@@ -30,11 +30,11 @@ export default class DisplayMessageModule extends AudioModule<DisplayMessageModu
 
   messageCallback(time: number, data?: MessageBusDataType): void {
     if (this.updateUIState) {
-      this.updateUIState({ message: data?.toString() ?? "" });
+      this.updateUIState({ message: data });
     }
   }
 
-  updateOptions(options: Partial<DisplayMessageModuleOptions>): void {
+  updateOptions(options: Partial<MessageDisplayModuleOptions>): void {
     // No options to update for display message
   }
 

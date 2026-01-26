@@ -286,7 +286,7 @@ export const availableModules: ModuleDescriptor[] = [
   {
     title: "msg-display",
     type: "msg-display",
-    GUIComponent: "DisplayMessageModule",
+    GUIComponent: "MessageDisplayModule",
     categories: ["message", "message-bus"],
     description: "Displays incoming messages visually.",
     inputDescriptions: [

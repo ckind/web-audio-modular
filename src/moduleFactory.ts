@@ -12,7 +12,7 @@ import NumberToSignalModule from "@/classes/audio-modules/NumberToSignalModule";
 import SequenceModule from "@/classes/audio-modules/SequenceModule";
 import StepSequencerModule from "@/classes/audio-modules/StepSequencerModule";
 import SliderModule from "@/classes/audio-modules/SliderModule";
-import DisplayMessageModule from "@/classes/audio-modules/DisplayMessageModule";
+import MessageDisplayModule from "@/classes/audio-modules/MessageDisplayModule";
 import FilterModule from "@/classes/audio-modules/FilterModule";
 import ConvolutionReverbModule from "@/classes/audio-modules/ConvolutionReverbModule";
 import ButtonTrigModule from "@/classes/audio-modules/ButtonTrigModule";
@@ -89,7 +89,7 @@ export function createAudioModule(
     case "ui-slider-msg":
       return new SliderMessageModule(id, options);
     case "msg-display":
-      return new DisplayMessageModule(id, options);
+      return new MessageDisplayModule(id, options);
     case "filter":
       return new FilterModule(id, options);
     case "fx-convolution-reverb":
