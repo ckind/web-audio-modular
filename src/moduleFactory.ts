@@ -23,7 +23,7 @@ import MidiCCModule from "@/classes/audio-modules/MidiCCModule";
 import PatchNotesModule from "@/classes/audio-modules/PatchNotesModule";
 import MidiNoteMessageModule from "@/classes/audio-modules/MidiNoteMessageModule";
 import ADSRAmplitudeModule from "@/classes/audio-modules/ADSRAmplitudeModule";
-import MessageBoxModule from "@/classes/audio-modules/MessageBoxModule";
+import StringInputModule from "@/classes/audio-modules/StringInputModule";
 import MidiNumToHzModule from "@/classes/audio-modules/MidiNumToHzModule";
 import SamplerPlusModule from "@/classes/audio-modules/SamplerPlusModule";
 import MessageRegexModule from "@/classes/audio-modules/MessageRegexModule";
@@ -112,8 +112,8 @@ export function createAudioModule(
       return new MidiNoteMessageModule(id, options);
     case "env-amp":
       return new ADSRAmplitudeModule(id, options);
-    case "msg-box":
-      return new MessageBoxModule(id, options);
+    case "str-input":
+      return new StringInputModule(id, options);
     case "midi-num-to-hz":
       return new MidiNumToHzModule(id, options);
     case "sampler":

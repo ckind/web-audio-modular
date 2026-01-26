@@ -16,8 +16,6 @@ declare module 'vue' {
     ButtonTrigModule: typeof import('./src/components/gui-module-components/ButtonTrigModule.vue')['default']
     DisplayMessageModule: typeof import('./src/components/gui-module-components/DisplayMessageModule.vue')['default']
     GrainPlayerModule: typeof import('./src/components/gui-module-components/GrainPlayerModule.vue')['default']
-    MessageBoxModule: typeof import('./src/components/gui-module-components/MessageBoxModule.vue')['default']
-    MessageTrigModule: typeof import('./src/components/gui-module-components/MessageTrigModule.vue')['default']
     MidiCCModule: typeof import('./src/components/gui-module-components/MidiCCModule.vue')['default']
     MidiInputModule: typeof import('./src/components/gui-module-components/MidiInputModule.vue')['default']
     MidiNoteMessageModule: typeof import('./src/components/gui-module-components/MidiNoteMessageModule.vue')['default']
@@ -41,6 +39,7 @@ declare module 'vue' {
     SamplerPlusModule: typeof import('./src/components/gui-module-components/SamplerPlusModule.vue')['default']
     SliderModule: typeof import('./src/components/gui-module-components/SliderModule.vue')['default']
     StepSequencerModule: typeof import('./src/components/gui-module-components/StepSequencerModule.vue')['default']
+    StringInputModule: typeof import('./src/components/gui-module-components/StringInputModule.vue')['default']
     UISwitchModule: typeof import('./src/components/gui-module-components/UISwitchModule.vue')['default']
     WaveformDisplay: typeof import('./src/components/WaveformDisplay.vue')['default']
   }

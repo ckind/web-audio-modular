@@ -38,7 +38,7 @@ export type AudioModuleType =
   | "patch-notes"
   | "midi-note-message"
   | "env-amp"
-  | "msg-box"
+  | "str-input"
   | "msg-regex"
   | "msg-counter"
   | "msg-mod"

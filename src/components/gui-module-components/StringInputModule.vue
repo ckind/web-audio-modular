@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, type PropType } from "vue";
-import type { MessageBoxModuleOptions } from "@/classes/audio-modules/MessageBoxModule";
+import type { StringInputModuleOptions } from "@/classes/audio-modules/StringInputModule";
 
 const props = defineProps({
   options: {
-    type: Object as PropType<MessageBoxModuleOptions>,
+    type: Object as PropType<StringInputModuleOptions>,
     required: true,
   },
 });

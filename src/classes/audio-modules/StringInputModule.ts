@@ -5,22 +5,22 @@ import MessageInputNode from "@/classes/MessageInputNode";
 import ModuleOutput from "@/classes/ModuleOutput";
 import ModuleInput from "../ModuleInput";
 import * as Tone from "tone";
-import type { MessageBusDataType } from "@/types/connectionTypes";
+import type { MessageBusDataType, MessageBusString } from "@/types/connectionTypes";
 
-export type MessageBoxModuleOptions = {
-  message?: MessageBusDataType;
+export type StringInputModuleOptions = {
+  message?: MessageBusString;
 };
 
-const getDefaultOptions = (): MessageBoxModuleOptions => ({
+const getDefaultOptions = (): StringInputModuleOptions => ({
   message: "",
 });
 
-export default class MessageBoxModule extends AudioModule<MessageBoxModuleOptions> {
+export default class StringInputModule extends AudioModule<StringInputModuleOptions> {
   private _messageOutputNode: MessageOutputNode;
   private _setInputNode: MessageInputNode;
   private _trigInputNode: MessageInputNode;
 
-  constructor(id: string, options?: MessageBoxModuleOptions) {
+  constructor(id: string, options?: StringInputModuleOptions) {
     super(id, options ?? getDefaultOptions());
 
     this._messageOutputNode = new MessageOutputNode();
@@ -39,12 +39,12 @@ export default class MessageBoxModule extends AudioModule<MessageBoxModuleOption
   }
 
   get type(): AudioModuleType {
-    return "msg-box";
+    return "str-input";
   }
 
   private _setMessageCallack(time: number, data?: MessageBusDataType) {
     Tone.getTransport().schedule(() => {
-      this._options.message = data;
+      this._options.message = data?.toString();
       if (this.updateUIState) {
         this.updateUIState(this._options);
       }
@@ -55,7 +55,7 @@ export default class MessageBoxModule extends AudioModule<MessageBoxModuleOption
     this._messageOutputNode.scheduleMessage(time, this._options.message);
   }
 
-  updateOptions(options: Partial<MessageBoxModuleOptions>): void {
+  updateOptions(options: Partial<StringInputModuleOptions>): void {
     if (options.message !== undefined) {
       this._options.message = options.message;
     }
