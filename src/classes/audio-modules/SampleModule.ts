@@ -6,18 +6,18 @@ import MessageOutputNode from "@/classes/MessageOutputNode";
 import * as Tone from "tone";
 import type { MessageBusDataType } from "@/types/connectionTypes";
 
-type MessageSampleSignalOptions = {
+type SampleModuleOptions = {
   // Add options as needed
 };
 
-const getDefaultOptions = (): MessageSampleSignalOptions => ({});
+const getDefaultOptions = (): SampleModuleOptions => ({});
 
-export default class MessageSampleSignalModule extends AudioModule<MessageSampleSignalOptions> {
+export default class SampleModule extends AudioModule<SampleModuleOptions> {
   private _messageOutputNode: MessageOutputNode;
   private _triggerInputNode: MessageInputNode;
   private _meter: Tone.DCMeter;
 
-  constructor(id: string, options?: MessageSampleSignalOptions) {
+  constructor(id: string, options?: SampleModuleOptions) {
     super(id, options ?? getDefaultOptions());
 
     this._meter = new Tone.DCMeter();
@@ -39,10 +39,10 @@ export default class MessageSampleSignalModule extends AudioModule<MessageSample
   }
 
   get type(): AudioModuleType {
-    return "msg-sample";
+    return "sample";
   }
 
-  updateOptions(options: Partial<MessageSampleSignalOptions>): void {
+  updateOptions(options: Partial<SampleModuleOptions>): void {
     this._options = { ...this._options, ...options };
   }
 

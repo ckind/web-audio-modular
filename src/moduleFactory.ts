@@ -27,11 +27,11 @@ import StringInputModule from "@/classes/audio-modules/StringInputModule";
 import MidiNumToHzModule from "@/classes/audio-modules/MidiNumToHzModule";
 import SamplerPlusModule from "@/classes/audio-modules/SamplerPlusModule";
 import MessageRegexModule from "@/classes/audio-modules/MessageRegexModule";
-import MessageCounterModule from "@/classes/audio-modules/NumberCounterModule";
+import NumberCounterModule from "@/classes/audio-modules/NumberCounterModule";
 import NumberModModule from "@/classes/audio-modules/NumberModModule";
 import NumberAddModule from "@/classes/audio-modules/NumberAddModule";
 import NumberMultiplyModule from "@/classes/audio-modules/NumberMultiplyModule";
-import MessageSampleSignalModule from "@/classes/audio-modules/MessageSampleSignalModule";
+import SampleModule from "@/classes/audio-modules/SampleModule";
 import SampleAndHoldModule from "@/classes/audio-modules/SampleAndHoldModule";
 import FxDelayModule from "@/classes/audio-modules/FxDelayModule";
 import FxDelayAnalogModule from "@/classes/audio-modules/FxDelayAnalogModule";
@@ -129,7 +129,7 @@ export function createAudioModule(
     case "msg-regex":
       return new MessageRegexModule(id, options);
     case "num-counter":
-      return new MessageCounterModule(id, options);
+      return new NumberCounterModule(id, options);
     case "num-mod":
       return new NumberModModule(id, options);
     case "num-add":
@@ -140,8 +140,8 @@ export function createAudioModule(
       return new ListElementModule(id, options);
     case "list-merge":
       return new ListMergeModule(id, options);
-    case "msg-sample":
-      return new MessageSampleSignalModule(id, options);
+    case "sample":
+      return new SampleModule(id, options);
     case "sample-and-hold":
       return new SampleAndHoldModule(id, options);
     case "fx-delay":

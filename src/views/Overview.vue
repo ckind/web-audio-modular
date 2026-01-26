@@ -55,7 +55,7 @@
         indicates the types of its inputs and outputs). There are a number of
         modules that allow conversion between signals and messages such as
         <strong>num-to-signal</strong>, which converts the number incoming message into
-        a continuous stream of values, and <strong>msg-sample</strong>, which
+        a continuous stream of values, and <strong>sample</strong>, which
         samples the incoming signal and outputs a single message.
       </p>
     </section>

@@ -17,7 +17,7 @@ export type AudioModuleType =
   | "scale"
   | "scale-exp"
   | "num-to-signal"
-  | "msg-sample"
+  | "sample"
   | "sample-and-hold"
   | "sequence"
   | "seq-step"

@@ -797,11 +797,11 @@ export const availableModules: ModuleDescriptor[] = [
     ],
   },
   {
-    title: "msg-sample",
-    type: "msg-sample",
+    title: "sample",
+    type: "sample",
     categories: ["message", "message-bus"],
     description:
-      "Samples incoming signal value on message trigger and outputs as discrete message.",
+      "Samples incoming signal value on message trigger and outputs as message (number).",
     inputDescriptions: [
       { name: "signal", description: "Signal to sample", type: "signal" },
       {
@@ -813,7 +813,7 @@ export const availableModules: ModuleDescriptor[] = [
     outputDescriptions: [
       {
         name: "output",
-        description: "Sampled signal value as message",
+        description: "Sampled signal value as message (number)",
         type: "message-bus",
       },
     ],
