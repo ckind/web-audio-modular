@@ -14,7 +14,7 @@ import StepSequencerModule from "@/classes/audio-modules/StepSequencerModule";
 import UISliderModule from "@/classes/audio-modules/UISliderModule";
 import MessageDisplayModule from "@/classes/audio-modules/MessageDisplayModule";
 import FilterModule from "@/classes/audio-modules/FilterModule";
-import ConvolutionReverbModule from "@/classes/audio-modules/ConvolutionReverbModule";
+import FxConvolutionReverbModule from "@/classes/audio-modules/FxConvolutionReverbModule";
 import ButtonTrigModule from "@/classes/audio-modules/ButtonTrigModule";
 import NoiseModule from "@/classes/audio-modules/NoiseModule";
 import ADSREnvelopeModule from "@/classes/audio-modules/ADSREnvelopeModule";
@@ -93,7 +93,7 @@ export function createAudioModule(
     case "filter":
       return new FilterModule(id, options);
     case "fx-convolution-reverb":
-      return new ConvolutionReverbModule(id, options);
+      return new FxConvolutionReverbModule(id, options);
     case "ui-switch":
       return new UISwitchModule(id, options);
     case "ui-button":
