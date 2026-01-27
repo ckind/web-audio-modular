@@ -2,12 +2,10 @@ import AudioModule from "@/classes/audio-modules/AudioModule";
 import type { AudioModuleType } from "@/classes/audio-modules/AudioModule";
 import ModuleInput from "@/classes/ModuleInput";
 import ModuleOutput from "@/classes/ModuleOutput";
-import MessageInputNode from "@/classes/MessageInputNode";
 import * as Tone from "tone";
 import type { ToneOscillatorType } from "tone";
-import type { MessageBusDataType } from "@/types/connectionTypes";
 
-type FMOscillatorModuleOptions = {
+type OscillatorFMModuleOptions = {
   frequency: number;
   ratio: number;
   carrierType: ToneOscillatorType;
@@ -15,7 +13,7 @@ type FMOscillatorModuleOptions = {
   modulationAmount: number;
 };
 
-const getDefaultOptions = (): FMOscillatorModuleOptions => ({
+const getDefaultOptions = (): OscillatorFMModuleOptions => ({
   frequency: 440,
   ratio: 1,
   carrierType: "sine",
@@ -23,10 +21,10 @@ const getDefaultOptions = (): FMOscillatorModuleOptions => ({
   modulationAmount: 0,
 });
 
-export default class FMOscillatorModule extends AudioModule<FMOscillatorModuleOptions> {
+export default class OscillatorFMModule extends AudioModule<OscillatorFMModuleOptions> {
   private _oscillatorNode: Tone.FMOscillator;
 
-  constructor(id: string, options?: FMOscillatorModuleOptions) {
+  constructor(id: string, options?: OscillatorFMModuleOptions) {
     super(id, options ?? getDefaultOptions());
 
     this._oscillatorNode = new Tone.FMOscillator(
@@ -57,7 +55,7 @@ export default class FMOscillatorModule extends AudioModule<FMOscillatorModuleOp
     return "osc-fm";
   }
 
-  updateOptions(options: Partial<FMOscillatorModuleOptions>): void {
+  updateOptions(options: Partial<OscillatorFMModuleOptions>): void {
     if (options.frequency !== undefined) {
       this._oscillatorNode.frequency.value = options.frequency;
       this._options.frequency = options.frequency;
