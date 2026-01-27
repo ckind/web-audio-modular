@@ -5,18 +5,18 @@ import * as Tone from "tone";
 import ModuleOutput from "@/classes/ModuleOutput";
 import type { MessageBusDataType } from "@/types/connectionTypes";
 
-type ButtonTrigModuleOptions = {
+type UIButtonModuleOptions = {
   trigMessage: MessageBusDataType;
 };
 
-const getDefaultOptions = (): ButtonTrigModuleOptions => ({
+const getDefaultOptions = (): UIButtonModuleOptions => ({
   trigMessage: "",
 });
 
-export default class ButtonTrigModule extends AudioModule<ButtonTrigModuleOptions> {
+export default class UIButtonModule extends AudioModule<UIButtonModuleOptions> {
   private _messageOutput: MessageOutputNode;
 
-  constructor(id: string, options?: ButtonTrigModuleOptions) {
+  constructor(id: string, options?: UIButtonModuleOptions) {
     super(id, options ?? getDefaultOptions());
 
     this._messageOutput = new MessageOutputNode();
@@ -27,7 +27,7 @@ export default class ButtonTrigModule extends AudioModule<ButtonTrigModuleOption
     return "ui-button";
   }
 
-  updateOptions(options: Partial<ButtonTrigModuleOptions>): void {
+  updateOptions(options: Partial<UIButtonModuleOptions>): void {
     if (options.trigMessage !== undefined) {
       this._options.trigMessage = options.trigMessage;
       this._messageOutput.scheduleMessage(

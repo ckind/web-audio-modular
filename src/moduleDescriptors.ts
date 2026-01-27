@@ -404,7 +404,7 @@ export const availableModules: ModuleDescriptor[] = [
   {
     title: "ui-button",
     type: "ui-button",
-    GUIComponent: "ButtonTrigModule",
+    GUIComponent: "UIButtonModule",
     categories: ["ui-control", "message-bus"],
     description: "Button that sends a message when clicked.",
     inputDescriptions: [],

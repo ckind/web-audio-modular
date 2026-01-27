@@ -15,7 +15,7 @@ import UISliderModule from "@/classes/audio-modules/UISliderModule";
 import MessageDisplayModule from "@/classes/audio-modules/MessageDisplayModule";
 import FilterModule from "@/classes/audio-modules/FilterModule";
 import FxConvolutionReverbModule from "@/classes/audio-modules/FxConvolutionReverbModule";
-import ButtonTrigModule from "@/classes/audio-modules/ButtonTrigModule";
+import UIButton from "@/classes/audio-modules/UIButton";
 import NoiseModule from "@/classes/audio-modules/NoiseModule";
 import ADSREnvelopeModule from "@/classes/audio-modules/ADSREnvelopeModule";
 import MidiInputModule from "@/classes/audio-modules/MidiInputModule";
@@ -97,7 +97,7 @@ export function createAudioModule(
     case "ui-switch":
       return new UISwitchModule(id, options);
     case "ui-button":
-      return new ButtonTrigModule(id, options);
+      return new UIButton(id, options);
     case "noise":
       return new NoiseModule(id, options);
     case "env-adsr":
