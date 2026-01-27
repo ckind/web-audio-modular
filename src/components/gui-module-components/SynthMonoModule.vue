@@ -3,7 +3,6 @@ import {
   ref,
   computed,
   onMounted,
-  useTemplateRef,
   type PropType,
   watch,
 } from "vue";

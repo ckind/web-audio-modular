@@ -10,6 +10,7 @@ import {
   centsToFrequencyMult,
   midiNoteToFrequency,
 } from "@/helpers/units";
+import ScaleWorkletNode from "@/classes/audio-nodes/ScaleWorkletNode";
 
 export type MonoSynthModuleOptions = {
   oscillator1Type: string;
@@ -86,10 +87,11 @@ export default class MonoSynthModule extends AudioModule<MonoSynthModuleOptions>
   private _osc2VolumeNode: Tone.Volume;
   private _outputNode: Tone.Gain;
   private _filterNode: Tone.Filter;
+  private _filterFrequencyInput: Tone.Signal;
+  private _filterFrequencyScale: ScaleWorkletNode;
   private _filterEnvNode: Tone.Envelope;
   private _filterEnvGainNode: Tone.Gain;
   private _ampEnvNode: Tone.AmplitudeEnvelope;
-
   private _midiInputNode: MessageInputNode;
 
   private _notesDown: Set<number> = new Set();
@@ -120,12 +122,19 @@ export default class MonoSynthModule extends AudioModule<MonoSynthModuleOptions>
     this._osc2Node.start();
 
     this._filterNode = new Tone.Filter({
-      frequency: this._options.filterFrequency,
+      frequency: 0, // gets set in filterFrequencyInput node
       type: this._options.filterType,
       rolloff: this._options.filterRolloff,
       Q: this._options.filterQ,
     });
-
+    this._filterFrequencyInput = new Tone.Signal(this._options.filterFrequency);
+    this._filterFrequencyScale = new ScaleWorkletNode({
+      inputMin: 20,
+      inputMax: 20000,
+      outputMin: 20,
+      outputMax: 20000,
+      curveAmount: 1.75,
+    });
     this._filterEnvNode = new Tone.Envelope({
       attack: this._options.filterEnvAttack,
       decay: this._options.filterEnvDecay,
@@ -144,6 +153,8 @@ export default class MonoSynthModule extends AudioModule<MonoSynthModuleOptions>
     // connections
     this._filterEnvNode.connect(this._filterEnvGainNode);
     this._filterEnvGainNode.connect(this._filterNode.frequency);
+    this._filterFrequencyInput.connect(this._filterFrequencyScale);
+    this._filterFrequencyScale.connect(this._filterNode.frequency);
 
     this._osc1Node.connect(this._osc1VolumeNode);
     this._osc1VolumeNode.connect(this._filterNode);
@@ -154,7 +165,6 @@ export default class MonoSynthModule extends AudioModule<MonoSynthModuleOptions>
     this._noiseNode.connect(this._noiseVolumeNode);
     this._noiseVolumeNode.connect(this._filterNode);
 
-    // this._filterEnvNode.connect(this._filterNode.frequency);
     this._filterNode.connect(this._ampEnvNode);
     this._ampEnvNode.connect(this._outputNode);
 
@@ -225,17 +235,6 @@ export default class MonoSynthModule extends AudioModule<MonoSynthModuleOptions>
   }
 
   updateOptions(options: Partial<MonoSynthModuleOptions>): void {
-    console.log(
-      "Mono synth update options",
-      "amp-env-attack",
-      options.ampEnvAttack,
-      "amp-env-decay",
-      options.ampEnvDecay,
-      "amp-env-sustain",
-      options.ampEnvSustain,
-      "amp-env-release",
-      options.ampEnvRelease,
-    );
     if (
       options.oscillator1Type !== undefined &&
       options.oscillator1Type !== this._options.oscillator1Type
@@ -355,7 +354,7 @@ export default class MonoSynthModule extends AudioModule<MonoSynthModuleOptions>
       options.filterFrequency !== undefined &&
       options.filterFrequency !== this._options.filterFrequency
     ) {
-      this._filterNode.frequency.value = options.filterFrequency;
+      this._filterFrequencyInput.value = options.filterFrequency;
       this._options.filterFrequency = options.filterFrequency;
     }
     if (
