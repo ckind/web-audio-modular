@@ -11,7 +11,7 @@ import ScaleModule from "@/classes/audio-modules/ScaleModule";
 import NumberToSignalModule from "@/classes/audio-modules/NumberToSignalModule";
 import SequenceModule from "@/classes/audio-modules/SequenceModule";
 import StepSequencerModule from "@/classes/audio-modules/StepSequencerModule";
-import SliderModule from "@/classes/audio-modules/SliderModule";
+import UISliderModule from "@/classes/audio-modules/UISliderModule";
 import MessageDisplayModule from "@/classes/audio-modules/MessageDisplayModule";
 import FilterModule from "@/classes/audio-modules/FilterModule";
 import ConvolutionReverbModule from "@/classes/audio-modules/ConvolutionReverbModule";
@@ -35,7 +35,7 @@ import SampleModule from "@/classes/audio-modules/SampleModule";
 import SampleAndHoldModule from "@/classes/audio-modules/SampleAndHoldModule";
 import FxDelayModule from "@/classes/audio-modules/FxDelayModule";
 import FxDelayAnalogModule from "@/classes/audio-modules/FxDelayAnalogModule";
-import SliderMessageModule from "@/classes/audio-modules/SliderMessageModule";
+import UISliderMessageModule from "@/classes/audio-modules/UISliderMessageModule";
 import DelayModule from "@/classes/audio-modules/DelayModule";
 import SamplerModule from "@/classes/audio-modules/SamplerModule";
 import PlayerModule from "@/classes/audio-modules/PlayerModule";
@@ -81,13 +81,13 @@ export function createAudioModule(
     case "seq-step":
       return new StepSequencerModule(id, options);
     case "ui-slider":
-      return new SliderModule(id, options);
+      return new UISliderModule(id, options);
     case "ui-knob":
       return new UIKnobModule(id, options);
     case "ui-knob-msg":
       return new RotaryKnobMessageModule(id, options);
     case "ui-slider-msg":
-      return new SliderMessageModule(id, options);
+      return new UISliderMessageModule(id, options);
     case "msg-display":
       return new MessageDisplayModule(id, options);
     case "filter":

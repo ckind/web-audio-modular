@@ -234,7 +234,7 @@ export const availableModules: ModuleDescriptor[] = [
   {
     title: "ui-slider",
     type: "ui-slider",
-    GUIComponent: "SliderModule",
+    GUIComponent: "UISliderModule",
     categories: ["ui-control", "signal"],
     description: "Interactive slider control for continuous signal values.",
     inputDescriptions: [],
@@ -245,7 +245,7 @@ export const availableModules: ModuleDescriptor[] = [
   {
     title: "ui-slider-msg",
     type: "ui-slider-msg",
-    GUIComponent: "SliderModule",
+    GUIComponent: "UISliderModule",
     categories: ["ui-control", "message-bus"],
     description: "Interactive slider control for message bus values.",
     inputDescriptions: [],

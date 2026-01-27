@@ -1,5 +1,4 @@
 import { type Component } from "vue";
-import SliderModule from "@/components/gui-module-components/SliderModule.vue";
 import MessageDisplayModule from "@/components/gui-module-components/MessageDisplayModule.vue";
 import ButtonTrigModule from "@/components/gui-module-components/ButtonTrigModule.vue";
 import StringInputModule from "@/components/gui-module-components/StringInputModule.vue";
@@ -11,6 +10,7 @@ import SamplerPlusModule from "@/components/gui-module-components/SamplerPlusMod
 import SamplerModule from "@/components/gui-module-components/SamplerModule.vue";
 import PlayerModule from "@/components/gui-module-components/PlayerModule.vue";
 import GrainPlayerModule from "@/components/gui-module-components/GrainPlayerModule.vue";
+import UISliderModule from "@/components/gui-module-components/UISliderModule.vue";
 import UIKnobModule from "@/components/gui-module-components/UIKnobModule.vue";
 import UISwitchModule from "@/components/gui-module-components/UISwitchModule.vue";
 import MonoSynthModule from "@/components/gui-module-components/MonoSynthModule.vue";
@@ -18,7 +18,6 @@ import StepSequencerModule from "@/components/gui-module-components/StepSequence
 
 export default function useGUIComponents() {
   const components: Record<string, Component> = {
-    SliderModule,
     MessageDisplayModule,
     ButtonTrigModule,
     StringInputModule,
@@ -30,6 +29,7 @@ export default function useGUIComponents() {
     SamplerModule,
     PlayerModule,
     GrainPlayerModule,
+    UISliderModule,
     UIKnobModule,
     UISwitchModule,
     MonoSynthModule,
