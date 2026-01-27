@@ -13,7 +13,7 @@ import UISliderModule from "@/components/gui-module-components/UISliderModule.vu
 import UIKnobModule from "@/components/gui-module-components/UIKnobModule.vue";
 import UISwitchModule from "@/components/gui-module-components/UISwitchModule.vue";
 import UIButtonModule from "@/components/gui-module-components/UIButtonModule.vue";
-import MonoSynthModule from "@/components/gui-module-components/MonoSynthModule.vue";
+import SynthMonoModule from "@/components/gui-module-components/SynthMonoModule.vue";
 import StepSequencerModule from "@/components/gui-module-components/StepSequencerModule.vue";
 
 export default function useGUIComponents() {
@@ -32,7 +32,7 @@ export default function useGUIComponents() {
     UIKnobModule,
     UISwitchModule,
     UIButtonModule,
-    MonoSynthModule,
+    SynthMonoModule,
     StepSequencerModule,
   };
 

@@ -40,7 +40,7 @@ import DelayModule from "@/classes/audio-modules/DelayModule";
 import SamplerModule from "@/classes/audio-modules/SamplerModule";
 import PlayerModule from "@/classes/audio-modules/PlayerModule";
 import GrainPlayerModule from "@/classes/audio-modules/GrainPlayerModule";
-import MonoSynthModule from "@/classes/audio-modules/MonoSynthModule";
+import SynthMonoModule from "@/classes/audio-modules/SynthMonoModule";
 import OscillatorPulseModule from "@/classes/audio-modules/OscillatorPulseModule";
 import OscillatorFMModule from "@/classes/audio-modules/OscillatorFMModule";
 import ConstantSignalModule from "@/classes/audio-modules/ConstantSignalModule";
@@ -119,7 +119,7 @@ export function createAudioModule(
     case "sampler":
       return new SamplerModule(id, options);
     case "synth-mono":
-      return new MonoSynthModule(id, options);
+      return new SynthMonoModule(id, options);
     case "sampler-plus":
       return new SamplerPlusModule(id, options);
     case "player":

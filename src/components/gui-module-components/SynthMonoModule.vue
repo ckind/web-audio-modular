@@ -7,7 +7,7 @@ import {
   type PropType,
   watch,
 } from "vue";
-import type { MonoSynthModuleOptions } from "@/classes/audio-modules/MonoSynthModule";
+import type { MonoSynthModuleOptions } from "@/classes/audio-modules/SynthMonoModule";
 import NumberInput from "@/components/NumberInput.vue";
 import ADSREnvelope from "../ADSREnvelope.vue";
 import { useAppColors } from "@/store/appColors";
