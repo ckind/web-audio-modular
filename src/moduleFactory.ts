@@ -44,7 +44,7 @@ import MonoSynthModule from "@/classes/audio-modules/MonoSynthModule";
 import PulseOscillatorModule from "@/classes/audio-modules/PulseOscillatorModule";
 import FMOscillatorModule from "@/classes/audio-modules/FMOscillatorModule";
 import ConstantSignalModule from "@/classes/audio-modules/ConstantSignalModule";
-import RotaryKnobModule from "@/classes/audio-modules/RotaryKnobModule";
+import UIKnobModule from "@/classes/audio-modules/UIKnobModule";
 import RotaryKnobMessageModule from "@/classes/audio-modules/RotaryKnobMessageModule";
 import UISwitchModule from "@/classes/audio-modules/UISwitchModule";
 import ListElementModule from "@/classes/audio-modules/ListElementModule";
@@ -83,7 +83,7 @@ export function createAudioModule(
     case "ui-slider":
       return new SliderModule(id, options);
     case "ui-knob":
-      return new RotaryKnobModule(id, options);
+      return new UIKnobModule(id, options);
     case "ui-knob-msg":
       return new RotaryKnobMessageModule(id, options);
     case "ui-slider-msg":

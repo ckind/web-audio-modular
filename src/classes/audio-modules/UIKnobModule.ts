@@ -4,22 +4,22 @@ import AudioModule, {
 import * as Tone from "tone";
 import ModuleOutput from "../ModuleOutput";
 
-type RotaryKnobModuleOptions = {
+type UIKnobModuleOptions = {
   min: number;
   max: number;
   value: number;
 };
 
-const getDefaultOptions = (): RotaryKnobModuleOptions => ({
+const getDefaultOptions = (): UIKnobModuleOptions => ({
   min: 0,
   max: 1,
   value: 0,
 });
 
-export default class RotaryKnobModule extends AudioModule<RotaryKnobModuleOptions> {
+export default class UIKnobModule extends AudioModule<UIKnobModuleOptions> {
   private _signal: Tone.Signal;
 
-  constructor(id: string, options?: RotaryKnobModuleOptions) {
+  constructor(id: string, options?: UIKnobModuleOptions) {
     super(id, options ?? getDefaultOptions());
     this._signal = new Tone.Signal(this._options.value);
 
@@ -30,7 +30,7 @@ export default class RotaryKnobModule extends AudioModule<RotaryKnobModuleOption
     return "ui-knob";
   }
 
-  updateOptions(options: Partial<RotaryKnobModuleOptions>): void {
+  updateOptions(options: Partial<UIKnobModuleOptions>): void {
     if (options.min !== undefined) {
       this._options.min = options.min;
     }

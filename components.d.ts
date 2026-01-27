@@ -41,6 +41,7 @@ declare module 'vue' {
     SliderModule: typeof import('./src/components/gui-module-components/SliderModule.vue')['default']
     StepSequencerModule: typeof import('./src/components/gui-module-components/StepSequencerModule.vue')['default']
     StringInputModule: typeof import('./src/components/gui-module-components/StringInputModule.vue')['default']
+    UIKnobModule: typeof import('./src/components/gui-module-components/UIKnobModule.vue')['default']
     UISwitchModule: typeof import('./src/components/gui-module-components/UISwitchModule.vue')['default']
     WaveformDisplay: typeof import('./src/components/WaveformDisplay.vue')['default']
   }

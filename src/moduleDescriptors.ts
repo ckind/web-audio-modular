@@ -243,32 +243,6 @@ export const availableModules: ModuleDescriptor[] = [
     ],
   },
   {
-    title: "ui-knob",
-    type: "ui-knob",
-    GUIComponent: "RotaryKnobModule",
-    categories: ["ui-control", "signal"],
-    description: "Rotary knob control for continuous signal values.",
-    inputDescriptions: [],
-    outputDescriptions: [
-      { name: "output", description: "Knob value as signal", type: "signal" },
-    ],
-  },
-  {
-    title: "ui-knob-msg",
-    type: "ui-knob-msg",
-    GUIComponent: "RotaryKnobModule",
-    categories: ["ui-control", "message-bus"],
-    description: "Rotary knob control for message bus values.",
-    inputDescriptions: [],
-    outputDescriptions: [
-      {
-        name: "output",
-        description: "Knob value as message",
-        type: "message-bus",
-      },
-    ],
-  },
-  {
     title: "ui-slider-msg",
     type: "ui-slider-msg",
     GUIComponent: "SliderModule",
@@ -279,6 +253,32 @@ export const availableModules: ModuleDescriptor[] = [
       {
         name: "output",
         description: "Slider value as message",
+        type: "message-bus",
+      },
+    ],
+  },
+  {
+    title: "ui-knob",
+    type: "ui-knob",
+    GUIComponent: "UIKnobModule",
+    categories: ["ui-control", "signal"],
+    description: "Rotary knob control for continuous signal values.",
+    inputDescriptions: [],
+    outputDescriptions: [
+      { name: "output", description: "Knob value as signal", type: "signal" },
+    ],
+  },
+  {
+    title: "ui-knob-msg",
+    type: "ui-knob-msg",
+    GUIComponent: "UIKnobModule",
+    categories: ["ui-control", "message-bus"],
+    description: "Rotary knob control for message bus values.",
+    inputDescriptions: [],
+    outputDescriptions: [
+      {
+        name: "output",
+        description: "Knob value as message (number)",
         type: "message-bus",
       },
     ],
