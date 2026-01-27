@@ -2,24 +2,22 @@ import AudioModule from "@/classes/audio-modules/AudioModule";
 import type { AudioModuleType } from "@/classes/audio-modules/AudioModule";
 import ModuleInput from "@/classes/ModuleInput";
 import ModuleOutput from "@/classes/ModuleOutput";
-import MessageInputNode from "@/classes/MessageInputNode";
 import * as Tone from "tone";
-import type { MessageBusDataType } from "@/types/connectionTypes";
 
-type PulseOscillatorModuleOptions = {
+type OscillatorPulseModuleOptions = {
   frequency: number;
   width: number;
 };
 
-const getDefaultOptions = (): PulseOscillatorModuleOptions => ({
+const getDefaultOptions = (): OscillatorPulseModuleOptions => ({
   frequency: 440,
   width: 0.5,
 });
 
-export default class PulseOscillatorModule extends AudioModule<PulseOscillatorModuleOptions> {
+export default class OscillatorPulseModule extends AudioModule<OscillatorPulseModuleOptions> {
   private _oscillatorNode: Tone.PulseOscillator;
 
-  constructor(id: string, options?: PulseOscillatorModuleOptions) {
+  constructor(id: string, options?: OscillatorPulseModuleOptions) {
     super(id, options ?? getDefaultOptions());
 
     this._oscillatorNode = new Tone.PulseOscillator(this._options.frequency);
@@ -36,7 +34,7 @@ export default class PulseOscillatorModule extends AudioModule<PulseOscillatorMo
     return "osc-pulse";
   }
 
-  updateOptions(options: Partial<PulseOscillatorModuleOptions>): void {
+  updateOptions(options: Partial<OscillatorPulseModuleOptions>): void {
     if (options.frequency !== undefined) {
       this._oscillatorNode.frequency.value = options.frequency;
       this._options.frequency = options.frequency;

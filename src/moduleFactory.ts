@@ -41,7 +41,7 @@ import SamplerModule from "@/classes/audio-modules/SamplerModule";
 import PlayerModule from "@/classes/audio-modules/PlayerModule";
 import GrainPlayerModule from "@/classes/audio-modules/GrainPlayerModule";
 import MonoSynthModule from "@/classes/audio-modules/MonoSynthModule";
-import PulseOscillatorModule from "@/classes/audio-modules/PulseOscillatorModule";
+import OscillatorPulseModule from "@/classes/audio-modules/OscillatorPulseModule";
 import OscillatorFMModule from "@/classes/audio-modules/OscillatorFMModule";
 import ConstantSignalModule from "@/classes/audio-modules/ConstantSignalModule";
 import UIKnobModule from "@/classes/audio-modules/UIKnobModule";
@@ -61,7 +61,7 @@ export function createAudioModule(
     case "osc":
       return new OscillatorModule(id, options);
     case "osc-pulse":
-      return new PulseOscillatorModule(id, options);
+      return new OscillatorPulseModule(id, options);
     case "osc-fm":
       return new OscillatorFMModule(id, options);
     case "constant-signal":
