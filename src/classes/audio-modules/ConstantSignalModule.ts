@@ -1,10 +1,7 @@
 import AudioModule from "@/classes/audio-modules/AudioModule";
 import type { AudioModuleType } from "@/classes/audio-modules/AudioModule";
-import ModuleInput from "@/classes/ModuleInput";
 import ModuleOutput from "@/classes/ModuleOutput";
-import MessageInputNode from "@/classes/MessageInputNode";
 import * as Tone from "tone";
-import type { MessageBusDataType } from "@/types/connectionTypes";
 
 type ConstantSignalModuleOptions = {
   value: number;
