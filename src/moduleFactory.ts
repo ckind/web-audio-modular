@@ -45,7 +45,7 @@ import PulseOscillatorModule from "@/classes/audio-modules/PulseOscillatorModule
 import FMOscillatorModule from "@/classes/audio-modules/FMOscillatorModule";
 import ConstantSignalModule from "@/classes/audio-modules/ConstantSignalModule";
 import UIKnobModule from "@/classes/audio-modules/UIKnobModule";
-import RotaryKnobMessageModule from "@/classes/audio-modules/RotaryKnobMessageModule";
+import UIKnobMessageModule from "@/classes/audio-modules/UIKnobMessageModule";
 import UISwitchModule from "@/classes/audio-modules/UISwitchModule";
 import ListElementModule from "@/classes/audio-modules/ListElementModule";
 import ListMergeModule from "@/classes/audio-modules/ListMergeModule"
@@ -85,7 +85,7 @@ export function createAudioModule(
     case "ui-knob":
       return new UIKnobModule(id, options);
     case "ui-knob-msg":
-      return new RotaryKnobMessageModule(id, options);
+      return new UIKnobMessageModule(id, options);
     case "ui-slider-msg":
       return new UISliderMessageModule(id, options);
     case "msg-display":

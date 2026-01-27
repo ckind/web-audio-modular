@@ -5,22 +5,22 @@ import * as Tone from "tone";
 import ModuleOutput from "@/classes/ModuleOutput";
 import MessageOutputNode from "@/classes/MessageOutputNode";
 
-type RotaryKnobMessageModuleOptions = {
+type UIKnobMessageModuleOptions = {
   min: number;
   max: number;
   value: number;
 };
 
-const getDefaultOptions = (): RotaryKnobMessageModuleOptions => ({
+const getDefaultOptions = (): UIKnobMessageModuleOptions => ({
   min: 0,
   max: 1,
   value: 0,
 });
 
-export default class RotaryKnobMessageModule extends AudioModule<RotaryKnobMessageModuleOptions> {
+export default class UIKnobMessageModule extends AudioModule<UIKnobMessageModuleOptions> {
   private _messageOutputNode: MessageOutputNode;
 
-  constructor(id: string, options?: RotaryKnobMessageModuleOptions) {
+  constructor(id: string, options?: UIKnobMessageModuleOptions) {
     super(id, options ?? getDefaultOptions());
 
     this._messageOutputNode = new MessageOutputNode();
@@ -32,7 +32,7 @@ export default class RotaryKnobMessageModule extends AudioModule<RotaryKnobMessa
     return "ui-knob-msg";
   }
 
-  updateOptions(options: Partial<RotaryKnobMessageModuleOptions>): void {
+  updateOptions(options: Partial<UIKnobMessageModuleOptions>): void {
     if (options.min !== undefined) {
       this._options.min = options.min;
     }
