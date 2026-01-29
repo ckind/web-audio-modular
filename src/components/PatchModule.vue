@@ -232,6 +232,7 @@ const onGuiOptionsUpdated = (options: Record<string, any>) => {
   display: inline-block;
   overflow: visible;
   border: 1px solid;
+  white-space: nowrap;
 }
 .module-input-output {
   position: absolute;
