@@ -2,10 +2,6 @@
 import { ref } from "vue";
 
 const props = defineProps({
-  width: {
-    type: Number,
-    required: true,
-  },
   borderColor: {
     type: String,
     required: true,
@@ -29,7 +25,7 @@ const onConfirmClear = () => {
 <template>
   <div
     class="d-flex justify-center mb-4"
-    :style="{ width: width + 'px', borderColor: borderColor }"
+    :style="{ borderColor: borderColor }"
   >
     <v-btn class="mx-2" @click="emit('save')">Save Patch</v-btn>
     <v-btn class="mx-2" @click="emit('load')">Load Patch</v-btn>
