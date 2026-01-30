@@ -25,6 +25,8 @@ import { useAppColors } from "@/store/appColors";
 import { usePatchConsole } from "@/store/patchConsole";
 //
 
+const emit = defineEmits(["windowResize"]);
+
 const appColors = useAppColors();
 const patchConsole = usePatchConsole();
 const patchWindowStyle = computed(() => {
@@ -46,27 +48,14 @@ const getElement = (id: string): HTMLElement | null => {
 let patchWindowPageX = 0;
 let patchWindowPageY = 0;
 
-const props = defineProps({
-  height: {
-    type: Number,
-    required: true,
-  },
-  width: {
-    type: Number,
-    required: true,
-  },
-});
-
-// INFO: The patcher class is used to manage internal audio modules and connections while
-// the patchGraph is a serializable model representing the state of the UI instances.
-// Data-flow is typically one-way from patchGraph (UI) to patcher (audio graph).
-// This is implemented by calling the updateOptions method on the IAudioModule.
-// Their are exceptions for some GUI modules which need to be updated based on audio node
-// changes. The optional updateUIState is provided for this purpose.
+let dragModuleHeight = 0;
+let dragModuleWidth = 0;
 
 const patcher = new Patcher();
 const patchGraph = ref<PatchGraph>({
   version: import.meta.env.PACKAGE_VERSION,
+  height: 0,
+  width: 0,
   modules: [],
   connections: [],
 });
@@ -79,9 +68,21 @@ const getModuleInstance = (moduleId: string) => {
   return patchGraph.value.modules.find((m) => m.moduleId === moduleId);
 };
 
+const getContainerSize = () => {
+  const BORDER_SIZE = 2;
+  const patchContainerEl = document.getElementById("patch-container");
+  const rect = patchContainerEl!.getBoundingClientRect();
+
+  return { width: rect.width - BORDER_SIZE, height: rect.height - BORDER_SIZE };
+};
+
 const clearPatch = () => {
+  const size = getContainerSize();
+
   patchGraph.value = {
     version: import.meta.env.PACKAGE_VERSION,
+    height: size.height,
+    width: size.width,
     modules: [],
     connections: [],
   };
@@ -120,7 +121,7 @@ const addModule = (moduleType: AudioModuleType, guiComponent?: string) => {
   patchGraph.value.modules.push(moduleInstance);
 
   module.updateUIState = (options: Partial<any>, guiState?: any) => {
-    // need to re-query the graph to reference to exact ui instance 
+    // need to re-query the graph to reference to exact ui instance
     const instance = patchGraph.value.modules.find(
       (m) => m.moduleId === moduleInstance.moduleId,
     );
@@ -269,6 +270,14 @@ const onModuleDrag = (
   moduleInstance.position.x += deltaX;
   moduleInstance.position.y += deltaY;
 
+  // resize graph if module is dragged outside of window
+  if (moduleInstance.position.x + dragModuleWidth > patchGraph.value.width) {
+    patchGraph.value.width = moduleInstance.position.x + dragModuleWidth;
+  }
+  if (moduleInstance.position.y + dragModuleWidth > patchGraph.value.height) {
+    patchGraph.value.height = moduleInstance.position.y + dragModuleWidth;
+  }
+
   updateModulePositionStyle(moduleInstance.moduleId, moduleInstance.position);
 
   // Update positions of connections related to this module
@@ -293,23 +302,25 @@ const onModuleDragStart = (
   moduleInstance: ModuleInstance,
 ) => {
   document.documentElement.classList.add("disable-tooltips");
+
+  const moduleEl = getElement(moduleInstance.moduleId);
+  const rect = moduleEl!.getBoundingClientRect();
+
+  dragModuleWidth = rect.height;
+  dragModuleWidth = rect.width;
+
   onDragElementStart(e, moduleInstance);
 };
 
 const { onDragElementStart } = useDragging(onModuleDrag, onModuleDragEnd);
 
 useResizeObserver("patch-window", (entries) => {
-  patchWindowPageX =
-    entries[0]!.target.getBoundingClientRect().x + window.scrollX;
-  patchWindowPageY =
-    entries[0]!.target.getBoundingClientRect().y + window.scrollY;
+  const rect = entries[0]!.target.getBoundingClientRect();
+  patchWindowPageX = rect.x + window.scrollX;
+  patchWindowPageY = rect.y + window.scrollY;
 });
 
-const {
-  savePatch,
-  loadPatch,
-  deepCloneModuleOptions,
-} = usePatchPersistence({
+const { savePatch, loadPatch, deepCloneModuleOptions } = usePatchPersistence({
   patchGraph,
   patcher,
   updateModulePositionStyle,
@@ -351,6 +362,11 @@ const { assignKeyListeners, removeKeyListeners } = usePatchShortcuts({
 });
 
 onMounted(() => {
+  const size = getContainerSize();
+
+  patchGraph.value.width = size.width;
+  patchGraph.value.height = size.height;
+
   assignKeyListeners();
 });
 
@@ -361,80 +377,87 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <PatchToolbar
-    :width="width"
-    :border-color="appColors.textColor"
-    @save="savePatch"
-    @load="loadPatch"
-    @clear="clearPatch"
-  />
-
-  <div
-    ref="patch-window"
-    class="patch-window"
-    @contextmenu.stop="onGraphContextMenu"
-    @click="clearSelection"
-    :style="patchWindowStyle"
-  >
-    <!-- prettier-ignore -->
-    <PatchModule
-      v-for="module in patchGraph.modules"
-      :id="module.moduleId"
-      :key="module.moduleId"
-      :moduleInstance="(module as ModuleInstance)"
-      :class="['patch-module', { selected: module.selected }]"
-      :style="{
-        borderColor: appColors.textColor,
-        backgroundColor: appColors.backgroundColor,
-      }"
-      :ripple="false"
-      @mousedown="(e: MouseEvent) => onModuleDragStart(e, module)"
-      @touchstart="(e: TouchEvent) => onModuleDragStart(e, module)"
-      @begin-patching="(output) => onBeginPatching(module, output)"
-      @finish-patching="(input) => onFinishPatching(module, input)"
-      @inputs-updated="(inputs) => onModuleInputsUpdated(module.moduleId, inputs)"
-      @outputs-updated="(outputs) => onModuleOutputsUpdated(module.moduleId, outputs)"
-      @dblclick.stop="() => onModuleSelected(module as ModuleInstance)"
-      @options-updated="(options) => onModuleOptionsUpdated(module.moduleId, options)"
-    ></PatchModule>
-
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      :viewBox="`0 0 ${width} ${height}`"
-      :width="width"
-      :height="height"
-    >
-      <PatchCable
-        v-if="inProgressConnection != null"
-        :startPosition="inProgressConnection.from"
-        :endPosition="inProgressConnection.to"
-        :connectionType="inProgressConnection.connectionType"
-      />
-
-      <!-- prettier-ignore -->
-      <PatchConnection
-        v-for="(connection, i) in patchGraph.connections"
-        :key="i"
-        :connection="(connection as ConnectionInstance)"
-        @selected="() => onConnectionSelected(connection as ConnectionInstance)"
-      />
-    </svg>
-
-    <PatchContextMenu
-      v-model="showContextMenu"
-      :x="contextMenuX"
-      :y="contextMenuY"
-      @add-module="addModule"
+  <div class="patch-container" id="patch-container">
+    <PatchToolbar
+      :border-color="appColors.textColor"
+      @save="savePatch"
+      @load="loadPatch"
+      @clear="clearPatch"
     />
+
+    <div
+      ref="patch-window"
+      class="patch-window"
+      @contextmenu.stop="onGraphContextMenu"
+      @click="clearSelection"
+      :style="patchWindowStyle"
+    >
+      <!-- prettier-ignore -->
+      <PatchModule
+        v-for="module in patchGraph.modules"
+        :id="module.moduleId"
+        :key="module.moduleId"
+        :moduleInstance="(module as ModuleInstance)"
+        :class="['patch-module', { selected: module.selected }]"
+        :style="{
+          borderColor: appColors.textColor,
+          backgroundColor: appColors.backgroundColor,
+        }"
+        :ripple="false"
+        @mousedown="(e: MouseEvent) => onModuleDragStart(e, module)"
+        @touchstart="(e: TouchEvent) => onModuleDragStart(e, module)"
+        @begin-patching="(output) => onBeginPatching(module, output)"
+        @finish-patching="(input) => onFinishPatching(module, input)"
+        @inputs-updated="(inputs) => onModuleInputsUpdated(module.moduleId, inputs)"
+        @outputs-updated="(outputs) => onModuleOutputsUpdated(module.moduleId, outputs)"
+        @dblclick.stop="() => onModuleSelected(module as ModuleInstance)"
+        @options-updated="(options) => onModuleOptionsUpdated(module.moduleId, options)"
+      />
+
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        :viewBox="`0 0 ${patchGraph.width} ${patchGraph.height}`"
+        :width="patchGraph.width"
+        :height="patchGraph.height"
+      >
+        <PatchCable
+          v-if="inProgressConnection != null"
+          :startPosition="inProgressConnection.from"
+          :endPosition="inProgressConnection.to"
+          :connectionType="inProgressConnection.connectionType"
+        />
+
+        <!-- prettier-ignore -->
+        <PatchConnection
+          v-for="(connection, i) in patchGraph.connections"
+          :key="i"
+          :connection="(connection as ConnectionInstance)"
+          @selected="() => onConnectionSelected(connection as ConnectionInstance)"
+        />
+      </svg>
+
+      <PatchContextMenu
+        v-model="showContextMenu"
+        :x="contextMenuX"
+        :y="contextMenuY"
+        @add-module="addModule"
+      />
+    </div>
   </div>
 </template>
 
 <style scoped>
+.patch-container {
+  width: 100%;
+  height: 79vh;
+}
 .patch-window {
   position: relative;
   cursor: default;
   border: 1px solid;
   border-radius: 5px;
+  overflow: auto;
+  height: 80vh;
 }
 .patch-module {
   position: absolute;

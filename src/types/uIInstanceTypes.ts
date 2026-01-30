@@ -61,6 +61,8 @@ export type ConnectionInstance = {
 
 export type PatchGraph = {
   version: string;
+  height: number;
+  width: number;
   modules: ModuleInstance[];
   connections: ConnectionInstance[];
 };
