@@ -2,6 +2,8 @@ import type {
   ModuleId,
   IAudioModule,
 } from "@/classes/audio-modules/AudioModule";
+import type { IModuleOutput } from "@/classes/ModuleOutput";
+import type { IModuleInput } from "@/classes/ModuleInput";
 
 type InputId = {
   moduleId: string;
@@ -23,11 +25,11 @@ type Connection = {
  * of the patch graph separately from the GUI
  */
 export default class Patcher {
-  private _modules: Map<ModuleId, IAudioModule>;
+  private _modules: Map<ModuleId, IAudioModule<any>>;
   private _connections: Array<Connection>;
 
   constructor() {
-    this._modules = new Map<ModuleId, IAudioModule>();
+    this._modules = new Map<ModuleId, IAudioModule<any>>();
     this._connections = new Array<Connection>();
   }
 
@@ -39,7 +41,7 @@ export default class Patcher {
     }
 
     const moduleInput = inputModule.inputs.find(
-      (i) => i.name === inputId.inputName,
+      (i: IModuleInput) => i.name === inputId.inputName,
     );
 
     if (!moduleInput) {
@@ -59,7 +61,7 @@ export default class Patcher {
     }
 
     const moduleOutput = outputModule.outputs.find(
-      (o) => o.name === outputId.outputName,
+      (o: IModuleOutput) => o.name === outputId.outputName,
     );
 
     if (!moduleOutput) {
@@ -88,7 +90,7 @@ export default class Patcher {
     this._connections = [];
   }
 
-  addModule(module: IAudioModule) {
+  addModule(module: IAudioModule<any>) {
     this._modules.set(module.id, module);
   }
 
